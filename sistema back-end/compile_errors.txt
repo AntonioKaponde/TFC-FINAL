@@ -1,0 +1,83 @@
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------------< [0;36mco.ao.tfc:sistema-api[0;1m >------------------------[m
+[[1;34mINFO[m] [1mBuilding sistema-api 1.0.0[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mclean:3.4.0:clean[m [1m(default-clean)[m @ [36msistema-api[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36msistema-api[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 0 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.13.0:compile[m [1m(default-compile)[m @ [36msistema-api[0;1m ---[m
+[[1;34mINFO[m] Recompiling the module because of [1mchanged source code[m.
+[[1;34mINFO[m] Compiling 93 source files with javac [debug parameters release 21] to target/classes
+[[1;34mINFO[m] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[[1;34mINFO[m] Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;33mWARNING[m] COMPILATION WARNING : 
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/Empresa.java:[59,23] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/Empresa.java:[68,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/Empresa.java:[74,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/Empresa.java:[77,29] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/dto/EmpresaRegisterRequest.java:[19,23] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/Fatura.java:[63,25] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/PerfilRole.java:[27,28] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;33mWARNING[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/model/PerfilRole.java:[34,26] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[[1;34mINFO[m] 8 warnings 
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;31mERROR[m] COMPILATION ERROR : 
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/DashboardService.java:[36,53] method somarTotalPorPeriodo in interface co.ao.tfc.sistema.repository.FaturaRepository cannot be applied to given types;
+  required: co.ao.tfc.sistema.model.Empresa,java.time.LocalDate,java.time.LocalDate
+  found:    java.time.LocalDate,java.time.LocalDate
+  reason: actual and formal argument lists differ in length
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/DashboardService.java:[37,48] method somarIvaPorPeriodo in interface co.ao.tfc.sistema.repository.FaturaRepository cannot be applied to given types;
+  required: co.ao.tfc.sistema.model.Empresa,java.time.LocalDate,java.time.LocalDate
+  found:    java.time.LocalDate,java.time.LocalDate
+  reason: actual and formal argument lists differ in length
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/DashboardService.java:[60,32] method resumoMensalPorAno in interface co.ao.tfc.sistema.repository.FaturaRepository cannot be applied to given types;
+  required: co.ao.tfc.sistema.model.Empresa,int
+  found:    int
+  reason: actual and formal argument lists differ in length
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/EmpresaService.java:[48,44] incompatible types: co.ao.tfc.sistema.model.enums.TipoEmpresa cannot be converted to java.lang.String
+[[1;34mINFO[m] 4 errors 
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  15.535 s
+[[1;34mINFO[m] Finished at: 2026-06-19T19:50:23+01:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile[m [1m(default-compile)[m on project [36msistema-api[m: [1;31mCompilation failure[m: Compilation failure: 
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/DashboardService.java:[36,53] method somarTotalPorPeriodo in interface co.ao.tfc.sistema.repository.FaturaRepository cannot be applied to given types;
+[[1;31mERROR[m]   required: co.ao.tfc.sistema.model.Empresa,java.time.LocalDate,java.time.LocalDate
+[[1;31mERROR[m]   found:    java.time.LocalDate,java.time.LocalDate
+[[1;31mERROR[m]   reason: actual and formal argument lists differ in length
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/DashboardService.java:[37,48] method somarIvaPorPeriodo in interface co.ao.tfc.sistema.repository.FaturaRepository cannot be applied to given types;
+[[1;31mERROR[m]   required: co.ao.tfc.sistema.model.Empresa,java.time.LocalDate,java.time.LocalDate
+[[1;31mERROR[m]   found:    java.time.LocalDate,java.time.LocalDate
+[[1;31mERROR[m]   reason: actual and formal argument lists differ in length
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/DashboardService.java:[60,32] method resumoMensalPorAno in interface co.ao.tfc.sistema.repository.FaturaRepository cannot be applied to given types;
+[[1;31mERROR[m]   required: co.ao.tfc.sistema.model.Empresa,int
+[[1;31mERROR[m]   found:    int
+[[1;31mERROR[m]   reason: actual and formal argument lists differ in length
+[[1;31mERROR[m] /home/darklord022/Documentos/TFC-Final/Final/Projecto-Final TFC/sistema back-end/src/main/java/co/ao/tfc/sistema/service/EmpresaService.java:[48,44] incompatible types: co.ao.tfc.sistema.model.enums.TipoEmpresa cannot be converted to java.lang.String
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

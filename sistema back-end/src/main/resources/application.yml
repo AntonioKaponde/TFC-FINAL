@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: sistema-api
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/facturacao
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: rooter
+    password: Root@2024
+
+  jpa:
+    database-plataform: org.hibernate.dialect.MYSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
+
+app:
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:3000

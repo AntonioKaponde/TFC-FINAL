@@ -1,0 +1,33 @@
+[
+    {
+        "mes":"Jan",
+        "lucro":8000,
+        "imposto":4560
+    },
+    {
+         "mes":"Fev",
+        "lucro":5000,
+        "imposto":4780
+    },
+    { "mes":"Mar",
+        "lucro":3800,
+        "imposto":1600
+    },
+    {
+        "mes":"Abr",
+        "lucro":3100,
+        "imposto":2500
+    },
+    {
+        "mes":"Mai",
+        "lucro":5000,
+        "imposto":1190
+        
+    },
+    {
+         "mes":"Jun",
+        "lucro":5700,
+        "imposto":1500
+    }
+
+]

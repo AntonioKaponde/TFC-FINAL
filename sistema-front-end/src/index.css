@@ -1,0 +1,11 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #F4F7F9;
+    overflow-x: hidden;
+}
+
+input:focus {
+    outline: 1px solid blue;
+}

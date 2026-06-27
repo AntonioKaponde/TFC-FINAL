@@ -1,0 +1,8 @@
+:root{
+    --verde:#083927;
+    --preta:#0B1220;
+    --pendente:#DC2626;
+    --background:#F4F7F9;
+}
+
+/*sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}  ":hover": { background: "#083927", color: "#fff" },*/

@@ -1,0 +1,12 @@
+[
+    {
+        "imposto":"IVA a liquidar",
+        "valor":125000
+    },
+    {
+        "imposto":"IRT retido",
+        "valor":65000
+        
+    }
+
+]

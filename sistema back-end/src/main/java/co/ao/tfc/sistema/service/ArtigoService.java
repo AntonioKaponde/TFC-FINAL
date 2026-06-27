@@ -1,0 +1,148 @@
+package co.ao.tfc.sistema.service;
+
+import co.ao.tfc.sistema.dto.ArtigoRequest;
+import co.ao.tfc.sistema.dto.ArtigoResponse;
+import co.ao.tfc.sistema.exception.ResourceNotFoundException;
+import co.ao.tfc.sistema.model.Artigo;
+import co.ao.tfc.sistema.repository.ArtigoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ArtigoService {
+
+    private final ArtigoRepository artigoRepository;
+    private final co.ao.tfc.sistema.repository.UsuarioRepository usuarioRepository;
+    private final co.ao.tfc.sistema.repository.CategoriaRepository categoriaRepository;
+    private final co.ao.tfc.sistema.repository.FornecedorRepository fornecedorRepository;
+
+
+    private co.ao.tfc.sistema.model.Usuario getCurrentUsuario() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utilizador não autenticado"));
+    }
+
+    private co.ao.tfc.sistema.model.Empresa getCurrentEmpresa() {
+        return getCurrentUsuario().getEmpresa();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArtigoResponse> listar(String pesquisa) {
+        co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
+        List<Artigo> artigos = artigoRepository.findByEmpresa(empresa);
+        
+        if (pesquisa != null && !pesquisa.isBlank()) {
+            artigos = artigos.stream().filter(a -> 
+                a.getNome().toLowerCase().contains(pesquisa.toLowerCase()) || 
+                (a.getCategoria() != null && a.getCategoria().getNome().toLowerCase().contains(pesquisa.toLowerCase()))
+            ).toList();
+        }
+        
+        return artigos.stream().map(this::toResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ArtigoResponse buscar(Long id) {
+        return toResponse(buscarEntidade(id));
+    }
+
+    @Transactional
+    public ArtigoResponse criar(ArtigoRequest request) {
+        co.ao.tfc.sistema.model.Usuario usuarioLogado = getCurrentUsuario();
+        co.ao.tfc.sistema.model.Empresa empresa = usuarioLogado.getEmpresa();
+
+        co.ao.tfc.sistema.model.Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+
+        co.ao.tfc.sistema.model.Fornecedor fornecedor = null;
+        if (request.getFornecedorId() != null) {
+            fornecedor = fornecedorRepository.findById(request.getFornecedorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+        }
+
+        Artigo artigo = Artigo.builder()
+                .nome(request.getNome())
+                .categoria(categoria)
+                .fornecedor(fornecedor)
+                .preco(request.getPreco())
+                .taxaIva(request.getTaxaIva())
+                .motivoIsencao(request.getMotivoIsencao())
+                .unidadeMedida(request.getUnidadeMedida())
+                .stock(request.getStock())
+                .stockMinimo(request.getStockMinimo())
+                .empresa(empresa)
+                .build();
+        artigo.atualizarEstado();
+        artigo = artigoRepository.save(artigo);
+
+
+
+        return toResponse(artigo);
+    }
+
+    @Transactional
+    public ArtigoResponse atualizar(Long id, ArtigoRequest request) {
+        Artigo artigo = buscarEntidade(id);
+        
+        co.ao.tfc.sistema.model.Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+
+        co.ao.tfc.sistema.model.Fornecedor fornecedor = null;
+        if (request.getFornecedorId() != null) {
+            fornecedor = fornecedorRepository.findById(request.getFornecedorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+        }
+
+        artigo.setNome(request.getNome());
+        artigo.setCategoria(categoria);
+        artigo.setFornecedor(fornecedor);
+        artigo.setPreco(request.getPreco());
+        artigo.setTaxaIva(request.getTaxaIva());
+        artigo.setMotivoIsencao(request.getMotivoIsencao());
+        artigo.setUnidadeMedida(request.getUnidadeMedida());
+        
+        if (!artigo.getStock().equals(request.getStock())) {
+            artigo.setStock(request.getStock());
+        }
+
+        artigo.setStockMinimo(request.getStockMinimo());
+        artigo.atualizarEstado();
+        return toResponse(artigoRepository.save(artigo));
+    }
+
+    @Transactional
+    public void remover(Long id) {
+        artigoRepository.delete(buscarEntidade(id));
+    }
+
+    public Artigo buscarEntidade(Long id) {
+        Artigo artigo = artigoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Artigo não encontrado: " + id));
+        if (!artigo.getEmpresa().getId().equals(getCurrentEmpresa().getId())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Acesso negado: Este artigo pertence a outra empresa.");
+        }
+        return artigo;
+    }
+
+    private ArtigoResponse toResponse(Artigo artigo) {
+        return ArtigoResponse.builder()
+                .id(artigo.getId())
+                .nome(artigo.getNome())
+                .categoriaId(artigo.getCategoria() != null ? artigo.getCategoria().getId() : null)
+                .categoria(artigo.getCategoria() != null ? artigo.getCategoria().getNome() : null)
+                .fornecedorId(artigo.getFornecedor() != null ? artigo.getFornecedor().getId() : null)
+                .fornecedorNome(artigo.getFornecedor() != null ? artigo.getFornecedor().getNome() : null)
+                .preco(artigo.getPreco())
+                .taxaIva(artigo.getTaxaIva())
+                .stock(artigo.getStock())
+                .stockMinimo(artigo.getStockMinimo())
+                .estado(artigo.getEstado())
+                .motivoIsencao(artigo.getMotivoIsencao())
+                .unidadeMedida(artigo.getUnidadeMedida())
+                .build();
+    }
+}
