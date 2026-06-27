@@ -15,8 +15,7 @@ mvn spring-boot:run
 ```
 
 A API fica disponível em `http://localhost:8080`.
-
-Console H2 (desenvolvimento): `http://localhost:8080/h2-console`
+Esta rodando em mysql assim como postgres
 
 ## Endpoints principais
 
