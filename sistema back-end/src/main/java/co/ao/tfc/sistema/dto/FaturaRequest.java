@@ -1,5 +1,6 @@
 package co.ao.tfc.sistema.dto;
 
+import co.ao.tfc.sistema.model.enums.MetodoPagamento;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +20,11 @@ public class FaturaRequest {
 
     @NotNull
     private LocalDate dataVencimento;
+
+    @NotNull
+    private boolean pagoPronto;
+
+    private MetodoPagamento metodoPagamento;
 
     @NotEmpty
     @Valid

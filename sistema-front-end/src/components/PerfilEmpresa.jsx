@@ -19,13 +19,14 @@ const PerfilEmpresa = forwardRef((props, ref) => {
     email: "",
     endereco: ""
   });
+  const [originalEmpresa, setOriginalEmpresa] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEmpresa = async () => {
       try {
         const response = await api.get("/api/empresa/atual");
-        setEmpresa({
+        const data = {
           id: response.id,
           nome: response.nome || "",
           nif: response.nif || "",
@@ -33,7 +34,9 @@ const PerfilEmpresa = forwardRef((props, ref) => {
           telefone: response.telefone || "",
           email: response.email || "",
           endereco: response.endereco || ""
-        });
+        };
+        setEmpresa(data);
+        setOriginalEmpresa(data);
       } catch (error) {
         console.error("Erro ao buscar dados da empresa", error);
       } finally {
@@ -42,6 +45,12 @@ const PerfilEmpresa = forwardRef((props, ref) => {
     };
     fetchEmpresa();
   }, []);
+
+  // Determina se um campo já foi configurado anteriormente (não pode ser alterado novamente, exceto telefone)
+  const jaConfigurado = (campo) => {
+    if (!originalEmpresa) return false;
+    return originalEmpresa[campo] !== null && originalEmpresa[campo] !== undefined && originalEmpresa[campo] !== '';
+  };
 
   const handleChange = (e) => {
     if (e.target.name === 'capitalSocial' && Number(e.target.value) < 0) {
@@ -109,23 +118,47 @@ const PerfilEmpresa = forwardRef((props, ref) => {
                 name="capitalSocial"
                 value={empresa.capitalSocial}
                 onChange={handleChange}
+                disabled={jaConfigurado('capitalSocial')}
                 onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
-                style={{ height: "50px", padding: 10, fontSize: 15,marginTop:5, border: "1px solid #ccc", borderRadius: "4px" }}
+                style={{ 
+                  height: "50px", padding: 10, fontSize: 15, marginTop:5, 
+                  border: "1px solid #ccc", borderRadius: "4px",
+                  backgroundColor: jaConfigurado('capitalSocial') ? "#f5f5f5" : "#fff",
+                  color: jaConfigurado('capitalSocial') ? "#666" : "#000"
+                }}
               />
+              {jaConfigurado('capitalSocial') && (
+                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5 }}>
+                  Capital social já configurado. Apenas o telefone pode ser alterado.
+                </Typography>
+              )}
             </FormControl>
             <FormControl sx={{ width: "28rem", p: 3 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                 Telefone<span style={{ color: "red" }}>*</span>
               </Typography>
               <input
-                type="number"
-                min="0"
+                type="text"
                 name="telefone"
                 value={empresa.telefone}
-                onChange={handleChange}
-                onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
-                style={{ height: "50px", padding: 10, fontSize: 15,marginTop:5, border: "1px solid #ccc", borderRadius: "4px" }}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val.length <= 9) {
+                    setEmpresa({ ...empresa, telefone: val });
+                  }
+                }}
+                maxLength={9}
+                placeholder="900000000"
+                style={{ 
+                  height: "50px", padding: 10, fontSize: 15, marginTop:5, 
+                  border: "1px solid #ccc", borderRadius: "4px"
+                }}
               />
+              {empresa.telefone && !/^9\d{8}$/.test(empresa.telefone) && (
+                <Typography variant="caption" color="error" sx={{ display: 'block', mt: 0.5 }}>
+                  O telefone deve ter 9 dígitos e começar com 9.
+                </Typography>
+              )}
             </FormControl>
             <FormControl sx={{ width: "28rem", p: 3 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
@@ -136,8 +169,19 @@ const PerfilEmpresa = forwardRef((props, ref) => {
                 name="email"
                 value={empresa.email}
                 onChange={handleChange}
-                style={{ height: "50px", padding: 10, fontSize: 15,marginTop:5, border: "1px solid #ccc", borderRadius: "4px" }}
+                disabled={jaConfigurado('email')}
+                style={{ 
+                  height: "50px", padding: 10, fontSize: 15, marginTop:5, 
+                  border: "1px solid #ccc", borderRadius: "4px",
+                  backgroundColor: jaConfigurado('email') ? "#f5f5f5" : "#fff",
+                  color: jaConfigurado('email') ? "#666" : "#000"
+                }}
               />
+              {jaConfigurado('email') && (
+                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5 }}>
+                  Email já configurado. Apenas o telefone pode ser alterado.
+                </Typography>
+              )}
             </FormControl>
             <FormControl sx={{ width: "56rem", p: 3 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
@@ -148,8 +192,19 @@ const PerfilEmpresa = forwardRef((props, ref) => {
                 name="endereco"
                 value={empresa.endereco}
                 onChange={handleChange}
-                style={{ height: "50px", padding: 10, fontSize: 15,marginTop:5, border: "1px solid #ccc", borderRadius: "4px" }}
+                disabled={jaConfigurado('endereco')}
+                style={{ 
+                  height: "50px", padding: 10, fontSize: 15, marginTop:5, 
+                  border: "1px solid #ccc", borderRadius: "4px",
+                  backgroundColor: jaConfigurado('endereco') ? "#f5f5f5" : "#fff",
+                  color: jaConfigurado('endereco') ? "#666" : "#000"
+                }}
               />
+              {jaConfigurado('endereco') && (
+                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5 }}>
+                  Endereço já configurado. Apenas o telefone pode ser alterado.
+                </Typography>
+              )}
             </FormControl>
           </Grid>
         </Card>

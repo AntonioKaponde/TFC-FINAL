@@ -28,7 +28,7 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
     regime: "geral",
     motivoIsencao: "M00",
     aplicarIrt: true,
-    aplicarImpostoSelo: false,
+    aplicarImpostoIndustrial: false,
   });
 
   useEffect(() => {
@@ -39,10 +39,12 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
           regime: regimeToSelect[data.regimeIva] ?? "geral",
           motivoIsencao: data.motivoIsencaoPadrao ?? "M00",
           aplicarIrt: data.aplicarIrt,
-          aplicarImpostoSelo: data.aplicarImpostoSelo,
+          aplicarImpostoIndustrial: data.aplicarImpostoIndustrial,
         });
       })
-      .catch(() => console.error("Não foi possível carregar a configuração fiscal."))
+      .catch(() => {
+        // Ainda não foi configurada, valores padrão
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -54,7 +56,7 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
         taxaIva: taxaFromRegime(regimeIva),
         motivoIsencaoPadrao: form.motivoIsencao,
         aplicarIrt: form.aplicarIrt,
-        aplicarImpostoSelo: form.aplicarImpostoSelo,
+        aplicarImpostoIndustrial: form.aplicarImpostoIndustrial,
       });
     }
   }));
@@ -78,13 +80,14 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
           </Box>
           <Divider />
           <Grid sx={{ alignItems: "center" }}>
-           {/*} <FormControl sx={{ width: "56rem", p: 3 }}>
+           {/** */} <FormControl sx={{ width: "56rem", p: 3 }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                 Regime do IVA<span style={{ color: "red" }}>*</span>
               </Typography>
               <Select
                 value={form.regime}
                 onChange={(e) => setForm({ ...form, regime: e.target.value })}
+                disabled
                 sx={{ height: "50px", fontSize: 15, marginTop: 1 }}
               >
                 <MenuItem value="geral">Regime Geral(14%)</MenuItem>
@@ -92,25 +95,6 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
                 <MenuItem value="M10"> Regime de Exclusão</MenuItem>
               </Select>
             </FormControl>
-
-            <FormControl sx={{ width: "56rem", p: 3 }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
-                Motivo de Isenção Padrão<span style={{ color: "red" }}>*</span>
-              </Typography>
-              {/*<Select
-                value={form.motivoIsencao}
-                onChange={(e) => setForm({ ...form, motivoIsencao: e.target.value })}
-                sx={{ height: "50px", fontSize: 15, marginTop: 1 }}
-              >
-                <MenuItem value="M00">M00 - Selecione um motivo padrão(Opcional)</MenuItem>
-                <MenuItem value="M01">Isenção Artigo 12.º do CIVA(Saúde e Ensino)</MenuItem>
-                <MenuItem value="M02">Isenção Artigo 13.º do CIVA(Bens Alimentar)</MenuItem>
-                <MenuItem value="M03">Isenção Artigo 14.º do CIVA(Exportações)</MenuItem>
-                <MenuItem value="M04">Isenção Artigo 15.º do CIVA(Transportes)</MenuItem>
-                <MenuItem value="M10">Isenção Regime de Exclusão</MenuItem>
-                <MenuItem value="M11">Isenção Regime Simplificado</MenuItem>
-              </Select>
-            </FormControl>*/}
 
             <Grid container sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ ml: 3 }}>
@@ -137,9 +121,9 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
                   </Typography>
                   <RadioGroup
                     row
-                    value={form.aplicarImpostoSelo ? "recibo" : "isento"}
+                    value={form.aplicarImpostoIndustrial ? "recibo" : "isento"}
                     onChange={(e) =>
-                      setForm({ ...form, aplicarImpostoSelo: e.target.value === "recibo" })
+                      setForm({ ...form, aplicarImpostoIndustrial: e.target.value === "recibo" })
                     }
                   >
                     <FormControlLabel value="recibo" control={<Radio />} label="Cobrar no Recibo(1%)" />

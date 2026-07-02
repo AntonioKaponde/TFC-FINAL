@@ -33,13 +33,13 @@ export default function CardRelatorio() {
   }
 
   const iva = Number(indicadores.ivaAPagar);
-  const totalImpostos = Number(indicadores.totalImpostos);
-  const irt = Math.max(totalImpostos - iva, 0);
+  const irt = Number(indicadores.irtRetido ?? 0);
+  const industrial = Number(indicadores.outrosImpostos ?? 0);
 
   const cards = [
     { titulo: `IVA a Liquidar (${indicadores.taxaIvaAplicada}%)`, valor: formatKz(iva), icon: <AccountBalanceOutlinedIcon sx={{ fontSize: '2rem' }} /> },
     { titulo: 'IRT Retido', valor: formatKz(irt), icon: <PeopleAltOutlinedIcon sx={{ fontSize: '2rem' }} /> },
-    { titulo: 'Imposto Industrial(25%)', valor: formatKz(0), icon: <ApprovalOutlinedIcon sx={{ fontSize: '2rem' }} /> },
+    { titulo: 'Imposto Industrial', valor: formatKz(industrial), icon: <ApprovalOutlinedIcon sx={{ fontSize: '2rem' }} /> },
     { titulo: 'Lucros Retidos', valor: formatKz(indicadores.lucroRetido), icon: <TrendingUpOutlinedIcon sx={{ fontSize: '2rem' }} /> },
   ];
 

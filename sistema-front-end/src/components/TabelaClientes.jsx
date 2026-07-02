@@ -235,7 +235,15 @@ export default function TabelaClientes() {
                           >
                             <strong>{row.nome}</strong>
                             <br />
-                            {row.empresa || "-"}
+                            <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                              {row.codigoCliente || 'C-000000'}
+                            </Typography>
+                            {row.empresa && (
+                              <>
+                                <br />
+                                {row.empresa}
+                              </>
+                            )}
                           </TableCell>
                           <TableCell sx={{ fontSize: "0.85rem", color: "#64748b" }}>
                             {row.nif}

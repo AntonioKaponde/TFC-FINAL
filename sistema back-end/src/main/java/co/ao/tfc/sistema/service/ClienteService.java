@@ -44,16 +44,33 @@ public class ClienteService {
     @Transactional
     public ClienteResponse criar(ClienteRequest request) {
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
+        String codigoCliente = gerarCodigoCliente(empresa);
         Cliente cliente = Cliente.builder()
                 .nome(request.getNome())
                 .nif(request.getNif())
+                .codigoCliente(codigoCliente)
                 .telefone(request.getTelefone())
                 .email(request.getEmail())
-                .saldo(request.getSaldo())
+                .saldo(request.getSaldo() != null ? request.getSaldo() : java.math.BigDecimal.ZERO)
                 .empresa(empresa)
                 .ativo(request.isAtivo())
                 .build();
         return toResponse(clienteRepository.save(cliente));
+    }
+
+    private String gerarCodigoCliente(co.ao.tfc.sistema.model.Empresa empresa) {
+        java.util.Optional<Cliente> ultimo = clienteRepository.findTopByEmpresaOrderByCodigoClienteDesc(empresa);
+        if (ultimo.isPresent() && ultimo.get().getCodigoCliente() != null && !ultimo.get().getCodigoCliente().isBlank()) {
+            String ultimoCodigo = ultimo.get().getCodigoCliente();
+            try {
+                int numero = Integer.parseInt(ultimoCodigo.replace("C-", ""));
+                return String.format("C-%06d", numero + 1);
+            } catch (NumberFormatException e) {
+                // Se o código existente não segue o padrão C-XXXXXX, começa do início
+                return "C-000001";
+            }
+        }
+        return "C-000001";
     }
 
     @Transactional
@@ -87,6 +104,7 @@ public class ClienteService {
                 .id(cliente.getId())
                 .nome(cliente.getNome())
                 .nif(cliente.getNif())
+                .codigoCliente(cliente.getCodigoCliente())
                 .telefone(cliente.getTelefone())
                 .email(cliente.getEmail())
                 .saldo(cliente.getSaldo())

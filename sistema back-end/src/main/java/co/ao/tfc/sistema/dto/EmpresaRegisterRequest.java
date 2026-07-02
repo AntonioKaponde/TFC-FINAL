@@ -16,6 +16,8 @@ public class EmpresaRegisterRequest {
     @jakarta.validation.constraints.Pattern(regexp = "^5\\d{9}$", message = "O NIF da Empresa deve conter 10 dígitos e começar por 5.")
     private String nif;
     private String endereco;
+    
+    @jakarta.validation.constraints.Pattern(regexp = "^9\\d{8}$", message = "O telefone deve ter 9 dígitos e começar com 9.")
     private String telefone;
     private TipoEmpresa tipoEmpresa;
     private RegimeIva regimeIva;

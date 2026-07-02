@@ -20,9 +20,9 @@ export default function DoughnutRelatorio({ valores: valoresProp }) {
       .indicadores(ANO_REFERENCIA)
       .then((data) => {
         const iva = Number(data.ivaAPagar);
-        const irt = Math.max(total - iva);
-        const total = Number(data.totalImpostos + irt);
-        setValores([iva, irt]);
+        const irt = Number(data.irtRetido ?? 0);
+        const total = Number(data.totalImpostos ?? 0);
+        setValores([iva, irt, Math.max(0, total - iva - irt)]);
       })
       .finally(() => setLoading(false));
   }, [valoresProp]);
@@ -38,12 +38,12 @@ export default function DoughnutRelatorio({ valores: valoresProp }) {
   return (
     <Doughnut
       data={{
-        labels: ["IVA", "IRT"],
+        labels: ["IVA", "IRT", "Outros Impostos"],
         datasets: [
           {
             label: "Imposto",
-            data: valores,
-            backgroundColor: ["#9b2e03b6", "#ee9906"],
+            data: valores.length === 3 ? valores : [...valores, 0],
+            backgroundColor: ["#9b2e03b6", "#ee9906", "#f59e0b"],
           },
         ],
       }}

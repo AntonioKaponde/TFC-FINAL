@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { movimentosEstoqueApi, artigosApi, fornecedoresApi } from "../api";
 
-export default function MovimentoStockModal({ open, onClose, onSucesso }) {
+export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId: artigoIdProp }) {
   const [artigos, setArtigos] = useState([]);
   const [fornecedores, setFornecedores] = useState([]);
   const [form, setForm] = useState({
@@ -32,17 +32,21 @@ export default function MovimentoStockModal({ open, onClose, onSucesso }) {
         .then(([arts, forns]) => {
           setArtigos(arts);
           setFornecedores(forns);
+          // Se um artigoId foi passado, pré-selecionar
+          if (artigoIdProp && arts.some(a => a.id === Number(artigoIdProp))) {
+            setForm(prev => ({ ...prev, artigoId: String(artigoIdProp) }));
+          }
         })
         .catch(e => console.error(e));
       setForm({
-        artigoId: "",
+        artigoId: artigoIdProp ? String(artigoIdProp) : "",
         quantidade: "",
         tipoMovimento: "ENTRADA",
         observacao: "",
         fornecedorId: ""
       });
     }
-  }, [open]);
+  }, [open, artigoIdProp]);
 
   const handleSave = async () => {
     setErro("");

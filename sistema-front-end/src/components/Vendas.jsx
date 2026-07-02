@@ -9,8 +9,11 @@ import {
   Card,
   CircularProgress,
   FormControl,
+  FormControlLabel,
   Grid,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   Stack,
   TextField,
@@ -41,6 +44,8 @@ export default function Vendas() {
   const [dataEmissao, setDataEmissao] = useState(hojeIso());
   const [dataVencimento, setDataVencimento] = useState(daquiDiasIso(30));
   const [linhas, setLinhas] = useState([linhaVazia()]);
+  const [pagoPronto, setPagoPronto] = useState(true);
+  const [metodoPagamento, setMetodoPagamento] = useState("DINHEIRO");
 
   useEffect(() => {
     Promise.all([clientesApi.listar(), artigosApi.listar()])
@@ -73,6 +78,8 @@ export default function Vendas() {
         clienteId: Number(clienteId),
         dataEmissao,
         dataVencimento,
+        pagoPronto,
+        metodoPagamento: pagoPronto ? metodoPagamento : null,
         linhas: linhasValidas.map((l) => ({
           artigoId: Number(l.artigoId),
           quantidade: Number(l.quantidade),
@@ -190,6 +197,45 @@ export default function Vendas() {
                     sx={{ width: "410px" }}
                   />
                 </Grid>
+                <Grid>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
+                    Pagamento a Pronto
+                  </Typography>
+                  <FormControl component="fieldset" size="small">
+                    <RadioGroup
+                      row
+                      value={pagoPronto ? "sim" : "nao"}
+                      onChange={(e) => {
+                        const isPronto = e.target.value === "sim";
+                        setPagoPronto(isPronto);
+                        setMetodoPagamento(isPronto ? "DINHEIRO" : "");
+                      }}
+                    >
+                      <FormControlLabel value="sim" control={<Radio size="small" />} label="Sim" />
+                      <FormControlLabel value="nao" control={<Radio size="small" />} label="Não" />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                {pagoPronto && (
+                  <Grid>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
+                      Método de Pagamento
+                    </Typography>
+                    <FormControl size="small">
+                      <Select
+                        value={metodoPagamento}
+                        onChange={(e) => setMetodoPagamento(e.target.value)}
+                        sx={{ width: "410px" }}
+                      >
+                        <MenuItem value="DINHEIRO">Dinheiro</MenuItem>
+                        <MenuItem value="TRANSFERENCIA">Transferência</MenuItem>
+                        <MenuItem value="TPA">TPA</MenuItem>
+                        <MenuItem value="MULTICAIXA">Multicaixa</MenuItem>
+                        <MenuItem value="CHEQUE">Cheque</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                )}
               </Grid>
             </Card>
           </Grid>

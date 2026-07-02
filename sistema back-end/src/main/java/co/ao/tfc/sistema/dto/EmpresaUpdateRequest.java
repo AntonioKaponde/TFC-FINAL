@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @Builder
 public class EmpresaUpdateRequest {
     private String endereco;
+    
+    @jakarta.validation.constraints.Pattern(regexp = "^$|^9\\d{8}$", message = "O telefone deve ter 9 dígitos e começar com 9.")
     private String telefone;
     
     @jakarta.validation.constraints.Email(message = "Email inválido")

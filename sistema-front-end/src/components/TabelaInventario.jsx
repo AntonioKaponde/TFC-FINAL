@@ -40,7 +40,7 @@ function getStatusColor(status) {
   }
 }
 
-export default function TabelaInventario() {
+export default function TabelaInventario({ onMovimentar, refreshKey }) {
   const [artigos, setArtigos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
@@ -59,7 +59,7 @@ export default function TabelaInventario() {
 
   useEffect(() => {
     carregar();
-  }, []);
+  }, [refreshKey]);
 
   // Filtros locais
   const artigosFiltrados = artigos.filter((artigo) => {
@@ -253,7 +253,7 @@ export default function TabelaInventario() {
                       <CreateOutlinedIcon sx={{ fontSize: 18 }} />
                     </IconButton>
 
-                    <IconButton size="small">
+                    <IconButton size="small" onClick={() => onMovimentar && onMovimentar(row.id)}>
                       <CompareArrowsOutlinedIcon sx={{ fontSize: 18 }} />
                     </IconButton>
 

@@ -11,7 +11,10 @@ import co.ao.tfc.sistema.repository.PerfilRoleRepository;
 import co.ao.tfc.sistema.repository.UsuarioRepository;
 import co.ao.tfc.sistema.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,33 +26,47 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final UsuarioRepository usuarioRepository;
     private final EmpresaRepository empresaRepository;
     private final PerfilRoleRepository perfilRoleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditoriaService auditoriaService;
 
-    public JwtAuthResponse autenticarUsuario(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+    public JwtAuthResponse autenticarUsuario(LoginRequest loginRequest, String ip) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.generateToken(authentication);
-        
-        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            String jwt = tokenProvider.generateToken(authentication);
 
-        java.util.List<String> roles = usuario.getPerfilRoles().stream()
-            .map(co.ao.tfc.sistema.model.PerfilRole::getNome)
-            .collect(java.util.stream.Collectors.toList());
+            Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        return new JwtAuthResponse(jwt, usuario.getNome(), usuario.getEmail(), roles);
+            java.util.List<String> roles = usuario.getPerfilRoles().stream()
+                .map(co.ao.tfc.sistema.model.PerfilRole::getNome)
+                .collect(java.util.stream.Collectors.toList());
+
+            // Regista login bem-sucedido na auditoria
+            auditoriaService.registrarLogin(loginRequest.getEmail(), usuario.getNome(), ip);
+
+            return new JwtAuthResponse(jwt, usuario.getNome(), usuario.getEmail(), roles);
+
+        } catch (BadCredentialsException e) {
+            // Regista tentativa falhada
+            auditoriaService.registrarLoginFalha(loginRequest.getEmail(), ip);
+            log.warn("Tentativa de login falhada para {} de IP {}", loginRequest.getEmail(), ip);
+            throw e;
+        }
     }
 
     @Transactional

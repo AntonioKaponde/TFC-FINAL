@@ -1,13 +1,12 @@
 package co.ao.tfc.sistema.controller;
 
 import co.ao.tfc.sistema.dto.EmpresaDetalheResponse;
+import co.ao.tfc.sistema.service.AuditoriaService;
 import co.ao.tfc.sistema.service.EmpresaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/empresa")
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmpresaLogadaController {
 
     private final EmpresaService empresaService;
+    private final AuditoriaService auditoriaService;
 
     @GetMapping("/atual")
     @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTABILISTA')")
@@ -22,10 +22,12 @@ public class EmpresaLogadaController {
         return ResponseEntity.ok(empresaService.obterEmpresaAtual());
     }
 
-    @org.springframework.web.bind.annotation.PutMapping("/atual")
+    @PutMapping("/atual")
     @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTABILISTA')")
-    public ResponseEntity<co.ao.tfc.sistema.dto.EmpresaUpdate> atualizarEmpresaAtual(@org.springframework.web.bind.annotation.RequestBody co.ao.tfc.sistema.dto.EmpresaUpdateRequest request) {
+    public ResponseEntity<co.ao.tfc.sistema.dto.EmpresaUpdate> atualizarEmpresaAtual(@RequestBody co.ao.tfc.sistema.dto.EmpresaUpdateRequest request) {
         Long empresaId = empresaService.obterEmpresaAtual().getId();
-        return ResponseEntity.ok(empresaService.updateEmpresa(request, empresaId));
+        co.ao.tfc.sistema.dto.EmpresaUpdate response = empresaService.updateEmpresa(request, empresaId);
+        auditoriaService.registrarAuditoria("ATUALIZOU", "Empresa", "Atualizou os dados da empresa");
+        return ResponseEntity.ok(response);
     }
 }

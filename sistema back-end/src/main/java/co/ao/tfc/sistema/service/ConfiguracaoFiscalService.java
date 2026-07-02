@@ -32,14 +32,29 @@ public class ConfiguracaoFiscalService {
     @Transactional
     public ConfiguracaoFiscalResponse salvar(ConfiguracaoFiscalRequest request) {
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
-        ConfiguracaoFiscal configuracao = configuracaoFiscalRepository.findByEmpresa(empresa)
-                .orElse(ConfiguracaoFiscal.builder().aplicarIrt(true).aplicarImpostoIndustrial(true).empresa(empresa).build());
+        java.util.Optional<ConfiguracaoFiscal> existente = configuracaoFiscalRepository.findByEmpresa(empresa);
 
-        configuracao.setRegimeIva(request.getRegimeIva());
-        configuracao.setTaxaIva(request.getTaxaIva());
-        configuracao.setMotivoIsencaoPadrao(request.getMotivoIsencaoPadrao());
-        configuracao.setAplicarIrt(request.isAplicarIrt());
-        configuracao.setAplicarImpostoIndustrial(request.isAplicarImpostoSelo());
+        ConfiguracaoFiscal configuracao;
+
+        if (existente.isPresent()) {
+            // Atualiza configuração existente
+            configuracao = existente.get();
+            configuracao.setRegimeIva(request.getRegimeIva());
+            configuracao.setTaxaIva(request.getTaxaIva());
+            configuracao.setMotivoIsencaoPadrao(request.getMotivoIsencaoPadrao());
+            configuracao.setAplicarIrt(request.isAplicarIrt());
+            configuracao.setAplicarImpostoIndustrial(request.isAplicarImpostoIndustrial());
+        } else {
+            // Cria nova configuração
+            configuracao = ConfiguracaoFiscal.builder()
+                    .regimeIva(request.getRegimeIva())
+                    .taxaIva(request.getTaxaIva())
+                    .motivoIsencaoPadrao(request.getMotivoIsencaoPadrao())
+                    .aplicarIrt(request.isAplicarIrt())
+                    .aplicarImpostoIndustrial(request.isAplicarImpostoIndustrial())
+                    .empresa(empresa)
+                    .build();
+        }
 
         return toResponse(configuracaoFiscalRepository.save(configuracao));
     }
@@ -51,7 +66,7 @@ public class ConfiguracaoFiscalService {
                 .taxaIva(configuracao.getTaxaIva())
                 .motivoIsencaoPadrao(configuracao.getMotivoIsencaoPadrao())
                 .aplicarIrt(configuracao.isAplicarIrt())
-                .aplicarImpostoSelo(configuracao.isAplicarImpostoIndustrial())
+                .aplicarImpostoIndustrial(configuracao.isAplicarImpostoIndustrial())
                 .build();
     }
 }

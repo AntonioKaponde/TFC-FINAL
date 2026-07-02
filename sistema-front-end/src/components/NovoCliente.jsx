@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clientesApi } from "../api";
 import {
@@ -28,8 +28,17 @@ const NovoCliente = () => {
   const navigate = useNavigate();
   const [tipoCliente, setTipoCliente] = useState("B2B");
   const [form, setForm] = useState({ nome: "", nif: "", email: "", telefone: "" });
+  const [codigoGerado, setCodigoGerado] = useState("C-000001");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
+
+  // Gera código de cliente automaticamente baseado no total de clientes
+  useEffect(() => {
+    clientesApi.listar().then(clientes => {
+      const total = clientes.length;
+      setCodigoGerado(`C-${String(total + 1).padStart(6, '0')}`);
+    }).catch(() => {});
+  }, []);
 
   const handleSalvar = async () => {
     setErro("");
@@ -41,6 +50,12 @@ const NovoCliente = () => {
 
     if (!form.email.endsWith('@gmail.com')) {
       setErro("O email deve ser um endereço @gmail.com");
+      return;
+    }
+
+    // Validação do telefone: 9 dígitos, começa com 9
+    if (!/^9\d{8}$/.test(form.telefone)) {
+      setErro("O telefone deve ter exatamente 9 dígitos e começar com 9.");
       return;
     }
 
@@ -184,7 +199,7 @@ const NovoCliente = () => {
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Código de Cliente</Typography>
                   <TextField
                     fullWidth
-                    placeholder="C-000257 (Gerado automaticamente)"
+                    value={codigoGerado}
                     size="small"
                     disabled
                     sx={{width:"19rem"}}
@@ -210,16 +225,22 @@ const NovoCliente = () => {
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Label>Telefone / Telemóvel</Label>
+                  <Label>Telefone / Telemóvel *</Label>
                   <TextField
                     fullWidth
-                    type="number"
+                    type="tel"
                     value={form.telefone}
-                    onChange={(e) => setForm({ ...form, telefone: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      if (val.length <= 9) {
+                        setForm({ ...form, telefone: val });
+                      }
+                    }}
                     placeholder="900000000"
                     size="small"
-                    inputProps={{ min: 0 }}
-                    onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                    inputProps={{ maxLength: 9 }}
+                    error={form.telefone.length > 0 && !/^9\d{8}$/.test(form.telefone)}
+                    helperText={form.telefone.length > 0 && !/^9\d{8}$/.test(form.telefone) ? "O telefone deve ter 9 dígitos e começar com 9" : ""}
                   />
                 </Grid>
                 <Grid item xs={12}>

@@ -1,6 +1,7 @@
 package co.ao.tfc.sistema.model;
 
 import co.ao.tfc.sistema.model.enums.EstadoFatura;
+import co.ao.tfc.sistema.model.enums.MetodoPagamento;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,6 +50,14 @@ public class Fatura {
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal total;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean pagoPronto = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private MetodoPagamento metodoPagamento;
 
     @OneToMany(mappedBy = "fatura", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

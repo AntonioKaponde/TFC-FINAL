@@ -1,19 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
 import { Box, Button,Typography } from "@mui/material";
 import CardInventario from "../components/CardInventario";
 import TabelaInventario from "../components/TabelaInventario";
+import MovimentoStockModal from "../components/MovimentoStockModal";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AddIcon from "@mui/icons-material/Add";
-import SearchIcon from "@mui/icons-material/Search";
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { Link } from "react-router-dom";
-// Removed unused imports: SwapVertIcon, MovimentoStockModal
 import { exportarPDF } from "../utils/pdfExport";
 
 export default function Inventário() {
-  // Removed modal state
+  const [modalMovimentoAberta, setModalMovimentoAberta] = useState(false);
+  const [artigoMovimentar, setArtigoMovimentar] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const abrirModalMovimento = useCallback((artigoId) => {
+    setArtigoMovimentar(artigoId);
+    setModalMovimentoAberta(true);
+  }, []);
+
+  const fecharModalMovimento = useCallback(() => {
+    setModalMovimentoAberta(false);
+    setArtigoMovimentar(null);
+  }, []);
+
+  const aoSucessoMovimento = useCallback(() => {
+    setRefreshKey(k => k + 1);
+    fecharModalMovimento();
+  }, [fecharModalMovimento]);
 
   const rolesString = localStorage.getItem('userRoles');
   const userRoles = rolesString ? JSON.parse(rolesString) : [];
@@ -88,11 +103,17 @@ export default function Inventário() {
             <CardInventario />
           </Box>
           <Box>
-            <TabelaInventario />
+            <TabelaInventario onMovimentar={abrirModalMovimento} refreshKey={refreshKey} />
           </Box>
         </Box>
       </Box>
 
+      <MovimentoStockModal
+        open={modalMovimentoAberta}
+        onClose={fecharModalMovimento}
+        onSucesso={aoSucessoMovimento}
+        artigoId={artigoMovimentar}
+      />
     </div>
   );
 }

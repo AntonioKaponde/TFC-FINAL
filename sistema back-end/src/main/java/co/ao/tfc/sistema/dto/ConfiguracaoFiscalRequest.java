@@ -21,5 +21,5 @@ public class ConfiguracaoFiscalRequest {
 
     private String motivoIsencaoPadrao;
     private boolean aplicarIrt;
-    private boolean aplicarImpostoSelo;
+    private boolean aplicarImpostoIndustrial;
 }

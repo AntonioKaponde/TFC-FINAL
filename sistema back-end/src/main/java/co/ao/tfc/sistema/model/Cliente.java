@@ -31,6 +31,9 @@ public class Cliente {
     @Column(precision = 15, scale = 2)
     private BigDecimal saldo;
 
+    @Column(nullable = false, length = 20)
+    private String codigoCliente;
+
     @Column(nullable = false)
     private boolean ativo;
 

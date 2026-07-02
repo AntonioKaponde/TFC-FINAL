@@ -15,5 +15,6 @@ public class ClienteResponse {
     private String email;
     private BigDecimal saldo;
     private String empresa;
+    private String codigoCliente;
     private boolean ativo;
 }

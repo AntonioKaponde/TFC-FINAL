@@ -8,6 +8,7 @@ import co.ao.tfc.sistema.model.Fatura;
 import co.ao.tfc.sistema.model.LinhaFatura;
 import co.ao.tfc.sistema.model.enums.EstadoFatura;
 import co.ao.tfc.sistema.repository.ArtigoRepository;
+import co.ao.tfc.sistema.repository.ClienteRepository;
 import co.ao.tfc.sistema.repository.FaturaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,130 +28,9 @@ public class FaturaService {
     private final FaturaRepository faturaRepository;
     private final ArtigoRepository artigoRepository;
     private final ClienteService clienteService;
+    private final ClienteRepository clienteRepository;
     private final ArtigoService artigoService;
     private final EmpresaService empresaService;
-
-    /*@Transactional(readOnly = true)
-    public List<FaturaResponse> listar() {
-        return faturaRepository.findAll().stream().map(this::toResponse).toList();
-    }
-
-    @Transactional(readOnly = true)
-    public FaturaResponse buscar(Long id) {
-        return toResponse(buscarEntidade(id));
-    }
-
-    @Transactional
-    public FaturaResponse criar(FaturaRequest request) {
-        Cliente cliente = clienteService.buscarEntidade(request.getClienteId());
-
-        Fatura fatura = Fatura.builder()
-                .numero(gerarNumero())
-                .cliente(cliente)
-                .dataEmissao(request.getDataEmissao())
-                .dataVencimento(request.getDataVencimento())
-                .estado(EstadoFatura.PAGO)
-                .subtotal(BigDecimal.ZERO)
-                .totalIva(BigDecimal.ZERO)
-                .total(BigDecimal.ZERO)
-                .build();
-
-        BigDecimal subtotal = BigDecimal.ZERO;
-        BigDecimal totalIva = BigDecimal.ZERO;
-
-        for (LinhaFaturaRequest linhaRequest : request.getLinhas()) {
-            Artigo artigo = artigoService.buscarEntidade(linhaRequest.getArtigoId());
-            if (artigo.getStock() < linhaRequest.getQuantidade()) {
-                throw new IllegalArgumentException("Stock insuficiente para o artigo: " + artigo.getNome());
-            }
-
-            BigDecimal totalLinha = artigo.getPreco()
-                    .multiply(BigDecimal.valueOf(linhaRequest.getQuantidade()));
-            BigDecimal ivaLinha = totalLinha
-                    .multiply(artigo.getTaxaIva())
-                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-            LinhaFatura linha = LinhaFatura.builder()
-                    .artigo(artigo)
-                    .quantidade(linhaRequest.getQuantidade())
-                    .precoUnitario(artigo.getPreco())
-                    .taxaIva(artigo.getTaxaIva())
-                    .totalLinha(totalLinha.add(ivaLinha))
-                    .build();
-
-            fatura.adicionarLinha(linha);
-            subtotal = subtotal.add(totalLinha);
-            totalIva = totalIva.add(ivaLinha);
-
-            artigo.setStock(artigo.getStock() - linhaRequest.getQuantidade());
-            artigo.atualizarEstado();
-            artigoRepository.save(artigo);
-        }
-
-        fatura.setSubtotal(subtotal);
-        fatura.setTotalIva(totalIva);
-        fatura.setTotal(subtotal.add(totalIva));
-        fatura.setEstado(calcularEstado(fatura.getDataVencimento()));
-
-        return toResponse(faturaRepository.save(fatura));
-    }
-
-    @Transactional
-    public FaturaResponse marcarComoPaga(Long id) {
-        Fatura fatura = buscarEntidade(id);
-        fatura.setEstado(EstadoFatura.PAGO);
-        return toResponse(faturaRepository.save(fatura));
-    }
-
-    @Transactional
-    public void atualizarEstadosVencidas() {
-        faturaRepository.findByEstado(EstadoFatura.VENCIDO).forEach(fatura -> {
-            if (fatura.getDataVencimento().isBefore(LocalDate.now())) {
-                fatura.setEstado(EstadoFatura.VENCIDO);
-            }
-        });
-    }
-
-    private String gerarNumero() {
-        long total = faturaRepository.count() + 1;
-        return "FT " + Year.now().getValue() + "/" + String.format("%04d", total);
-    }
-
-    private EstadoFatura calcularEstado(LocalDate vencimento) {
-        return vencimento.isBefore(LocalDate.now()) ? EstadoFatura.VENCIDO : EstadoFatura.PAGO;
-    }
-
-    public Fatura buscarEntidade(Long id) {
-        return faturaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Fatura não encontrada: " + id));
-    }
-
-    private FaturaResponse toResponse(Fatura fatura) {
-        return FaturaResponse.builder()
-                .id(fatura.getId())
-                .numero(fatura.getNumero())
-                .cliente(fatura.getCliente().getNome())
-                .nif(fatura.getCliente().getNif())
-                .dataEmissao(fatura.getDataEmissao())
-                .dataVencimento(fatura.getDataVencimento())
-                .estado(fatura.getEstado())
-                .subtotal(fatura.getSubtotal())
-                .totalIva(fatura.getTotalIva())
-                .total(fatura.getTotal())
-                .linhas(fatura.getLinhas().stream()
-                        .map(linha -> LinhaFaturaResponse.builder()
-                                .id(linha.getId())
-                                .artigo(linha.getArtigo().getNome())
-                                .quantidade(linha.getQuantidade())
-                                .precoUnitario(linha.getPrecoUnitario())
-                                .taxaIva(linha.getTaxaIva())
-                                .totalLinha(linha.getTotalLinha())
-                                .build())
-                        .toList())
-                .build();
-    }*/
-
-
     private final co.ao.tfc.sistema.repository.UsuarioRepository usuarioRepository;
 
     private co.ao.tfc.sistema.model.Empresa getCurrentEmpresa() {
@@ -179,7 +59,8 @@ public class FaturaService {
                 .cliente(cliente)
                 .dataEmissao(request.getDataEmissao())
                 .dataVencimento(request.getDataVencimento())
-                .estado(EstadoFatura.PAGO)
+                .pagoPronto(request.isPagoPronto())
+                .metodoPagamento(request.getMetodoPagamento())
                 .subtotal(BigDecimal.ZERO)
                 .totalIva(BigDecimal.ZERO)
                 .total(BigDecimal.ZERO)
@@ -221,16 +102,41 @@ public class FaturaService {
         fatura.setSubtotal(subtotal);
         fatura.setTotalIva(totalIva);
         fatura.setTotal(subtotal.add(totalIva));
-        fatura.setEstado(calcularEstado(fatura.getDataVencimento()));
+        fatura.setEstado(calcularEstado(request.isPagoPronto(), fatura.getDataVencimento()));
 
-        return toResponse(faturaRepository.save(fatura));
+        Fatura saved = faturaRepository.save(fatura);
+
+        // Se não foi pago a pronto, atualiza o saldo do cliente (dívida)
+        if (!request.isPagoPronto()) {
+            cliente.setSaldo(cliente.getSaldo() != null
+                    ? cliente.getSaldo().add(saved.getTotal())
+                    : saved.getTotal());
+            clienteRepository.save(cliente);
+        }
+
+        return toResponse(saved);
     }
 
     @Transactional
     public FaturaResponse marcarComoPaga(Long id) {
         Fatura fatura = buscarEntidade(id);
+        if (fatura.getEstado() == EstadoFatura.PAGO) {
+            throw new IllegalStateException("Fatura já se encontra paga.");
+        }
         fatura.setEstado(EstadoFatura.PAGO);
-        return toResponse(faturaRepository.save(fatura));
+        Fatura saved = faturaRepository.save(fatura);
+
+        // Atualiza saldo do cliente: reduz a dívida
+        Cliente cliente = saved.getCliente();
+        if (cliente.getSaldo() != null) {
+            cliente.setSaldo(cliente.getSaldo().subtract(saved.getTotal()));
+            if (cliente.getSaldo().compareTo(java.math.BigDecimal.ZERO) < 0) {
+                cliente.setSaldo(java.math.BigDecimal.ZERO);
+            }
+            clienteRepository.save(cliente);
+        }
+
+        return toResponse(saved);
     }
 
     @Transactional
@@ -297,8 +203,14 @@ public class FaturaService {
         return "FT " + Year.now().getValue() + "/" + String.format("%04d", total);
     }
 
-    private EstadoFatura calcularEstado(LocalDate vencimento) {
-        return vencimento.isBefore(LocalDate.now()) ? EstadoFatura.VENCIDO : EstadoFatura.PAGO;
+    private EstadoFatura calcularEstado(boolean pagoPronto, LocalDate vencimento) {
+        if (pagoPronto) {
+            return EstadoFatura.PAGO;
+        }
+        if (vencimento.isBefore(LocalDate.now())) {
+            return EstadoFatura.VENCIDO;
+        }
+        return EstadoFatura.PENDENTE;
     }
 
     public Fatura buscarEntidade(Long id) {
@@ -319,6 +231,8 @@ public class FaturaService {
                 .dataEmissao(fatura.getDataEmissao())
                 .dataVencimento(fatura.getDataVencimento())
                 .estado(fatura.getEstado())
+                .pagoPronto(fatura.isPagoPronto())
+                .metodoPagamento(fatura.getMetodoPagamento())
                 .subtotal(fatura.getSubtotal())
                 .totalIva(fatura.getTotalIva())
                 .total(fatura.getTotal())

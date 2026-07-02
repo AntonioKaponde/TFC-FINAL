@@ -8,4 +8,10 @@ import java.util.List;
 
 public interface AuditoriaRepository extends JpaRepository<Auditoria, Long> {
     List<Auditoria> findByEmpresaOrderByDataHoraDesc(Empresa empresa);
+
+    List<Auditoria> findByEmpresaAndUsuarioContainingIgnoreCaseOrderByDataHoraDesc(Empresa empresa, String usuario);
+
+    List<Auditoria> findByEmpresaAndOperacaoOrderByDataHoraDesc(Empresa empresa, String operacao);
+
+    List<Auditoria> findByEmpresaAndOperacaoInOrderByDataHoraDesc(Empresa empresa, java.util.Set<String> operacoes);
 }
