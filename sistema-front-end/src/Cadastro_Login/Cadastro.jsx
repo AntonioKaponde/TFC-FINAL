@@ -273,14 +273,10 @@ export default function Cadastro() {
                       <MenuItem value={"CANTINA"}>Cantina</MenuItem>
                       <MenuItem value={"SUPERMERCADO"}>Supermercado</MenuItem>
                       <MenuItem value={"BARBEARIA"}>Barbearia</MenuItem>
-                      <MenuItem value={"CLINICA"}>Clínica</MenuItem>
-                      <MenuItem value={"HOTEL"}>Hotel</MenuItem>
                       <MenuItem value={"RESTAURANTE"}>Restaurante</MenuItem>
-                      <MenuItem value={"CONSULTORIA"}>Consultoria</MenuItem>
                       <MenuItem value={"TECNOLOGIA"}>Tecnologia</MenuItem>
                       <MenuItem value={"PAPELARIA"}>Papelaria</MenuItem>
                       <MenuItem value={"LIVRARIA"}>Livraria</MenuItem>
-                      <MenuItem value={"EDITORA"}>Editora</MenuItem>
                     </Select>
                   </FormLabel>
                   <FormLabel>

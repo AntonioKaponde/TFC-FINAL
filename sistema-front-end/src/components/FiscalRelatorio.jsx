@@ -12,12 +12,10 @@ export default function FiscalRelatorio() {
   useEffect(() => {
     dashboardApi.indicadores(ANO_REFERENCIA).then((data) => {
       const iva = Number(data.ivaAPagar);
-      const irt = Number(data.irtRetido ?? 0);
-      const industrial = Number(data.outrosImpostos ?? 0);
-      const total = Number(data.totalImpostos ?? (iva + irt + industrial));
+      const total = Number(data.totalImpostos ?? iva);
       const pct = (v) => (total > 0 ? Math.round((v / total) * 100) : 0);
-      setValores([iva, irt, industrial]);
-      setPercentagens({ iva: pct(iva), irt: pct(irt), industrial: pct(industrial) });
+      setValores([iva]);
+      setPercentagens({ iva: pct(iva) });
     }).finally(() => setLoading(false));
   }, []);
 
@@ -43,13 +41,9 @@ export default function FiscalRelatorio() {
               <Box sx={{ display: "flex" }}>
                 <Grid sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
                   <Typography>IVA</Typography>
-                  <Typography>IRT Retido</Typography>
-                  <Typography>Imposto Industrial</Typography>
                 </Grid>
                 <Grid sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2, ml: 15 }}>
                   <Typography>{percentagens.iva}%</Typography>
-                  <Typography>{percentagens.irt}%</Typography>
-                  <Typography>{percentagens.industrial}%</Typography>
                 </Grid>
               </Box>
             )}

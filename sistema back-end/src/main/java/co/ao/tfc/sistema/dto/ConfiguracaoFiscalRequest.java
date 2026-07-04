@@ -20,6 +20,4 @@ public class ConfiguracaoFiscalRequest {
     private BigDecimal taxaIva;
 
     private String motivoIsencaoPadrao;
-    private boolean aplicarIrt;
-    private boolean aplicarImpostoIndustrial;
 }

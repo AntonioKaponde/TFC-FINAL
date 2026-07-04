@@ -25,10 +25,6 @@ public class EmpresaUpdate {
 
     private RegimeIva regimeIva;
 
-    private ImpostoIndustrial industrial;
-
-    private RetencaoNaFonte retencaoNaFonte;
-
     private IsencaoIva iva;
 
     private String prefixoFatura;

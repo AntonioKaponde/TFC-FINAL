@@ -45,14 +45,6 @@ public class Empresa {
     private RegimeIva regimeIva;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "imposto_industrial")
-    private ImpostoIndustrial industrial;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "retencao_na_fonte")
-    private RetencaoNaFonte retencaoNaFonte;
-
-    @Enumerated(EnumType.STRING)
     private IsencaoIva iva;
 
     @Column(name = "ano_fiscal")

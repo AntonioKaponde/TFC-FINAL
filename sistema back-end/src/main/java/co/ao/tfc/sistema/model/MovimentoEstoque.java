@@ -35,7 +35,7 @@ public class MovimentoEstoque {
     @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;
 
-    @Column(nullable = false)
+    @Column(name = "data_movimento", nullable = false)
     @Builder.Default
     private LocalDateTime dataHora = LocalDateTime.now();
 

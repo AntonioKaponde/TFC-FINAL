@@ -29,12 +29,6 @@ public class ConfiguracaoFiscal {
     @Column(length = 10)
     private String motivoIsencaoPadrao;
 
-    @Column(nullable = false)
-    private boolean aplicarIrt;
-
-    @Column(nullable = false)
-    private boolean aplicarImpostoIndustrial;
-
     @ManyToOne
     @JoinColumn(name = "empresaId")
     private Empresa empresa;

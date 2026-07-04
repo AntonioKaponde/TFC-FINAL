@@ -27,8 +27,6 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
   const [form, setForm] = useState({
     regime: "geral",
     motivoIsencao: "M00",
-    aplicarIrt: true,
-    aplicarImpostoIndustrial: false,
   });
 
   useEffect(() => {
@@ -38,8 +36,6 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
         setForm({
           regime: regimeToSelect[data.regimeIva] ?? "geral",
           motivoIsencao: data.motivoIsencaoPadrao ?? "M00",
-          aplicarIrt: data.aplicarIrt,
-          aplicarImpostoIndustrial: data.aplicarImpostoIndustrial,
         });
       })
       .catch(() => {
@@ -55,8 +51,6 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
         regimeIva,
         taxaIva: taxaFromRegime(regimeIva),
         motivoIsencaoPadrao: form.motivoIsencao,
-        aplicarIrt: form.aplicarIrt,
-        aplicarImpostoIndustrial: form.aplicarImpostoIndustrial,
       });
     }
   }));
@@ -96,42 +90,7 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
               </Select>
             </FormControl>
 
-            <Grid container sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Box sx={{ ml: 3 }}>
-                <FormControl>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
-                    Retenção na Fonte (IRT)
-                  </Typography>
-                  <RadioGroup
-                    row
-                    value={form.aplicarIrt ? "aplicavel" : "nao_aplicavel"}
-                    onChange={(e) =>
-                      setForm({ ...form, aplicarIrt: e.target.value === "aplicavel" })
-                    }
-                  >
-                    <FormControlLabel value="aplicavel" control={<Radio />} label="Aplicável(6.5%)" />
-                    <FormControlLabel value="nao_aplicavel" control={<Radio />} label="Não aplicável" />
-                  </RadioGroup>
-                </FormControl>
-              </Box>
-              <Box sx={{ mr: 10 }}>
-                <FormControl>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
-                    Imposto Industrial
-                  </Typography>
-                  <RadioGroup
-                    row
-                    value={form.aplicarImpostoIndustrial ? "recibo" : "isento"}
-                    onChange={(e) =>
-                      setForm({ ...form, aplicarImpostoIndustrial: e.target.value === "recibo" })
-                    }
-                  >
-                    <FormControlLabel value="recibo" control={<Radio />} label="Cobrar no Recibo(1%)" />
-                    <FormControlLabel value="isento" control={<Radio />} label="Isento" />
-                  </RadioGroup>
-                </FormControl>
-              </Box>
-            </Grid>
+
           </Grid>
         </Card>
       </Grid>

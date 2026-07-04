@@ -34,8 +34,6 @@ public class DataInitializer implements CommandLineRunner {
                 .regimeIva(RegimeIva.GERAL)
                 .taxaIva(BigDecimal.valueOf(14))
                 .motivoIsencaoPadrao("M00")
-                .aplicarIrt(true)
-                .aplicarImpostoIndustrial(true)
                 .build());
 
         Artigo laptop = artigoRepository.save(Artigo.builder()

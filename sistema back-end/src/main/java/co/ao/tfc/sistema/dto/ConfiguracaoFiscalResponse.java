@@ -13,6 +13,4 @@ public class ConfiguracaoFiscalResponse {
     private RegimeIva regimeIva;
     private BigDecimal taxaIva;
     private String motivoIsencaoPadrao;
-    private boolean aplicarIrt;
-    private boolean aplicarImpostoIndustrial;
 }

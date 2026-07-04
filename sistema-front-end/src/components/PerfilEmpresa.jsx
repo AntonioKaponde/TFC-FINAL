@@ -61,12 +61,12 @@ const PerfilEmpresa = forwardRef((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     save: async () => {
-      await api.put(`/api/empresa/atual`, {
-        endereco: empresa.endereco,
-        telefone: empresa.telefone,
-        email: empresa.email,
-        capitalSocial: empresa.capitalSocial ? Number(empresa.capitalSocial) : null
-      });
+      const payload = { telefone: empresa.telefone };
+      if (!jaConfigurado('endereco')) payload.endereco = empresa.endereco;
+      if (!jaConfigurado('email')) payload.email = empresa.email;
+      if (!jaConfigurado('capitalSocial')) payload.capitalSocial = empresa.capitalSocial ? Number(empresa.capitalSocial) : null;
+
+      await api.put(`/api/empresa/atual`, payload);
     }
   }));
 

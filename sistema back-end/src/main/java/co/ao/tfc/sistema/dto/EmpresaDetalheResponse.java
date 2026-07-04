@@ -22,8 +22,6 @@ public class EmpresaDetalheResponse {
     private String empresa; // tipo de empresa
     private BigDecimal capitalSocial;
     private String regimeIva;
-    private String industrial;
-    private String retencaoNaFonte;
     private String iva;
     private String prefixoFatura;
     private LocalDate anoFiscal;

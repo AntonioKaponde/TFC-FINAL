@@ -47,7 +47,7 @@ export default function TabelaRelatorio() {
               <Table>
                 <TableHead sx={{ bgcolor: '#f1f5f9' }}>
                   <TableRow>
-                    {['Período', 'IVA Liquidado(Kz)', 'IVA Dedutível(Kz)', 'IVA a Entregar (Kz)', 'IRT (Kz)', 'Imposto Industrial(Kz)', 'Estado AGT', 'Ações'].map((head) => (
+                    {['Período', 'IVA Liquidado(Kz)', 'IVA Dedutível(Kz)', 'IVA a Entregar (Kz)', 'Estado AGT', 'Ações'].map((head) => (
                       <TableCell key={head} sx={{ fontWeight: '600', color: '#64748b', fontSize: '0.75rem' }}>{head}</TableCell>
                     ))}
                   </TableRow>
@@ -59,8 +59,6 @@ export default function TabelaRelatorio() {
                       <TableCell sx={{ fontSize: '0.85rem', color: '#64748b' }}>{formatKzSemPrefixo(row.ivaLiquidado)}</TableCell>
                       <TableCell sx={{ fontSize: '0.85rem', color: '#64748b' }}>{formatKzSemPrefixo(row.ivaDedutivel)}</TableCell>
                       <TableCell sx={{ fontSize: '0.85rem', color: '#64748b' }}>{formatKzSemPrefixo(row.ivaEntregar)}</TableCell>
-                      <TableCell sx={{ fontSize: '0.85rem', color: '#64748b' }}>{formatKzSemPrefixo(row.irt)}</TableCell>
-                      <TableCell sx={{ fontSize: '0.85rem', color: '#64748b' }}>{formatKzSemPrefixo(row.selo)}</TableCell>
                       <TableCell>
                         <Chip label={row.estado} size="small" color="success" sx={{ color: '#fff', fontWeight: '600', fontSize: '0.7rem' }} />
                       </TableCell>

@@ -63,8 +63,6 @@ export default function FiscalCard() {
   }
 
   const iva = Number(indicadores?.ivaAPagar ?? 0);
-  const irt = Number(indicadores?.irtRetido ?? 0);
-  const outrosImpostos = Number(indicadores?.outrosImpostos ?? 0);
   const total = Number(indicadores?.totalImpostos ?? 0);
   
   const pct = (valor) => (total > 0 ? Math.round((valor / total) * 100) : 0);
@@ -86,20 +84,6 @@ export default function FiscalCard() {
           value={formatKzSemPrefixo(iva)}
           totalPercentage={pct(iva)}
           color="#ef4444"
-        />
-
-        <TaxRow
-          label="IRT Retido"
-          value={formatKzSemPrefixo(irt)}
-          totalPercentage={pct(irt)}
-          color="#f59e0b"
-        />
-
-        <TaxRow
-          label="Outros impostos (Imposto Ind.)"
-          value={formatKzSemPrefixo(outrosImpostos)}
-          totalPercentage={pct(outrosImpostos)}
-          color="#fbbf24"
         />
       </CardContent>
     </Card>

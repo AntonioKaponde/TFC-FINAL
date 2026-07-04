@@ -130,20 +130,15 @@ export function resumoMensalImpostos(comparativo) {
   return comparativo.map((item, index) => {
     const imposto = Number(item.imposto);
     const lucro = Number(item.lucro);
-    // O 'imposto' do backend = IVA + IRT + Imposto Industrial (total de impostos)
-    // O 'lucro' do backend = base tributável já líquida de IRT e Imposto Industrial
-    // Estimativa: ~85% do total de impostos é IVA (proporção típica)
-    const iva = Math.round(imposto * 0.85);
-    const irt = Math.round(lucro * 0.065);
-    const industrial = imposto - iva;
+    // O 'imposto' do backend = IVA
+    // O 'lucro' do backend = base tributável
+    const iva = imposto;
     return {
       id: index + 1,
       periodo: item.mes,
       ivaLiquidado: iva,
       ivaDedutivel: 0,
       ivaEntregar: iva,
-      irt,
-      selo: Math.max(0, industrial),
       estado: 'Calculado',
     };
   });

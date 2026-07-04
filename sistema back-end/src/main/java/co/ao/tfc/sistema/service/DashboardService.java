@@ -48,22 +48,12 @@ public class DashboardService {
 
         BigDecimal baseTributavel = faturacaoBruta.subtract(ivaAPagar);
 
-        BigDecimal irtRetido = configFiscal.isAplicarIrt() 
-                ? baseTributavel.multiply(BigDecimal.valueOf(0.065)).setScale(2, RoundingMode.HALF_UP) 
-                : BigDecimal.ZERO;
-
-        BigDecimal impostoIndustrial = configFiscal.isAplicarImpostoIndustrial() 
-                ? baseTributavel.multiply(BigDecimal.valueOf(0.065)).setScale(2, RoundingMode.HALF_UP) 
-                : BigDecimal.ZERO;
-
-        BigDecimal totalImpostos = ivaAPagar.add(irtRetido).add(impostoIndustrial);
+        BigDecimal totalImpostos = ivaAPagar;
         BigDecimal lucroRetido = faturacaoBruta.subtract(totalImpostos);
 
         return DashboardIndicadoresResponse.builder()
                 .faturacaoBruta(faturacaoBruta)
                 .ivaAPagar(ivaAPagar)
-                .irtRetido(irtRetido)
-                .outrosImpostos(impostoIndustrial) // Aqui colocamos o imposto industrial nos outros impostos
                 .totalImpostos(totalImpostos)
                 .lucroRetido(lucroRetido)
                 .taxaIvaAplicada(taxaIva)
@@ -82,16 +72,8 @@ public class DashboardService {
                     BigDecimal lucroBrutoRow = (BigDecimal) row[1]; // faturacao_bruta - iva (base tributavel)
                     BigDecimal ivaRow = (BigDecimal) row[2];
 
-                    BigDecimal irtRow = configFiscal.isAplicarIrt() 
-                            ? lucroBrutoRow.multiply(BigDecimal.valueOf(0.065)).setScale(2, RoundingMode.HALF_UP) 
-                            : BigDecimal.ZERO;
-                    
-                    BigDecimal iiRow = configFiscal.isAplicarImpostoIndustrial() 
-                            ? lucroBrutoRow.multiply(BigDecimal.valueOf(0.065)).setScale(2, RoundingMode.HALF_UP) 
-                            : BigDecimal.ZERO;
-
-                    BigDecimal impostosTotais = ivaRow.add(irtRow).add(iiRow);
-                    BigDecimal lucroLiquido = lucroBrutoRow.subtract(irtRow).subtract(iiRow);
+                    BigDecimal impostosTotais = ivaRow;
+                    BigDecimal lucroLiquido = lucroBrutoRow;
 
                     return DashboardMensalResponse.builder()
                             .mes(MESES[(Integer) row[0]])

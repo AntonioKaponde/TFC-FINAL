@@ -42,16 +42,12 @@ public class ConfiguracaoFiscalService {
             configuracao.setRegimeIva(request.getRegimeIva());
             configuracao.setTaxaIva(request.getTaxaIva());
             configuracao.setMotivoIsencaoPadrao(request.getMotivoIsencaoPadrao());
-            configuracao.setAplicarIrt(request.isAplicarIrt());
-            configuracao.setAplicarImpostoIndustrial(request.isAplicarImpostoIndustrial());
         } else {
             // Cria nova configuração
             configuracao = ConfiguracaoFiscal.builder()
                     .regimeIva(request.getRegimeIva())
                     .taxaIva(request.getTaxaIva())
                     .motivoIsencaoPadrao(request.getMotivoIsencaoPadrao())
-                    .aplicarIrt(request.isAplicarIrt())
-                    .aplicarImpostoIndustrial(request.isAplicarImpostoIndustrial())
                     .empresa(empresa)
                     .build();
         }
@@ -65,8 +61,6 @@ public class ConfiguracaoFiscalService {
                 .regimeIva(configuracao.getRegimeIva())
                 .taxaIva(configuracao.getTaxaIva())
                 .motivoIsencaoPadrao(configuracao.getMotivoIsencaoPadrao())
-                .aplicarIrt(configuracao.isAplicarIrt())
-                .aplicarImpostoIndustrial(configuracao.isAplicarImpostoIndustrial())
                 .build();
     }
 }

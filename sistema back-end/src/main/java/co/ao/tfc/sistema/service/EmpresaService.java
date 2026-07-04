@@ -48,8 +48,6 @@ public class EmpresaService {
                 .empresa(empresa.getEmpresa() != null ? empresa.getEmpresa().name() : null)
                 .capitalSocial(empresa.getCapitalSocial())
                 .regimeIva(empresa.getRegimeIva() != null ? empresa.getRegimeIva().name() : null)
-                .industrial(empresa.getIndustrial() != null ? empresa.getIndustrial().name() : null)
-                .retencaoNaFonte(empresa.getRetencaoNaFonte() != null ? empresa.getRetencaoNaFonte().name() : null)
                 .iva(empresa.getIva() != null ? empresa.getIva().name() : null)
                 .prefixoFatura(empresa.getPrefixoFatura())
                 .anoFiscal(empresa.getAnoFiscal())
@@ -105,45 +103,48 @@ public class EmpresaService {
             }
 
             // Os restantes campos só podem ser atualizados uma vez (se ainda estiverem vazios/nulos)
-            if ((newEmprea.getEndereco() == null || newEmprea.getEndereco().isEmpty()) && request.getEndereco() != null && !request.getEndereco().isEmpty()) {
-                newEmprea.setEndereco(request.getEndereco());
-            } else if (request.getEndereco() != null && !request.getEndereco().isEmpty()) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O endereço já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+            if (request.getEndereco() != null && !request.getEndereco().isEmpty()) {
+                if (newEmprea.getEndereco() == null || newEmprea.getEndereco().isEmpty()) {
+                    newEmprea.setEndereco(request.getEndereco());
+                } else if (!newEmprea.getEndereco().equals(request.getEndereco())) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O endereço já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+                }
             }
-            if ((newEmprea.getCapitalSocial() == null) && request.getCapitalSocial() != null) {
-                newEmprea.setCapitalSocial(request.getCapitalSocial());
-            } else if (request.getCapitalSocial() != null && newEmprea.getCapitalSocial() != null) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O capital social já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+            if (request.getCapitalSocial() != null) {
+                if (newEmprea.getCapitalSocial() == null) {
+                    newEmprea.setCapitalSocial(request.getCapitalSocial());
+                } else if (newEmprea.getCapitalSocial().compareTo(request.getCapitalSocial()) != 0) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O capital social já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+                }
             }
-            if ((newEmprea.getEmail() == null || newEmprea.getEmail().isEmpty()) && request.getEmail() != null && !request.getEmail().isEmpty()) {
-                newEmprea.setEmail(request.getEmail());
-            } else if (request.getEmail() != null && !request.getEmail().isEmpty() && newEmprea.getEmail() != null && !newEmprea.getEmail().isEmpty()) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O email já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+            if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+                if (newEmprea.getEmail() == null || newEmprea.getEmail().isEmpty()) {
+                    newEmprea.setEmail(request.getEmail());
+                } else if (!newEmprea.getEmail().equals(request.getEmail())) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O email já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+                }
             }
-            if (newEmprea.getIndustrial() == null && request.getIndustrial() != null) {
-                newEmprea.setIndustrial(request.getIndustrial());
-            } else if (request.getIndustrial() != null && newEmprea.getIndustrial() != null) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O imposto industrial já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+
+            if (request.getIva() != null) {
+                if (newEmprea.getIva() == null) {
+                    newEmprea.setIva(request.getIva());
+                } else if (!newEmprea.getIva().equals(request.getIva())) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "A isenção de IVA já foi configurada e não pode ser alterada novamente. Apenas o telefone pode ser atualizado.");
+                }
             }
-            if (newEmprea.getRetencaoNaFonte() == null && request.getRetencaoNaFonte() != null) {
-                newEmprea.setRetencaoNaFonte(request.getRetencaoNaFonte());
-            } else if (request.getRetencaoNaFonte() != null && newEmprea.getRetencaoNaFonte() != null) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "A retenção na fonte já foi configurada e não pode ser alterada novamente. Apenas o telefone pode ser atualizado.");
+            if (request.getPrefixoFatura() != null && !request.getPrefixoFatura().isEmpty()) {
+                if (newEmprea.getPrefixoFatura() == null || newEmprea.getPrefixoFatura().isEmpty()) {
+                    newEmprea.setPrefixoFatura(request.getPrefixoFatura());
+                } else if (!newEmprea.getPrefixoFatura().equals(request.getPrefixoFatura())) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O prefixo da fatura já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+                }
             }
-            if (newEmprea.getIva() == null && request.getIva() != null) {
-                newEmprea.setIva(request.getIva());
-            } else if (request.getIva() != null && newEmprea.getIva() != null) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "A isenção de IVA já foi configurada e não pode ser alterada novamente. Apenas o telefone pode ser atualizado.");
-            }
-            if ((newEmprea.getPrefixoFatura() == null || newEmprea.getPrefixoFatura().isEmpty()) && request.getPrefixoFatura() != null && !request.getPrefixoFatura().isEmpty()) {
-                newEmprea.setPrefixoFatura(request.getPrefixoFatura());
-            } else if (request.getPrefixoFatura() != null && !request.getPrefixoFatura().isEmpty() && newEmprea.getPrefixoFatura() != null && !newEmprea.getPrefixoFatura().isEmpty()) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O prefixo da fatura já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
-            }
-            if (newEmprea.getRegimeIva() == null && request.getRegimeIva() != null) {
-                newEmprea.setRegimeIva(request.getRegimeIva());
-            } else if (request.getRegimeIva() != null && newEmprea.getRegimeIva() != null) {
-                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O regime de IVA já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+            if (request.getRegimeIva() != null) {
+                if (newEmprea.getRegimeIva() == null) {
+                    newEmprea.setRegimeIva(request.getRegimeIva());
+                } else if (!newEmprea.getRegimeIva().equals(request.getRegimeIva())) {
+                    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "O regime de IVA já foi configurado e não pode ser alterado novamente. Apenas o telefone pode ser atualizado.");
+                }
             }
 
             empresaRepository.save(newEmprea);
@@ -157,8 +158,6 @@ public class EmpresaService {
                 request.getEmail(),
                 request.getCapitalSocial(),
                 request.getRegimeIva(),
-                request.getIndustrial(),
-                request.getRetencaoNaFonte(),
                 request.getIva(),
                 request.getPrefixoFatura()
         );
