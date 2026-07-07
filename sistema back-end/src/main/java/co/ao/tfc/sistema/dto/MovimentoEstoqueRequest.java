@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class MovimentoEstoqueRequest {
 
@@ -21,4 +23,12 @@ public class MovimentoEstoqueRequest {
     private String observacao;
 
     private Long fornecedorId;
+
+    /**
+     * Preço de custo unitário da compra ao fornecedor.
+     * Deve ser informado em movimentos ENTRADA com fornecedor para calcular o IVA Dedutível.
+     * Se nulo, será usado o precoCusto registado no artigo como fallback.
+     */
+    private BigDecimal precoCustoUnitario;
 }
+

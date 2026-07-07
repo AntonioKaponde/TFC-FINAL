@@ -3,11 +3,52 @@ package co.ao.tfc.sistema.repository;
 import co.ao.tfc.sistema.model.Empresa;
 import co.ao.tfc.sistema.model.MovimentoEstoque;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MovimentoEstoqueRepository extends JpaRepository<MovimentoEstoque, Long> {
     List<MovimentoEstoque> findByEmpresaOrderByDataHoraDesc(Empresa empresa);
 
     List<MovimentoEstoque> findByArtigoIdAndEmpresaOrderByDataHoraDesc(Long artigoId, Empresa empresa);
+
+    /**
+     * Soma o IVA Dedutível de todas as entradas com fornecedor no período informado.
+     * Apenas movimentos do tipo ENTRADA com fornecedor associado e ivaCompra preenchido.
+     */
+    @Query("""
+        SELECT COALESCE(SUM(m.ivaCompra), 0)
+        FROM MovimentoEstoque m
+        WHERE m.empresa = :empresa
+          AND m.tipoMovimento = 'ENTRADA'
+          AND m.fornecedor IS NOT NULL
+          AND m.ivaCompra IS NOT NULL
+          AND m.dataHora BETWEEN :inicio AND :fim
+    """)
+    BigDecimal somarIvaDedutiveisPorPeriodo(
+            @Param("empresa") Empresa empresa,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fim") LocalDateTime fim);
+
+    /**
+     * Resumo mensal de IVA dedutível (compras a fornecedor) para um dado ano.
+     */
+    @Query("""
+        SELECT FUNCTION('MONTH', m.dataHora), COALESCE(SUM(m.ivaCompra), 0)
+        FROM MovimentoEstoque m
+        WHERE m.empresa = :empresa
+          AND m.tipoMovimento = 'ENTRADA'
+          AND m.fornecedor IS NOT NULL
+          AND m.ivaCompra IS NOT NULL
+          AND FUNCTION('YEAR', m.dataHora) = :ano
+        GROUP BY FUNCTION('MONTH', m.dataHora)
+        ORDER BY FUNCTION('MONTH', m.dataHora)
+    """)
+    List<Object[]> resumoMensalIvaDedutivel(
+            @Param("empresa") Empresa empresa,
+            @Param("ano") int ano);
 }
+

@@ -129,16 +129,17 @@ export function agruparFaturasPorMes(faturas) {
 export function resumoMensalImpostos(comparativo) {
   return comparativo.map((item, index) => {
     const imposto = Number(item.imposto);
-    const lucro = Number(item.lucro);
-    // O 'imposto' do backend = IVA
-    // O 'lucro' do backend = base tributável
-    const iva = imposto;
+    const ivaDedutivel = Number(item.ivaDedutivel ?? 0);
+    // O 'imposto' do backend = IVA Liquidado
+    // O 'ivaDedutivel' do backend = IVA Dedutível das compras
+    // IVA a Entregar = IVA Liquidado - IVA Dedutível
+    const ivaEntregar = Math.max(0, imposto - ivaDedutivel);
     return {
       id: index + 1,
       periodo: item.mes,
-      ivaLiquidado: iva,
-      ivaDedutivel: 0,
-      ivaEntregar: iva,
+      ivaLiquidado: imposto,
+      ivaDedutivel: ivaDedutivel,
+      ivaEntregar: ivaEntregar,
       estado: 'Calculado',
     };
   });

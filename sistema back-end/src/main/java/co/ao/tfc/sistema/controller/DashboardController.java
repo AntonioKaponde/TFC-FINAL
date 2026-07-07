@@ -41,20 +41,25 @@ public class DashboardController {
 
     @GetMapping("/relatorio-impostos/pdf")
     @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTABILISTA')")
-    public ResponseEntity<byte[]> baixarRelatorioImpostosPdf(@RequestParam(required = false) Integer ano) {
+    public ResponseEntity<?> baixarRelatorioImpostosPdf(@RequestParam(required = false) Integer ano) {
         try {
             if (ano == null) {
                 ano = java.time.LocalDate.now().getYear();
             }
             Empresa empresa = empresaService.getEmpresaLogada();
             byte[] pdfBytes = relatorioImpostosPdfService.gerarRelatorioImpostosPdf(empresa, ano);
-            
+
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Relatorio_Impostos_" + ano + ".pdf\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"Relatorio_Impostos_" + ano + ".pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(pdfBytes);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity
+                    .status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(java.util.Map.of("mensagem", "Erro ao gerar relatório PDF: " + e.getMessage()));
         }
     }
 }
+

@@ -21,7 +21,8 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
     quantidade: "",
     tipoMovimento: "ENTRADA",
     observacao: "",
-    fornecedorId: ""
+    fornecedorId: "",
+    precoCustoUnitario: ""
   });
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -43,7 +44,8 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
         quantidade: "",
         tipoMovimento: "ENTRADA",
         observacao: "",
-        fornecedorId: ""
+        fornecedorId: "",
+        precoCustoUnitario: ""
       });
     }
   }, [open, artigoIdProp]);
@@ -57,7 +59,8 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
         quantidade: Number(form.quantidade),
         tipoMovimento: form.tipoMovimento,
         observacao: form.observacao,
-        fornecedorId: form.fornecedorId || null
+        fornecedorId: form.fornecedorId || null,
+        precoCustoUnitario: form.precoCustoUnitario ? Number(form.precoCustoUnitario) : null
       });
       onSucesso();
       onClose();
@@ -99,17 +102,31 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
         </FormControl>
 
         {form.tipoMovimento === "ENTRADA" && (
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <Typography variant="caption" fontWeight="bold">Fornecedor (Opcional)</Typography>
-            <Select
-              value={form.fornecedorId}
-              onChange={(e) => setForm({ ...form, fornecedorId: e.target.value })}
-              displayEmpty
-            >
-              <MenuItem value="">Nenhum</MenuItem>
-              {fornecedores.map(f => <MenuItem key={f.id} value={f.id}>{f.nome}</MenuItem>)}
-            </Select>
-          </FormControl>
+          <>
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <Typography variant="caption" fontWeight="bold">Fornecedor (Opcional)</Typography>
+              <Select
+                value={form.fornecedorId}
+                onChange={(e) => setForm({ ...form, fornecedorId: e.target.value })}
+                displayEmpty
+              >
+                <MenuItem value="">Nenhum</MenuItem>
+                {fornecedores.map(f => <MenuItem key={f.id} value={f.id}>{f.nome}</MenuItem>)}
+              </Select>
+            </FormControl>
+            {form.fornecedorId && (
+              <TextField
+                label="Preço de Custo Unitário (Kz)"
+                type="number"
+                fullWidth
+                sx={{ mt: 2 }}
+                value={form.precoCustoUnitario}
+                onChange={(e) => setForm({ ...form, precoCustoUnitario: e.target.value })}
+                inputProps={{ min: 0, step: 0.01 }}
+                helperText="Valor pago por unidade ao fornecedor (para cálculo do IVA Dedutível)"
+              />
+            )}
+          </>
         )}
 
         <TextField

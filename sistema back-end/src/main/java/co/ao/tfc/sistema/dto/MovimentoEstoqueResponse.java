@@ -3,6 +3,7 @@ package co.ao.tfc.sistema.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,4 +20,7 @@ public class MovimentoEstoqueResponse {
     private String usuario;
     private Integer stockAntes;
     private Integer stockDepois;
+    /** IVA Dedutível desta compra. Apenas preenchido em ENTRADA com fornecedor. */
+    private BigDecimal ivaCompra;
 }
+

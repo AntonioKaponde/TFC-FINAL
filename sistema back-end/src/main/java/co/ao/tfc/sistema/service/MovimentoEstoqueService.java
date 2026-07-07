@@ -8,7 +8,10 @@ import co.ao.tfc.sistema.model.Empresa;
 import co.ao.tfc.sistema.model.Fornecedor;
 import co.ao.tfc.sistema.model.MovimentoEstoque;
 import co.ao.tfc.sistema.model.Usuario;
+import co.ao.tfc.sistema.model.ConfiguracaoFiscal;
+import co.ao.tfc.sistema.model.enums.RegimeIva;
 import co.ao.tfc.sistema.repository.ArtigoRepository;
+import co.ao.tfc.sistema.repository.ConfiguracaoFiscalRepository;
 import co.ao.tfc.sistema.repository.FornecedorRepository;
 import co.ao.tfc.sistema.repository.MovimentoEstoqueRepository;
 import co.ao.tfc.sistema.repository.UsuarioRepository;
@@ -16,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,10 +32,13 @@ public class MovimentoEstoqueService {
     private final ArtigoRepository artigoRepository;
     private final FornecedorRepository fornecedorRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ConfiguracaoFiscalRepository configuracaoFiscalRepository;
 
     private Usuario getCurrentUsuario() {
-        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        return usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utilizador não autenticado"));
+        String email = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilizador não autenticado"));
     }
 
     private Empresa getCurrentEmpresa() {
@@ -52,12 +60,13 @@ public class MovimentoEstoqueService {
         Empresa empresa = usuarioLogado.getEmpresa();
 
         Artigo artigo = artigoRepository.findById(request.getArtigoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Artigo não encontrado: " + request.getArtigoId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Artigo não encontrado: " + request.getArtigoId()));
 
-        // Verificar se o artigo pertence à empresa do utilizador
         if (!artigo.getEmpresa().getId().equals(empresa.getId())) {
             throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.FORBIDDEN, "Acesso negado: Este artigo pertence a outra empresa.");
+                    org.springframework.http.HttpStatus.FORBIDDEN,
+                    "Acesso negado: Este artigo pertence a outra empresa.");
         }
 
         String tipoMovimento = request.getTipoMovimento().toUpperCase();
@@ -78,7 +87,8 @@ public class MovimentoEstoqueService {
             case "AJUSTE":
                 if (stockAntes < quantidade) {
                     throw new IllegalArgumentException(
-                            "Stock insuficiente. Stock atual: " + stockAntes + ", quantidade pretendida: " + quantidade);
+                            "Stock insuficiente. Stock atual: " + stockAntes
+                                    + ", quantidade pretendida: " + quantidade);
                 }
                 stockDepois = stockAntes - quantidade;
                 break;
@@ -86,19 +96,50 @@ public class MovimentoEstoqueService {
                 throw new IllegalArgumentException("Tipo de movimento inválido: " + tipoMovimento);
         }
 
-        // Atualizar o stock do artigo
         artigo.setStock(stockDepois);
         artigo.atualizarEstado();
         artigoRepository.save(artigo);
 
-        // Buscar fornecedor se fornecido
         Fornecedor fornecedor = null;
         if (request.getFornecedorId() != null) {
-            fornecedor = fornecedorRepository.findById(request.getFornecedorId())
-                    .orElse(null);
+            fornecedor = fornecedorRepository.findById(request.getFornecedorId()).orElse(null);
         }
 
-        // Criar registo de movimento
+        // ─── Calcular IVA Dedutível nas entradas com fornecedor ──────────────────
+        BigDecimal precoCustoUnitario = null;
+        BigDecimal ivaCompra = null;
+
+        if ("ENTRADA".equals(tipoMovimento) && fornecedor != null) {
+            // Verificar se a empresa está no Regime Geral (só este regime permite dedução - Art. 19.º CIVA)
+            ConfiguracaoFiscal config = configuracaoFiscalRepository
+                    .findByEmpresa(empresa).orElse(new ConfiguracaoFiscal());
+            boolean regimePermiteDeducao = config.getRegimeIva() == null
+                    || config.getRegimeIva() == RegimeIva.GERAL;
+
+            if (regimePermiteDeducao) {
+                // Prioridade: preço informado no request → fallback para precoCusto do artigo
+                precoCustoUnitario = request.getPrecoCustoUnitario() != null
+                        ? request.getPrecoCustoUnitario()
+                        : artigo.getPrecoCusto();
+
+                if (precoCustoUnitario != null && precoCustoUnitario.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal taxaIva = artigo.getTaxaIva() != null
+                            ? artigo.getTaxaIva()
+                            : (config.getTaxaIva() != null ? config.getTaxaIva() : BigDecimal.valueOf(14));
+
+                    // IVA Dedutível = preço custo unitário × quantidade × taxa IVA / 100
+                    ivaCompra = precoCustoUnitario
+                            .multiply(BigDecimal.valueOf(quantidade))
+                            .multiply(taxaIva)
+                            .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+                    // Atualizar o precoCusto do artigo com o valor mais recente da compra
+                    artigo.setPrecoCusto(precoCustoUnitario);
+                    artigoRepository.save(artigo);
+                }
+            }
+        }
+
         MovimentoEstoque movimento = MovimentoEstoque.builder()
                 .artigo(artigo)
                 .quantidade(quantidade)
@@ -110,6 +151,8 @@ public class MovimentoEstoqueService {
                 .empresa(empresa)
                 .stockAntes(stockAntes)
                 .stockDepois(stockDepois)
+                .precoCustoUnitario(precoCustoUnitario)
+                .ivaCompra(ivaCompra)
                 .build();
 
         movimento = movimentoEstoqueRepository.save(movimento);
@@ -129,6 +172,9 @@ public class MovimentoEstoqueService {
                 .usuario(movimento.getUsuario())
                 .stockAntes(movimento.getStockAntes())
                 .stockDepois(movimento.getStockDepois())
+                .ivaCompra(movimento.getIvaCompra())
                 .build();
     }
 }
+
+

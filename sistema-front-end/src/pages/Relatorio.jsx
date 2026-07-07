@@ -10,7 +10,6 @@ import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import GraficoRelatorio from '../components/GraficoRelatorio';
 import FiscalRelatorio from '../components/FiscalRelatorio';
 import TabelaRelatorio from '../components/TabelaRelatorio';
-import { imprimirPagina } from '../utils/pdfExport';
 import { dashboardApi } from '../api';
 
 export default function Relatorio() {
@@ -28,29 +27,14 @@ export default function Relatorio() {
 
   const handleExportarPDF = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/dashboard/relatorio-impostos/pdf', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) throw new Error('Erro ao gerar PDF');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Relatorio_Impostos_${new Date().getFullYear()}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
+      const ano = new Date().getFullYear();
+      await dashboardApi.baixarRelatorioImpostosPdf(ano);
     } catch (error) {
       console.error("Erro ao baixar PDF:", error);
-      alert("Ocorreu um erro ao baixar o PDF.");
+      alert(`Ocorreu um erro ao exportar o PDF: ${error.message}`);
     }
   };
+
 
   return (
     <div>
@@ -73,7 +57,7 @@ export default function Relatorio() {
               sx={{p:"20px 10px", display: "flex", gap: 2,ml:36}}
             >
               <Button
-                onClick={imprimirPagina}
+                onClick={handleExportarPDF}
                 variant="contained"
                 startIcon={<PrintOutlinedIcon />}
                 sx={{

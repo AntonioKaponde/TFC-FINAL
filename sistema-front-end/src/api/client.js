@@ -49,7 +49,20 @@ export const api = {
     const response = await fetch(`${API_BASE}${path}`, {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {},
     });
-    if (!response.ok) throw new Error(`Erro ao baixar: ${response.status}`);
+    if (!response.ok) {
+      let mensagem = `Erro ao baixar: ${response.status}`;
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const err = await response.json().catch(() => ({}));
+          mensagem = err.mensagem || err.message || mensagem;
+        } else {
+          const text = await response.text();
+          if (text) mensagem = text;
+        }
+      } catch (_) {}
+      throw new Error(mensagem);
+    }
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');

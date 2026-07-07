@@ -53,4 +53,19 @@ public class MovimentoEstoque {
     @Column(nullable = false)
     @Builder.Default
     private Integer stockDepois = 0;
+
+    /**
+     * Preço de custo unitário da compra ao fornecedor.
+     * Preenchido apenas em movimentos ENTRADA com fornecedor.
+     */
+    @Column(precision = 15, scale = 2)
+    private java.math.BigDecimal precoCustoUnitario;
+
+    /**
+     * IVA Dedutível desta compra = precoCustoUnitario * quantidade * taxaIva / 100
+     * Conforme Art. 19.º CIVA Angola (Regime Geral).
+     * Preenchido apenas em movimentos ENTRADA com fornecedor.
+     */
+    @Column(precision = 15, scale = 2)
+    private java.math.BigDecimal ivaCompra;
 }

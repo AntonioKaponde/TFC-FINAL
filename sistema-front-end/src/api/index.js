@@ -39,6 +39,11 @@ export const dashboardApi = {
     api.get(
       ano ? `/api/dashboard/comparativo-mensal?ano=${ano}` : '/api/dashboard/comparativo-mensal',
     ),
+  baixarRelatorioImpostosPdf: (ano) =>
+    api.download(
+      ano ? `/api/dashboard/relatorio-impostos/pdf?ano=${ano}` : '/api/dashboard/relatorio-impostos/pdf',
+      `Relatorio_Impostos_${ano || new Date().getFullYear()}.pdf`,
+    ),
 };
 
 export const configuracaoFiscalApi = {

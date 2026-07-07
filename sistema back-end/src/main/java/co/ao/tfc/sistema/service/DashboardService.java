@@ -4,9 +4,9 @@ import co.ao.tfc.sistema.dto.DashboardIndicadoresResponse;
 import co.ao.tfc.sistema.dto.DashboardMensalResponse;
 import co.ao.tfc.sistema.model.ConfiguracaoFiscal;
 import co.ao.tfc.sistema.model.enums.RegimeIva;
-import co.ao.tfc.sistema.repository.ArtigoRepository;
 import co.ao.tfc.sistema.repository.ConfiguracaoFiscalRepository;
 import co.ao.tfc.sistema.repository.FaturaRepository;
+import co.ao.tfc.sistema.repository.MovimentoEstoqueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +30,7 @@ public class DashboardService {
     };
 
     private final FaturaRepository faturaRepository;
-    private final ArtigoRepository artigoRepository;
+    private final MovimentoEstoqueRepository movimentoEstoqueRepository;
     private final ConfiguracaoFiscalRepository configuracaoFiscalRepository;
     private final co.ao.tfc.sistema.repository.UsuarioRepository usuarioRepository;
 
@@ -55,14 +58,16 @@ public class DashboardService {
          * IVA a Recuperar (IVA Dedutível) — Art. 19.º CIVA Angola
          * Apenas aplicável a empresas no Regime Geral (Art. 19.º, n.º 1 CIVA).
          * Empresas no Regime Simplificado ou Exclusão NÃO podem deduzir IVA.
-         * Calculado com base no precoCusto dos artigos registados:
-         *   IVA a Recuperar = Σ (precoCusto × taxaIva / 100) por artigo
+         * Calculado com base nos movimentos de estoque (compras a fornecedor):
+         *   IVA a Recuperar = Σ ivaCompra dos movimentos ENTRADA com fornecedor
          */
         BigDecimal ivaARecuperar = BigDecimal.ZERO;
         boolean regimeGeralOuNulo = configFiscal.getRegimeIva() == null || configFiscal.getRegimeIva() == RegimeIva.GERAL;
 
         if (regimeGeralOuNulo) {
-            ivaARecuperar = artigoRepository.calcularIvaARecuperarPorEmpresa(empresa);
+            LocalDateTime inicioLdt = inicio.atStartOfDay();
+            LocalDateTime fimLdt = fim.atTime(23, 59, 59);
+            ivaARecuperar = movimentoEstoqueRepository.somarIvaDedutiveisPorPeriodo(empresa, inicioLdt, fimLdt);
             if (ivaARecuperar == null) ivaARecuperar = BigDecimal.ZERO;
         }
 
@@ -88,18 +93,28 @@ public class DashboardService {
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
         int anoReferencia = ano != null ? ano : Year.now().getValue();
 
+        // Mapa de IVA dedutível por mês (das compras a fornecedor)
+        List<Object[]> ivaDedMensal = movimentoEstoqueRepository.resumoMensalIvaDedutivel(empresa, anoReferencia);
+        Map<Integer, BigDecimal> mapIvaDed = new HashMap<>();
+        for (Object[] row : ivaDedMensal) {
+            mapIvaDed.put(((Number) row[0]).intValue(), (BigDecimal) row[1]);
+        }
+
         return faturaRepository.resumoMensalPorAno(empresa, anoReferencia).stream()
                 .map(row -> {
+                    int mes = (Integer) row[0];
                     BigDecimal lucroBrutoRow = (BigDecimal) row[1];
                     BigDecimal ivaRow = (BigDecimal) row[2];
 
                     BigDecimal impostosTotais = ivaRow;
                     BigDecimal lucroLiquido = lucroBrutoRow;
+                    BigDecimal ivaDed = mapIvaDed.getOrDefault(mes, BigDecimal.ZERO);
 
                     return DashboardMensalResponse.builder()
-                            .mes(MESES[(Integer) row[0]])
+                            .mes(MESES[mes])
                             .lucro(lucroLiquido)
                             .imposto(impostosTotais)
+                            .ivaDedutivel(ivaDed)
                             .build();
                 })
                 .toList();

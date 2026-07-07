@@ -135,8 +135,10 @@ const NovoFornecedor = () => {
                     fullWidth
                     value={form.nif}
                     onChange={(e) => setForm({ ...form, nif: e.target.value })}
-                    placeholder="Ex: 000000000LA000"
+                    placeholder="5007382748"
                     size="small"
+                    type="number"
+                    maxLength={10}
                     sx={{ width: '20rem' }}
                   />
                 </Grid>

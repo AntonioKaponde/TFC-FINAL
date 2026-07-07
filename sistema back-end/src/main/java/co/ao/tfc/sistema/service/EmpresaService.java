@@ -30,6 +30,19 @@ public class EmpresaService {
         return usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Utilizador não autenticado"));
     }
 
+    /**
+     * Retorna a entidade Empresa do utilizador logado.
+     * Usado internamente por outros serviços que precisam da entidade (não do DTO).
+     */
+    public Empresa getEmpresaLogada() {
+        Usuario currentUser = getCurrentUser();
+        Empresa empresa = currentUser.getEmpresa();
+        if (empresa == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhuma empresa associada ao utilizador logado.");
+        }
+        return empresa;
+    }
+
     public EmpresaDetalheResponse obterEmpresaAtual() {
         Usuario currentUser = getCurrentUser();
         Empresa empresa = currentUser.getEmpresa();

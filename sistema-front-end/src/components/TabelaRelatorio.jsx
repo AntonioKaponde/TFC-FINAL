@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { Download as DownloadIcon, MoreVert as MoreVertIcon } from '@mui/icons-material';
 import { dashboardApi } from '../api';
 import { ANO_REFERENCIA, formatKzSemPrefixo, resumoMensalImpostos } from '../utils/formatters';
-import { exportarPDF } from '../utils/pdfExport';
 
 export default function TabelaRelatorio() {
   const [rows, setRows] = useState([]);
@@ -64,7 +63,7 @@ export default function TabelaRelatorio() {
                       </TableCell>
                       <TableCell>
                         <Stack direction="row" spacing={1}>
-                          <IconButton size="small" onClick={() => exportarPDF('area-impressao', `Relatorio_${row.periodo}_${ANO_REFERENCIA}`)}><DownloadIcon sx={{ fontSize: 18 }} /></IconButton>
+                          <IconButton size="small" onClick={() => dashboardApi.baixarRelatorioImpostosPdf(ANO_REFERENCIA)}><DownloadIcon sx={{ fontSize: 18 }} /></IconButton>
                           <IconButton size="small"><MoreVertIcon sx={{ fontSize: 18 }} /></IconButton>
                         </Stack>
                       </TableCell>
