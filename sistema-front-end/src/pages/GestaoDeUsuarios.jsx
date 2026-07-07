@@ -13,6 +13,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   TextField,
   MenuItem,
@@ -30,6 +31,7 @@ import {
   LockReset as ResetIcon,
   EditOutlined as EditIcon,
   VpnKeyOutlined as KeyIcon,
+  DeleteOutline as DeleteIcon
 } from '@mui/icons-material';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
@@ -44,6 +46,8 @@ export default function GestaoDeUsuarios() {
   const [newUser, setNewUser] = useState({ nome: '', email: '', password: '', roleId: '' });
   
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -64,6 +68,10 @@ export default function GestaoDeUsuarios() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const rolesString = localStorage.getItem('userRoles');
+  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
 
   const handleCreateUser = async () => {
     if (!newUser.nome || !newUser.email || !newUser.password || !newUser.roleId) {
@@ -94,6 +102,26 @@ export default function GestaoDeUsuarios() {
 
   const showNotification = (message, severity) => {
     setNotification({ open: true, message, severity });
+  };
+
+  const handleRemoveUserClick = (id) => {
+    setItemToDelete(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
+      try {
+        await api.delete(`/api/usuarios/${itemToDelete}`);
+        showNotification('Usuário removido com sucesso!', 'success');
+        fetchData();
+      } catch (error) {
+        showNotification(error.response?.data || error.message || 'Erro ao remover usuário', 'error');
+      } finally {
+        setOpenDeleteDialog(false);
+        setItemToDelete(null);
+      }
+    }
   };
 
   return (
@@ -180,6 +208,11 @@ export default function GestaoDeUsuarios() {
                       >
                         Reset Password
                       </Button>
+                      {isAdmin && (
+                        <IconButton size="small" onClick={() => handleRemoveUserClick(user.id)} sx={{ color: '#d32f2f' }}>
+                          <DeleteIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
+                      )}
                     </Box>
                   </Card>
                 </Grid>
@@ -239,6 +272,19 @@ export default function GestaoDeUsuarios() {
         <DialogActions sx={{ p: 2, pt: 0 }}>
             <Button onClick={() => setOpenModal(false)} sx={{ color: 'text.secondary' }}>Cancelar</Button>
             <Button onClick={handleCreateUser} variant="contained" sx={{ bgcolor: "#083927", '&:hover': {bgcolor: '#06291c'} }}>Salvar Usuário</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Confirmar Eliminação</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem a certeza que deseja eliminar este usuário? Esta acção não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained" sx={{ textTransform: 'none', fontWeight: 600 }}>Eliminar</Button>
         </DialogActions>
       </Dialog>
 

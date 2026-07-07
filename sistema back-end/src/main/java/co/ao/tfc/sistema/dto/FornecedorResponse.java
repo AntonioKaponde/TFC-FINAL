@@ -12,5 +12,6 @@ public class FornecedorResponse {
     private String telefone;
     private String email;
     private String endereco;
+    private String produtosFornecidos;
     private boolean ativo;
 }

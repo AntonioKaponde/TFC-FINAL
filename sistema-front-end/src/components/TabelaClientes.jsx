@@ -21,11 +21,19 @@ import {
   MoreVert as MoreVertIcon,
   Check as CheckIcon,
 } from "@mui/icons-material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgress from "@mui/material/CircularProgress";
 import { clientesApi } from "../api";
 import { formatKzSemPrefixo, labelEstadoCliente } from "../utils/formatters";
@@ -50,12 +58,39 @@ export default function TabelaClientes() {
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos Clientes");
 
+  const rolesString = localStorage.getItem('userRoles');
+  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+
   const carregar = () => {
     setLoading(true);
     clientesApi
       .listar("")
       .then(setClientes)
       .finally(() => setLoading(false));
+  };
+
+  const handleRemoverClick = (id) => {
+    setItemToDelete(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      clientesApi.remover(itemToDelete).then(() => {
+        carregar();
+        setNotification({ open: true, message: 'Cliente eliminado com sucesso!', severity: 'success' });
+      }).catch((e) => {
+        setNotification({ open: true, message: e.response?.data || "Erro ao eliminar o cliente.", severity: 'error' });
+      }).finally(() => {
+        setOpenDeleteDialog(false);
+        setItemToDelete(null);
+      });
+    }
   };
 
   useEffect(() => {
@@ -290,6 +325,11 @@ export default function TabelaClientes() {
                                   <MoreVertIcon sx={{ fontSize: 18 }} />
                                 </IconButton>
                               )}
+                              {isAdmin && (
+                                <IconButton size="small" onClick={() => handleRemoverClick(row.id)} color="error">
+                                  <DeleteOutlineIcon sx={{ fontSize: 18 }} />
+                                </IconButton>
+                              )}
                             </Stack>
                           </TableCell>
                         </TableRow>
@@ -335,6 +375,23 @@ export default function TabelaClientes() {
           </Card>
         </Grid>
       </Grid>
+
+      <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Confirmar Eliminação</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem a certeza que deseja eliminar este cliente? Esta acção não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained" sx={{ textTransform: 'none', fontWeight: 600 }}>Eliminar</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={notification.open} autoHideDuration={4000} onClose={() => setNotification({...notification, open: false})} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <Alert severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
+      </Snackbar>
     </Box>
   );
 }

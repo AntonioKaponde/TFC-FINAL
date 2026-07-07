@@ -11,12 +11,13 @@ public class ArtigoRequest {
     @NotBlank
     private String nome;
 
-    @NotNull
+    @NotNull(message = "A categoria é obrigatória")
     private Long categoriaId;
 
+    @NotNull(message = "O fornecedor é obrigatório")
     private Long fornecedorId;
 
-    @NotNull
+    @NotNull(message = "O preço é obrigatório")
     @DecimalMin("0.01")
     private BigDecimal preco;
 
@@ -36,4 +37,8 @@ public class ArtigoRequest {
     private String motivoIsencao;
 
     private String unidadeMedida;
+
+    /** Preço de custo ao fornecedor (opcional). Usado para calcular IVA a recuperar. */
+    @DecimalMin("0.00")
+    private BigDecimal precoCusto;
 }

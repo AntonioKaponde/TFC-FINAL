@@ -11,11 +11,12 @@ export default function FiscalRelatorio() {
 
   useEffect(() => {
     dashboardApi.indicadores(ANO_REFERENCIA).then((data) => {
-      const iva = Number(data.ivaAPagar);
-      const total = Number(data.totalImpostos ?? iva);
+      const ivaAPagar = Number(data.ivaAPagar ?? 0);
+      const ivaARecuperar = Number(data.ivaARecuperar ?? 0);
+      const total = ivaAPagar + ivaARecuperar;
       const pct = (v) => (total > 0 ? Math.round((v / total) * 100) : 0);
-      setValores([iva]);
-      setPercentagens({ iva: pct(iva) });
+      setValores([ivaAPagar, ivaARecuperar]);
+      setPercentagens({ ivaAPagar: pct(ivaAPagar), ivaARecuperar: pct(ivaARecuperar) });
     }).finally(() => setLoading(false));
   }, []);
 
@@ -38,13 +39,21 @@ export default function FiscalRelatorio() {
               )}
             </Box>
             {percentagens && (
-              <Box sx={{ display: "flex" }}>
-                <Grid sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-                  <Typography>IVA</Typography>
-                </Grid>
-                <Grid sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2, ml: 15 }}>
-                  <Typography>{percentagens.iva}%</Typography>
-                </Grid>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, px: 3, pb: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ width: 12, height: 12, bgcolor: '#ef4444', borderRadius: '2px' }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>IVA a Pagar</Typography>
+                  </Box>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{percentagens.ivaAPagar}%</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ width: 12, height: 12, bgcolor: '#22c55e', borderRadius: '2px' }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>IVA Dedutível (A Recup.)</Typography>
+                  </Box>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{percentagens.ivaARecuperar}%</Typography>
+                </Box>
               </Box>
             )}
           </Card>

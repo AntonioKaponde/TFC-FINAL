@@ -3,6 +3,8 @@ package co.ao.tfc.sistema.service;
 import co.ao.tfc.sistema.dto.DashboardIndicadoresResponse;
 import co.ao.tfc.sistema.dto.DashboardMensalResponse;
 import co.ao.tfc.sistema.model.ConfiguracaoFiscal;
+import co.ao.tfc.sistema.model.enums.RegimeIva;
+import co.ao.tfc.sistema.repository.ArtigoRepository;
 import co.ao.tfc.sistema.repository.ConfiguracaoFiscalRepository;
 import co.ao.tfc.sistema.repository.FaturaRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class DashboardService {
     };
 
     private final FaturaRepository faturaRepository;
+    private final ArtigoRepository artigoRepository;
     private final ConfiguracaoFiscalRepository configuracaoFiscalRepository;
     private final co.ao.tfc.sistema.repository.UsuarioRepository usuarioRepository;
 
@@ -40,13 +43,31 @@ public class DashboardService {
         LocalDate inicio = LocalDate.of(anoReferencia, 1, 1);
         LocalDate fim = LocalDate.of(anoReferencia, 12, 31);
 
+        // IVA a Pagar = IVA liquidado nas vendas (Art. 22.º CIVA Angola)
+        // Corresponde ao IVA cobrado nas facturas emitidas
         BigDecimal faturacaoBruta = faturaRepository.somarTotalPorPeriodo(empresa, inicio, fim);
         BigDecimal ivaAPagar = faturaRepository.somarIvaPorPeriodo(empresa, inicio, fim);
-        
+
         ConfiguracaoFiscal configFiscal = configuracaoFiscalRepository.findByEmpresa(empresa).orElse(new ConfiguracaoFiscal());
         BigDecimal taxaIva = configFiscal.getTaxaIva() != null ? configFiscal.getTaxaIva() : BigDecimal.valueOf(14);
 
-        BigDecimal baseTributavel = faturacaoBruta.subtract(ivaAPagar);
+        /*
+         * IVA a Recuperar (IVA Dedutível) — Art. 19.º CIVA Angola
+         * Apenas aplicável a empresas no Regime Geral (Art. 19.º, n.º 1 CIVA).
+         * Empresas no Regime Simplificado ou Exclusão NÃO podem deduzir IVA.
+         * Calculado com base no precoCusto dos artigos registados:
+         *   IVA a Recuperar = Σ (precoCusto × taxaIva / 100) por artigo
+         */
+        BigDecimal ivaARecuperar = BigDecimal.ZERO;
+        boolean regimeGeralOuNulo = configFiscal.getRegimeIva() == null || configFiscal.getRegimeIva() == RegimeIva.GERAL;
+
+        if (regimeGeralOuNulo) {
+            ivaARecuperar = artigoRepository.calcularIvaARecuperarPorEmpresa(empresa);
+            if (ivaARecuperar == null) ivaARecuperar = BigDecimal.ZERO;
+        }
+
+        // IVA Líquido a Entregar ao Estado = IVA a Pagar - IVA a Recuperar (Art. 22.º CIVA)
+        BigDecimal ivaLiquido = ivaAPagar.subtract(ivaARecuperar).max(BigDecimal.ZERO);
 
         BigDecimal totalImpostos = ivaAPagar;
         BigDecimal lucroRetido = faturacaoBruta.subtract(totalImpostos);
@@ -54,6 +75,8 @@ public class DashboardService {
         return DashboardIndicadoresResponse.builder()
                 .faturacaoBruta(faturacaoBruta)
                 .ivaAPagar(ivaAPagar)
+                .ivaARecuperar(ivaARecuperar)
+                .ivaLiquido(ivaLiquido)
                 .totalImpostos(totalImpostos)
                 .lucroRetido(lucroRetido)
                 .taxaIvaAplicada(taxaIva)
@@ -64,12 +87,10 @@ public class DashboardService {
     public List<DashboardMensalResponse> obterComparativoMensal(Integer ano) {
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
         int anoReferencia = ano != null ? ano : Year.now().getValue();
-        
-        ConfiguracaoFiscal configFiscal = configuracaoFiscalRepository.findByEmpresa(empresa).orElse(new ConfiguracaoFiscal());
 
         return faturaRepository.resumoMensalPorAno(empresa, anoReferencia).stream()
                 .map(row -> {
-                    BigDecimal lucroBrutoRow = (BigDecimal) row[1]; // faturacao_bruta - iva (base tributavel)
+                    BigDecimal lucroBrutoRow = (BigDecimal) row[1];
                     BigDecimal ivaRow = (BigDecimal) row[2];
 
                     BigDecimal impostosTotais = ivaRow;

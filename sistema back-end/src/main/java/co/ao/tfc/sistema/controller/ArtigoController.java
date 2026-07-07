@@ -49,7 +49,7 @@ public class ArtigoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void remover(@PathVariable Long id) {
         artigoService.remover(id);
         auditoriaService.registrarAuditoria("REMOVEU", "Artigo", "Removeu o artigo com ID " + id);

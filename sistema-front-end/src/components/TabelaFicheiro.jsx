@@ -11,6 +11,7 @@ import {
 } from '@mui/icons-material';
 import { faturasApi } from '../api';
 import { agruparFaturasPorMes, formatData, formatKzSemPrefixo, formatPeriodo } from '../utils/formatters';
+import { exportarPDF } from '../utils/pdfExport';
 
 const TabelaFicheiro = () => {
   const [grupos, setGrupos] = useState([]);
@@ -44,7 +45,10 @@ const TabelaFicheiro = () => {
           <Card sx={{ overflow: 'hidden', width: "81rem" }}>
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="subtitle1" fontWeight="700">Histórico de Ficheiros Gerados</Typography>
-              <Button size="small" startIcon={<FilterIcon />} sx={{ textTransform: 'none', color: '#64748b' }}>Filtrar</Button>
+              <Box>
+                <Button size="small" onClick={() => exportarPDF('tabela-historico-ficheiros', 'Historico_Ficheiros')} startIcon={<DownloadIcon />} sx={{ textTransform: 'none', color: '#64748b', mr: 2 }}>Exportar PDF</Button>
+                <Button size="small" startIcon={<FilterIcon />} sx={{ textTransform: 'none', color: '#64748b' }}>Filtrar</Button>
+              </Box>
             </Box>
 
             {loading ? (
@@ -52,7 +56,7 @@ const TabelaFicheiro = () => {
                 <CircularProgress sx={{ color: '#0B6E4F' }} />
               </Box>
             ) : (
-              <TableContainer component={Paper} elevation={0}>
+              <TableContainer id="tabela-historico-ficheiros" component={Paper} elevation={0}>
                 <Table>
                   <TableHead sx={{ bgcolor: '#f1f5f9' }}>
                     <TableRow>

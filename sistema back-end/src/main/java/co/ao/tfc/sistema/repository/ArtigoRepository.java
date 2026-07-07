@@ -3,11 +3,23 @@ package co.ao.tfc.sistema.repository;
 import co.ao.tfc.sistema.model.Artigo;
 import co.ao.tfc.sistema.model.enums.EstadoArtigo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ArtigoRepository extends JpaRepository<Artigo, Long> {
     List<Artigo> findByEstado(EstadoArtigo estado);
 
     List<Artigo> findByEmpresa(co.ao.tfc.sistema.model.Empresa empresa);
+
+    /**
+     * Calcula o IVA dedutível (IVA a Recuperar) da empresa.
+     * Baseia-se no preço de custo × taxa IVA de cada artigo registado.
+     * Conforme Art. 19.º CIVA Angola — apenas aplicável no Regime Geral.
+     */
+    @Query("SELECT COALESCE(SUM(a.precoCusto * a.taxaIva / 100), 0) FROM Artigo a WHERE a.empresa = :empresa AND a.precoCusto IS NOT NULL")
+    BigDecimal calcularIvaARecuperarPorEmpresa(co.ao.tfc.sistema.model.Empresa empresa);
+
+    boolean existsByNomeIgnoreCaseAndEmpresa(String nome, co.ao.tfc.sistema.model.Empresa empresa);
 }

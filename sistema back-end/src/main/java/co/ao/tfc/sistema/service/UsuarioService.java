@@ -78,4 +78,23 @@ public class UsuarioService {
         novoUsuario.getPerfilRoles().add(role);
         usuarioRepository.save(novoUsuario);
     }
+
+    @Transactional
+    public void removerUsuario(Long id) {
+        Usuario currentUser = getCurrentUser();
+        boolean isAdmin = currentUser.getPerfilRoles().stream()
+                .anyMatch(r -> r.getNome().equalsIgnoreCase("Admin") || r.getNome().equalsIgnoreCase("NovoAdmin"));
+        if (!isAdmin) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Acesso negado: Apenas administradores podem remover usuários.");
+        }
+        Usuario usuarioParaRemover = usuarioRepository.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Usuário não encontrado."));
+        if (!usuarioParaRemover.getEmpresa().getId().equals(currentUser.getEmpresa().getId())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Não pode remover um usuário de outra empresa.");
+        }
+        if (usuarioParaRemover.getId().equals(currentUser.getId())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Não pode remover a si próprio.");
+        }
+        usuarioRepository.delete(usuarioParaRemover);
+    }
 }

@@ -2,6 +2,7 @@ package co.ao.tfc.sistema.model;
 
 import co.ao.tfc.sistema.model.enums.EstadoFatura;
 import co.ao.tfc.sistema.model.enums.MetodoPagamento;
+import co.ao.tfc.sistema.model.enums.TipoDocumento;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,6 +55,17 @@ public class Fatura {
     @Column(nullable = false)
     @Builder.Default
     private boolean pagoPronto = true;
+
+    /**
+     * Tipo de documento fiscal conforme Decreto n.º 34/09 (Angola).
+     * FATURA: pagamento diferido — Art. 5.º
+     * FATURA_RECIBO: pago no momento — Art. 7.º
+     * FATURA_SIMPLIFICADA: pequeno valor / consumidor final — Art. 8.º
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 25)
+    @Builder.Default
+    private TipoDocumento tipoDocumento = TipoDocumento.FATURA_RECIBO;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)

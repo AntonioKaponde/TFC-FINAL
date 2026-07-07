@@ -2,6 +2,7 @@ package co.ao.tfc.sistema.dto;
 
 import co.ao.tfc.sistema.model.enums.EstadoFatura;
 import co.ao.tfc.sistema.model.enums.MetodoPagamento;
+import co.ao.tfc.sistema.model.enums.TipoDocumento;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ public class FaturaResponse {
     private LocalDate dataEmissao;
     private LocalDate dataVencimento;
     private EstadoFatura estado;
+    private TipoDocumento tipoDocumento;
     private boolean pagoPronto;
     private MetodoPagamento metodoPagamento;
     private BigDecimal subtotal;

@@ -19,8 +19,9 @@ export default function DoughnutRelatorio({ valores: valoresProp }) {
     dashboardApi
       .indicadores(ANO_REFERENCIA)
       .then((data) => {
-        const iva = Number(data.ivaAPagar);
-        setValores([iva]);
+        const ivaAPagar = Number(data.ivaAPagar ?? 0);
+        const ivaARecuperar = Number(data.ivaARecuperar ?? 0);
+        setValores([ivaAPagar, ivaARecuperar]);
       })
       .finally(() => setLoading(false));
   }, [valoresProp]);
@@ -36,14 +37,21 @@ export default function DoughnutRelatorio({ valores: valoresProp }) {
   return (
     <Doughnut
       data={{
-        labels: ["IVA"],
+        labels: ["IVA a Pagar", "IVA Dedutível (A Recuperar)"],
         datasets: [
           {
-            label: "Imposto",
+            label: "Valor",
             data: valores,
-            backgroundColor: ["#ef4444"],
+            backgroundColor: ["#ef4444", "#22c55e"],
+            borderWidth: 0,
           },
         ],
+      }}
+      options={{
+        cutout: "75%",
+        plugins: {
+          legend: { display: false }
+        }
       }}
     />
   );

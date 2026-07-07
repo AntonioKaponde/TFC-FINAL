@@ -22,4 +22,5 @@ public class ArtigoResponse {
     private EstadoArtigo estado;
     private String motivoIsencao;
     private String unidadeMedida;
+    private BigDecimal precoCusto;
 }

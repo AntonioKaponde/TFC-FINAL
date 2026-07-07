@@ -16,6 +16,13 @@ import {
   CardContent,
   InputBase,
   Avatar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  Alert
 } from "@mui/material";
 
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
@@ -23,6 +30,7 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import CompareArrowsOutlinedIcon from "@mui/icons-material/CompareArrowsOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgress from "@mui/material/CircularProgress";
 import { artigosApi } from "../api";
 import { formatKzSemPrefixo, labelEstadoArtigo } from "../utils/formatters";
@@ -49,12 +57,39 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos os Artigos");
 
+  const rolesString = localStorage.getItem('userRoles');
+  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+
   const carregar = () => {
     setLoading(true);
     artigosApi
       .listar("")
       .then(setArtigos)
       .finally(() => setLoading(false));
+  };
+
+  const handleRemoverClick = (id) => {
+    setItemToDelete(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      artigosApi.remover(itemToDelete).then(() => {
+        carregar();
+        setNotification({ open: true, message: 'Artigo eliminado com sucesso!', severity: 'success' });
+      }).catch((e) => {
+        setNotification({ open: true, message: e.response?.data || "Erro ao eliminar o artigo.", severity: 'error' });
+      }).finally(() => {
+        setOpenDeleteDialog(false);
+        setItemToDelete(null);
+      });
+    }
   };
 
   useEffect(() => {
@@ -260,6 +295,11 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
                     <IconButton size="small">
                       <MoreVertOutlinedIcon sx={{ fontSize: 18 }} />
                     </IconButton>
+                    {isAdmin && (
+                      <IconButton size="small" onClick={() => handleRemoverClick(row.id)} color="error">
+                        <DeleteOutlineIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    )}
                   </TableCell>
                 </TableRow>
               );
@@ -298,6 +338,23 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
         </TableRow>
       </Table>
       </Box>
+
+      <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Confirmar Eliminação</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem a certeza que deseja eliminar este artigo? Esta acção não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained" sx={{ textTransform: 'none', fontWeight: 600 }}>Eliminar</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={notification.open} autoHideDuration={4000} onClose={() => setNotification({...notification, open: false})} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <Alert severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
+      </Snackbar>
     </Paper>
   );
 }

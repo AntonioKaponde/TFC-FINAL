@@ -30,6 +30,7 @@ export default function NovoArtigo() {
     categoriaId: "",
     fornecedorId: "",
     preco: "",
+    precoCusto: "",
     taxaIva: "IVA Normal(14%)",
     motivoIsencao: "Selecione um motivo (Apenas se isento)",
     unidadeMedida: "UN",
@@ -50,13 +51,20 @@ export default function NovoArtigo() {
 
   const handleSalvar = async () => {
     setErro("");
+    
+    if (!form.fornecedorId) {
+      setErro("O artigo deve estar obrigatoriamente associado a um fornecedor.");
+      return;
+    }
+
     setSalvando(true);
     try {
       await artigosApi.criar({
         nome: form.nome,
         categoriaId: form.categoriaId,
-        fornecedorId: form.fornecedorId || null,
+        fornecedorId: form.fornecedorId,
         preco: Number(form.preco),
+        precoCusto: Number(form.precoCusto || 0),
         taxaIva: taxaIvaFromSelect(form.taxaIva),
         motivoIsencao: form.taxaIva === "isento(0%)" ? form.motivoIsencao : null,
         unidadeMedida: form.unidadeMedida,
@@ -152,14 +160,14 @@ export default function NovoArtigo() {
                   </Select>
                 </FormControl>
                 <FormControl>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Fornecedor</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Fornecedor <span style={{ color: "red" }}>*</span></Typography>
                   <Select
                     value={form.fornecedorId}
                     onChange={(e) => setForm({ ...form, fornecedorId: e.target.value })}
                     sx={{ width: "500px", height: "2.1em", margin: "2px 0" }}
                     displayEmpty
                   >
-                    <MenuItem value=""><em>Nenhum</em></MenuItem>
+                    <MenuItem value=""><em>Selecione o Fornecedor</em></MenuItem>
                     {fornecedores.map(forn => (
                       <MenuItem key={forn.id} value={forn.id}>{forn.nome}</MenuItem>
                     ))}
@@ -204,7 +212,28 @@ export default function NovoArtigo() {
                     onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
                     placeholder="Ex: 10000"
                     style={{
-                      width: "500px",
+                      width: "330px",
+                      height: "2.5em",
+                      padding: 10,
+                      borderRadius: 5,
+                      border: ".1px solid#05040444",
+                      margin: "2px 0",
+                    }}
+                  />
+                </FormControl>
+                <FormControl>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
+                    Preço de Custo (S/IVA)
+                  </Typography>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.precoCusto}
+                    onChange={(e) => setForm({ ...form, precoCusto: e.target.value })}
+                    onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                    placeholder="Ex: 8000"
+                    style={{
+                      width: "330px",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
@@ -220,7 +249,7 @@ export default function NovoArtigo() {
                   <Select
                     value={form.taxaIva}
                     onChange={(e) => setForm({ ...form, taxaIva: e.target.value })}
-                    sx={{ width: "500px", height: "2.1em", margin: "2px 0" }}
+                    sx={{ width: "330px", height: "2.1em", margin: "2px 0" }}
                   >
                     <MenuItem value="IVA Normal(14%)">IVA Normal(14%)</MenuItem>
                     <MenuItem value="IVA Reduzida(7%)">

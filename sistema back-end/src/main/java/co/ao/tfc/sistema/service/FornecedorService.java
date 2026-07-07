@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,17 +28,44 @@ public class FornecedorService {
     public List<FornecedorResponse> listar(String pesquisa) {
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
         List<Fornecedor> fornecedores = fornecedorRepository.findByEmpresa(empresa);
-        
+
         if (pesquisa != null && !pesquisa.isBlank()) {
             fornecedores = fornecedores.stream().filter(f -> f.getNome().toLowerCase().contains(pesquisa.toLowerCase())).toList();
         }
-        
+
         return fornecedores.stream().map(this::toResponse).toList();
     }
 
     @Transactional(readOnly = true)
     public FornecedorResponse buscar(Long id) {
         return toResponse(buscarEntidade(id));
+    }
+
+    /**
+     * Busca o fornecedor mais adequado para um determinado produto/artigo.
+     * Procura nos campos produtosFornecidos de cada fornecedor da empresa.
+     * Retorna o primeiro fornecedor cujos produtos fornecidos contêm o nome do artigo.
+     */
+    @Transactional(readOnly = true)
+    public Optional<FornecedorResponse> buscarPorProduto(String nomeProduto) {
+        co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
+        List<Fornecedor> fornecedores = fornecedorRepository.findByEmpresa(empresa);
+
+        if (nomeProduto == null || nomeProduto.isBlank()) {
+            return Optional.empty();
+        }
+
+        String nomeLower = nomeProduto.toLowerCase();
+
+        return fornecedores.stream()
+                .filter(f -> f.getProdutosFornecidos() != null
+                        && !f.getProdutosFornecidos().isBlank()
+                        && f.isAtivo()
+                        && java.util.Arrays.stream(f.getProdutosFornecidos().split("[,;]+"))
+                                .map(String::trim)
+                                .anyMatch(p -> nomeLower.contains(p.toLowerCase()) || p.toLowerCase().contains(nomeLower)))
+                .findFirst()
+                .map(this::toResponse);
     }
 
     @Transactional
@@ -49,6 +77,7 @@ public class FornecedorService {
                 .telefone(request.getTelefone())
                 .email(request.getEmail())
                 .endereco(request.getEndereco())
+                .produtosFornecidos(request.getProdutosFornecidos())
                 .empresa(empresa)
                 .ativo(request.isAtivo())
                 .build();
@@ -63,6 +92,7 @@ public class FornecedorService {
         fornecedor.setTelefone(request.getTelefone());
         fornecedor.setEmail(request.getEmail());
         fornecedor.setEndereco(request.getEndereco());
+        fornecedor.setProdutosFornecidos(request.getProdutosFornecidos());
         fornecedor.setAtivo(request.isAtivo());
         return toResponse(fornecedorRepository.save(fornecedor));
     }
@@ -89,6 +119,7 @@ public class FornecedorService {
                 .telefone(fornecedor.getTelefone())
                 .email(fornecedor.getEmail())
                 .endereco(fornecedor.getEndereco())
+                .produtosFornecidos(fornecedor.getProdutosFornecidos())
                 .ativo(fornecedor.isAtivo())
                 .build();
     }

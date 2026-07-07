@@ -4,12 +4,14 @@ export const artigosApi = {
   listar: (pesquisa) =>
     api.get(pesquisa ? `/api/artigos?pesquisa=${encodeURIComponent(pesquisa)}` : '/api/artigos'),
   criar: (data) => api.post('/api/artigos', data),
+  remover: (id) => api.delete(`/api/artigos/${id}`),
 };
 
 export const clientesApi = {
   listar: (pesquisa) =>
     api.get(pesquisa ? `/api/clientes?pesquisa=${encodeURIComponent(pesquisa)}` : '/api/clientes'),
   criar: (data) => api.post('/api/clientes', data),
+  remover: (id) => api.delete(`/api/clientes/${id}`),
 };
 
 export const fornecedoresApi = {
@@ -18,6 +20,9 @@ export const fornecedoresApi = {
       pesquisa ? `/api/fornecedores?pesquisa=${encodeURIComponent(pesquisa)}` : '/api/fornecedores',
     ),
   criar: (data) => api.post('/api/fornecedores', data),
+  /** Busca o fornecedor mais adequado para um produto pelo nome */
+  buscarPorProduto: (nome) => api.get(`/api/fornecedores/por-produto?nome=${encodeURIComponent(nome)}`),
+  remover: (id) => api.delete(`/api/fornecedores/${id}`),
 };
 
 export const faturasApi = {
@@ -63,3 +68,8 @@ export const saftApi = {
     api.download(`/api/saft/exportar?ano=${ano}&mes=${mes}`, `SAF-T_${ano}_${String(mes).padStart(2, '0')}.xml`),
 };
 
+export const usuariosApi = {
+  listar: () => api.get('/api/usuarios'),
+  criar: (data) => api.post('/api/usuarios', data),
+  remover: (id) => api.delete(`/api/usuarios/${id}`),
+};

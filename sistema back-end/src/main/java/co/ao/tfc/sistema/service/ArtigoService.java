@@ -58,10 +58,16 @@ public class ArtigoService {
         co.ao.tfc.sistema.model.Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
+        if (artigoRepository.existsByNomeIgnoreCaseAndEmpresa(request.getNome(), empresa)) {
+            throw new IllegalArgumentException("Já existe um artigo registado com este nome.");
+        }
+
         co.ao.tfc.sistema.model.Fornecedor fornecedor = null;
         if (request.getFornecedorId() != null) {
             fornecedor = fornecedorRepository.findById(request.getFornecedorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+            // Validação: verificar se o fornecedor fornece este tipo de produto
+            validarFornecedorProduto(fornecedor, request.getNome());
         }
 
         Artigo artigo = Artigo.builder()
@@ -69,6 +75,7 @@ public class ArtigoService {
                 .categoria(categoria)
                 .fornecedor(fornecedor)
                 .preco(request.getPreco())
+                .precoCusto(request.getPrecoCusto())
                 .taxaIva(request.getTaxaIva())
                 .motivoIsencao(request.getMotivoIsencao())
                 .unidadeMedida(request.getUnidadeMedida())
@@ -79,15 +86,13 @@ public class ArtigoService {
         artigo.atualizarEstado();
         artigo = artigoRepository.save(artigo);
 
-
-
         return toResponse(artigo);
     }
 
     @Transactional
     public ArtigoResponse atualizar(Long id, ArtigoRequest request) {
         Artigo artigo = buscarEntidade(id);
-        
+
         co.ao.tfc.sistema.model.Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
@@ -95,16 +100,19 @@ public class ArtigoService {
         if (request.getFornecedorId() != null) {
             fornecedor = fornecedorRepository.findById(request.getFornecedorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+            // Validação: verificar se o fornecedor fornece este tipo de produto
+            validarFornecedorProduto(fornecedor, request.getNome());
         }
 
         artigo.setNome(request.getNome());
         artigo.setCategoria(categoria);
         artigo.setFornecedor(fornecedor);
         artigo.setPreco(request.getPreco());
+        artigo.setPrecoCusto(request.getPrecoCusto());
         artigo.setTaxaIva(request.getTaxaIva());
         artigo.setMotivoIsencao(request.getMotivoIsencao());
         artigo.setUnidadeMedida(request.getUnidadeMedida());
-        
+
         if (!artigo.getStock().equals(request.getStock())) {
             artigo.setStock(request.getStock());
         }
@@ -128,6 +136,27 @@ public class ArtigoService {
         return artigo;
     }
 
+    /**
+     * Valida que o fornecedor fornece o produto indicado.
+     * Se o campo produtosFornecidos estiver vazio, a associação é permitida (sem restrição).
+     * Se estiver preenchido, verifica se algum dos produtos listados corresponde ao nome do artigo.
+     */
+    private void validarFornecedorProduto(co.ao.tfc.sistema.model.Fornecedor fornecedor, String nomeArtigo) {
+        String produtosFornecidos = fornecedor.getProdutosFornecidos();
+        if (produtosFornecidos == null || produtosFornecidos.isBlank()) {
+            return; // Sem restrição — fornecedor não especificou produtos
+        }
+        String nomeLower = nomeArtigo.toLowerCase();
+        boolean corresponde = java.util.Arrays.stream(produtosFornecidos.split("[,;]+"))
+                .map(String::trim)
+                .anyMatch(p -> nomeLower.contains(p.toLowerCase()) || p.toLowerCase().contains(nomeLower));
+        if (!corresponde) {
+            throw new IllegalArgumentException(
+                "O fornecedor '" + fornecedor.getNome() + "' não fornece o produto '" + nomeArtigo +
+                "'. Produtos deste fornecedor: " + produtosFornecidos);
+        }
+    }
+
     private ArtigoResponse toResponse(Artigo artigo) {
         return ArtigoResponse.builder()
                 .id(artigo.getId())
@@ -137,6 +166,7 @@ public class ArtigoService {
                 .fornecedorId(artigo.getFornecedor() != null ? artigo.getFornecedor().getId() : null)
                 .fornecedorNome(artigo.getFornecedor() != null ? artigo.getFornecedor().getNome() : null)
                 .preco(artigo.getPreco())
+                .precoCusto(artigo.getPrecoCusto())
                 .taxaIva(artigo.getTaxaIva())
                 .stock(artigo.getStock())
                 .stockMinimo(artigo.getStockMinimo())

@@ -25,6 +25,17 @@ public class FornecedorController {
         return fornecedorService.listar(pesquisa);
     }
 
+    /**
+     * Endpoint para auto-preenchimento do fornecedor ao criar um artigo.
+     * Devolve o fornecedor que fornece o produto com o nome indicado.
+     */
+    @GetMapping("/por-produto")
+    public org.springframework.http.ResponseEntity<FornecedorResponse> buscarPorProduto(@RequestParam String nome) {
+        return fornecedorService.buscarPorProduto(nome)
+                .map(org.springframework.http.ResponseEntity::ok)
+                .orElse(org.springframework.http.ResponseEntity.noContent().build());
+    }
+
     @GetMapping("/{id}")
     public FornecedorResponse buscar(@PathVariable Long id) {
         return fornecedorService.buscar(id);
@@ -49,7 +60,7 @@ public class FornecedorController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void remover(@PathVariable Long id) {
         fornecedorService.remover(id);
         auditoriaService.registrarAuditoria("REMOVEU", "Fornecedor", "Removeu o fornecedor com ID " + id);

@@ -28,6 +28,14 @@ public class Fornecedor {
 
     private String endereco;
 
+    /**
+     * Descrição dos produtos/serviços fornecidos por este fornecedor.
+     * Ex: "Computadores, Impressoras, Acessórios de informática".
+     * Utilizado para auto-associar artigos ao fornecedor correcto.
+     */
+    @Column(length = 500)
+    private String produtosFornecidos;
+
     @Column(nullable = false)
     private boolean ativo;
 

@@ -45,7 +45,9 @@ export default function Vendas() {
   const [dataVencimento, setDataVencimento] = useState(daquiDiasIso(30));
   const [linhas, setLinhas] = useState([linhaVazia()]);
   const [pagoPronto, setPagoPronto] = useState(true);
-  const [metodoPagamento, setMetodoPagamento] = useState("DINHEIRO");
+  const [metodoPagamento, setMetodoPagamento] = useState('DINHEIRO');
+  // Tipo de documento fiscal conforme Decreto n.º 34/09 Angola
+  const [tipoDocumento, setTipoDocumento] = useState('FATURA_RECIBO');
 
   useEffect(() => {
     Promise.all([clientesApi.listar(), artigosApi.listar()])
@@ -79,15 +81,16 @@ export default function Vendas() {
         dataEmissao,
         dataVencimento,
         pagoPronto,
+        tipoDocumento,
         metodoPagamento: pagoPronto ? metodoPagamento : null,
         linhas: linhasValidas.map((l) => ({
           artigoId: Number(l.artigoId),
           quantidade: Number(l.quantidade),
         })),
       });
-      navigate("/faturacao");
+      navigate('/faturacao');
     } catch (e) {
-      setErro(e.response?.data?.message || e.response?.data || e.message || "Erro desconhecido ao emitir a fatura.");
+      setErro(e.response?.data?.message || e.response?.data || e.message || 'Erro desconhecido ao emitir a fatura.');
     } finally {
       setSalvando(false);
     }
@@ -165,11 +168,43 @@ export default function Vendas() {
               <Grid container spacing={2} ml={5} mt={1}>
                 <Grid>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
-                    Tipo de Documento<span style={{ color: "red" }}>*</span>
+                    Tipo de Documento <span style={{ color: 'red' }}>*</span>
                   </Typography>
                   <FormControl size="small">
-                    <Select defaultValue="Fatura" sx={{ width: "410px" }} disabled>
-                      <MenuItem value="Fatura">Fatura</MenuItem>
+                    <Select
+                      value={tipoDocumento}
+                      onChange={(e) => {
+                        const tipo = e.target.value;
+                        setTipoDocumento(tipo);
+                        // Ajuste automático: Fatura implica pagamento diferido
+                        if (tipo === 'FATURA') {
+                          setPagoPronto(false);
+                          setMetodoPagamento('');
+                        } else if (tipo === 'FATURA_RECIBO' || tipo === 'FATURA_SIMPLIFICADA') {
+                          setPagoPronto(true);
+                          setMetodoPagamento('DINHEIRO');
+                        }
+                      }}
+                      sx={{ width: '410px' }}
+                    >
+                      <MenuItem value="FATURA_RECIBO">
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>Fatura-Recibo</Typography>
+                          <Typography variant="caption" sx={{ color: '#64748b' }}>Pagamento imediato — Art. 7.º Decreto 34/09</Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="FATURA">
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>Fatura</Typography>
+                          <Typography variant="caption" sx={{ color: '#64748b' }}>Pagamento diferido (a crédito) — Art. 5.º Decreto 34/09</Typography>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem value="FATURA_SIMPLIFICADA">
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>Fatura Simplificada</Typography>
+                          <Typography variant="caption" sx={{ color: '#64748b' }}>Pequeno valor / Consumidor final — Art. 8.º Decreto 34/09</Typography>
+                        </Box>
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -204,11 +239,14 @@ export default function Vendas() {
                   <FormControl component="fieldset" size="small">
                     <RadioGroup
                       row
-                      value={pagoPronto ? "sim" : "nao"}
+                      value={pagoPronto ? 'sim' : 'nao'}
                       onChange={(e) => {
-                        const isPronto = e.target.value === "sim";
+                        const isPronto = e.target.value === 'sim';
                         setPagoPronto(isPronto);
-                        setMetodoPagamento(isPronto ? "DINHEIRO" : "");
+                        setMetodoPagamento(isPronto ? 'DINHEIRO' : '');
+                        // Sincroniza tipo de documento
+                        if (!isPronto && tipoDocumento !== 'FATURA') setTipoDocumento('FATURA');
+                        if (isPronto && tipoDocumento === 'FATURA') setTipoDocumento('FATURA_RECIBO');
                       }}
                     >
                       <FormControlLabel value="sim" control={<Radio size="small" />} label="Sim" />

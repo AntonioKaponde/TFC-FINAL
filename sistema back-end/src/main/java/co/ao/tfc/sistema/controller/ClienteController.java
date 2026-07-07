@@ -49,7 +49,7 @@ public class ClienteController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void remover(@PathVariable Long id) {
         clienteService.remover(id);
         auditoriaService.registrarAuditoria("REMOVEU", "Cliente", "Removeu o cliente com ID " + id);

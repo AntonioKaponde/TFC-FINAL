@@ -33,6 +33,14 @@ public class Artigo {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal preco;
 
+    /**
+     * Preço de custo (preço de compra ao fornecedor).
+     * Usado para calcular o IVA dedutível (IVA a Recuperar) conforme CIVA Angola.
+     * O IVA a Recuperar = precoCusto × taxaIva (apenas para Regime Geral, Art. 19.º CIVA).
+     */
+    @Column(precision = 15, scale = 2)
+    private BigDecimal precoCusto;
+
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal taxaIva;
 

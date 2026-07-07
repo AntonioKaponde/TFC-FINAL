@@ -7,6 +7,7 @@ import co.ao.tfc.sistema.model.Cliente;
 import co.ao.tfc.sistema.model.Fatura;
 import co.ao.tfc.sistema.model.LinhaFatura;
 import co.ao.tfc.sistema.model.enums.EstadoFatura;
+import co.ao.tfc.sistema.model.enums.TipoDocumento;
 import co.ao.tfc.sistema.repository.ArtigoRepository;
 import co.ao.tfc.sistema.repository.ClienteRepository;
 import co.ao.tfc.sistema.repository.FaturaRepository;
@@ -54,13 +55,26 @@ public class FaturaService {
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
         Cliente cliente = clienteService.buscarEntidade(request.getClienteId());
 
+        /*
+         * Inferência automática do TipoDocumento conforme Decreto n.º 34/09 Angola:
+         * - Utilizador escolheu explicitamente → usa o valor enviado
+         * - pagoPronto=true e sem tipo → FATURA_RECIBO (Art. 7.º)
+         * - pagoPronto=false e sem tipo → FATURA (Art. 5.º)
+         * - FATURA_SIMPLIFICADA → apenas se explicitamente selecionada
+         */
+        TipoDocumento tipoDocumento = request.getTipoDocumento();
+        if (tipoDocumento == null) {
+            tipoDocumento = request.isPagoPronto() ? TipoDocumento.FATURA_RECIBO : TipoDocumento.FATURA;
+        }
+
         Fatura fatura = Fatura.builder()
-                .numero(gerarNumero())
+                .numero(gerarNumero(tipoDocumento))
                 .cliente(cliente)
                 .dataEmissao(request.getDataEmissao())
                 .dataVencimento(request.getDataVencimento())
                 .pagoPronto(request.isPagoPronto())
                 .metodoPagamento(request.getMetodoPagamento())
+                .tipoDocumento(tipoDocumento)
                 .subtotal(BigDecimal.ZERO)
                 .totalIva(BigDecimal.ZERO)
                 .total(BigDecimal.ZERO)
@@ -198,9 +212,18 @@ public class FaturaService {
     // Utilitários privados
     // -------------------------------------------------------------------------
 
-    private String gerarNumero() {
+    /**
+     * Gera o número da fatura conforme prefixo do tipo de documento.
+     * FT (Fatura), FR (Fatura-Recibo), FS (Fatura Simplificada)
+     */
+    private String gerarNumero(TipoDocumento tipo) {
         long total = faturaRepository.count() + 1;
-        return "FT " + Year.now().getValue() + "/" + String.format("%04d", total);
+        String prefixo = switch (tipo) {
+            case FATURA -> "FT";
+            case FATURA_RECIBO -> "FR";
+            case FATURA_SIMPLIFICADA -> "FS";
+        };
+        return prefixo + " " + Year.now().getValue() + "/" + String.format("%04d", total);
     }
 
     private EstadoFatura calcularEstado(boolean pagoPronto, LocalDate vencimento) {
@@ -231,6 +254,7 @@ public class FaturaService {
                 .dataEmissao(fatura.getDataEmissao())
                 .dataVencimento(fatura.getDataVencimento())
                 .estado(fatura.getEstado())
+                .tipoDocumento(fatura.getTipoDocumento())
                 .pagoPronto(fatura.isPagoPronto())
                 .metodoPagamento(fatura.getMetodoPagamento())
                 .subtotal(fatura.getSubtotal())

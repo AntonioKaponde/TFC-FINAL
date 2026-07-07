@@ -15,6 +15,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   TextField,
   IconButton,
@@ -34,6 +35,9 @@ export default function Categorias() {
   const [currentId, setCurrentId] = useState(null);
   const [form, setForm] = useState({ nome: "", descricao: "" });
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const showMessage = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
@@ -65,14 +69,22 @@ export default function Categorias() {
     setOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Deseja realmente remover esta categoria?")) {
+  const handleDeleteClick = (id) => {
+    setItemToDelete(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (itemToDelete) {
       try {
-        await categoriasApi.remover(id);
+        await categoriasApi.remover(itemToDelete);
         showMessage("Categoria removida com sucesso!");
         carregarCategorias();
       } catch (e) {
         showMessage("Erro ao remover categoria: " + (e.response?.data?.message || e.response?.data || e.message), "error");
+      } finally {
+        setOpenDeleteDialog(false);
+        setItemToDelete(null);
       }
     }
   };
@@ -128,7 +140,7 @@ export default function Categorias() {
                       <IconButton color="primary" onClick={() => handleEdit(cat)}>
                         <EditIcon />
                       </IconButton>
-                      <IconButton color="error" onClick={() => handleDelete(cat.id)}>
+                      <IconButton color="error" onClick={() => handleDeleteClick(cat.id)}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -174,6 +186,19 @@ export default function Categorias() {
           <Button onClick={handleSave} variant="contained" sx={{ bgcolor: "#0B6E4F" }}>
             Salvar
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Confirmar Eliminação</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem a certeza que deseja remover esta categoria? Esta acção não pode ser desfeita.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained" sx={{ textTransform: 'none', fontWeight: 600 }}>Eliminar</Button>
         </DialogActions>
       </Dialog>
 

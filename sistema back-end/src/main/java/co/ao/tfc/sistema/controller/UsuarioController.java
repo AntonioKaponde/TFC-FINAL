@@ -37,4 +37,16 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> removerUsuario(@PathVariable Long id) {
+        try {
+            usuarioService.removerUsuario(id);
+            auditoriaService.registrarAuditoria("REMOVEU", "Usuario", "Removeu o usuário com ID " + id);
+            return ResponseEntity.ok("Usuário removido com sucesso.");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
 }
