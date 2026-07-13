@@ -54,6 +54,75 @@ public class MovimentoEstoqueService {
                 .toList();
     }
 
+    /**
+     * Corrige artigos existentes que têm precoCusto = 0 (bug da versão anterior).
+     * Define precoCusto como null para que o sistema saiba que não há custo definido,
+     * forçando o utilizador a informar o precoCustoUnitário nos movimentos de stock.
+     */
+    @Transactional
+    public int corrigirArtigosPrecoCustoZero() {
+        Empresa empresa = getCurrentEmpresa();
+        List<Artigo> artigosCorrigir = artigoRepository.findByEmpresaAndPrecoCusto(empresa, BigDecimal.ZERO);
+        for (Artigo a : artigosCorrigir) {
+            a.setPrecoCusto(null);
+        }
+        artigoRepository.saveAll(artigosCorrigir);
+        return artigosCorrigir.size();
+    }
+
+    /**
+     * Recalcula o IVA Dedutível para movimentos ENTRADA com fornecedor que:
+     * - Têm ivaCompra = NULL (nunca foi calculado)
+     * - OU têm precoCustoUnitario preenchido mas ivaCompra = NULL
+     * <p>
+     * Usa a mesma lógica de cálculo do método {@link #criar}.
+     */
+    @Transactional
+    public int recalcularIvaMovimentosExistentes() {
+        Empresa empresa = getCurrentEmpresa();
+        ConfiguracaoFiscal config = configuracaoFiscalRepository
+                .findByEmpresa(empresa).orElse(new ConfiguracaoFiscal());
+        boolean regimePermiteDeducao = config.getRegimeIva() == null
+                || config.getRegimeIva() == RegimeIva.GERAL;
+
+        if (!regimePermiteDeducao) {
+            return 0; // Regime não permite dedução
+        }
+
+        List<MovimentoEstoque> movimentos = movimentoEstoqueRepository
+                .findByEmpresaAndTipoMovimentoAndFornecedorIsNotNullAndIvaCompraIsNull(empresa);
+
+        int count = 0;
+        for (MovimentoEstoque m : movimentos) {
+            BigDecimal precoUnitario = m.getPrecoCustoUnitario();
+            if (precoUnitario == null || precoUnitario.compareTo(BigDecimal.ZERO) <= 0) {
+                // Tentar obter do artigo
+                Artigo artigo = m.getArtigo();
+                if (artigo != null && artigo.getPrecoCusto() != null
+                        && artigo.getPrecoCusto().compareTo(BigDecimal.ZERO) > 0) {
+                    precoUnitario = artigo.getPrecoCusto();
+                }
+            }
+
+            if (precoUnitario != null && precoUnitario.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal taxaIva = m.getArtigo().getTaxaIva() != null
+                        ? m.getArtigo().getTaxaIva()
+                        : (config.getTaxaIva() != null ? config.getTaxaIva() : BigDecimal.valueOf(14));
+
+                BigDecimal iva = precoUnitario
+                        .multiply(BigDecimal.valueOf(m.getQuantidade()))
+                        .multiply(taxaIva)
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+                m.setPrecoCustoUnitario(precoUnitario);
+                m.setIvaCompra(iva);
+                movimentoEstoqueRepository.save(m);
+                count++;
+            }
+        }
+        return count;
+    }
+
     @Transactional
     public MovimentoEstoqueResponse criar(MovimentoEstoqueRequest request) {
         Usuario usuarioLogado = getCurrentUsuario();
@@ -117,11 +186,23 @@ public class MovimentoEstoqueService {
                     || config.getRegimeIva() == RegimeIva.GERAL;
 
             if (regimePermiteDeducao) {
-                // Prioridade: preço informado no request → fallback para precoCusto do artigo
-                precoCustoUnitario = request.getPrecoCustoUnitario() != null
-                        ? request.getPrecoCustoUnitario()
-                        : artigo.getPrecoCusto();
+                // ─── Prioridade para obter o precoCustoUnitario ─────────────────────
+                // 1. Valor enviado no request (pelo utilizador no formulário)
+                // 2. Fallback: precoCusto do artigo APENAS se for um valor positivo (> 0)
+                //    (Evita usar 0 de artigos antigos que foi criado pelo bug anterior)
+                // 3. Se ambos forem inválidos → null → IVA não é calculado
+                BigDecimal precoRequest = request.getPrecoCustoUnitario();
+                BigDecimal precoArtigo   = artigo.getPrecoCusto();
 
+                if (precoRequest != null) {
+                    precoCustoUnitario = precoRequest;
+                } else if (precoArtigo != null && precoArtigo.compareTo(BigDecimal.ZERO) > 0) {
+                    precoCustoUnitario = precoArtigo;
+                } else {
+                    precoCustoUnitario = null;
+                }
+
+                // Só calcular IVA se houver um valor positivo de custo
                 if (precoCustoUnitario != null && precoCustoUnitario.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal taxaIva = artigo.getTaxaIva() != null
                             ? artigo.getTaxaIva()
@@ -133,7 +214,7 @@ public class MovimentoEstoqueService {
                             .multiply(taxaIva)
                             .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
-                    // Atualizar o precoCusto do artigo com o valor mais recente da compra
+                    // Atualizar o precoCusto do artigo com o valor usado no movimento
                     artigo.setPrecoCusto(precoCustoUnitario);
                     artigoRepository.save(artigo);
                 }

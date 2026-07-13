@@ -19,6 +19,7 @@ public class ArtigoService {
     private final co.ao.tfc.sistema.repository.UsuarioRepository usuarioRepository;
     private final co.ao.tfc.sistema.repository.CategoriaRepository categoriaRepository;
     private final co.ao.tfc.sistema.repository.FornecedorRepository fornecedorRepository;
+    private final MovimentoEstoqueService movimentoEstoqueService;
 
 
     private co.ao.tfc.sistema.model.Usuario getCurrentUsuario() {
@@ -79,12 +80,26 @@ public class ArtigoService {
                 .taxaIva(request.getTaxaIva())
                 .motivoIsencao(request.getMotivoIsencao())
                 .unidadeMedida(request.getUnidadeMedida())
-                .stock(request.getStock())
+                .stock(0) // Inicialmente 0, será ajustado pelo movimento de estoque inicial
                 .stockMinimo(request.getStockMinimo())
                 .empresa(empresa)
                 .build();
         artigo.atualizarEstado();
         artigo = artigoRepository.save(artigo);
+
+        if (request.getStock() != null && request.getStock() > 0) {
+            co.ao.tfc.sistema.dto.MovimentoEstoqueRequest movReq = new co.ao.tfc.sistema.dto.MovimentoEstoqueRequest();
+            movReq.setArtigoId(artigo.getId());
+            movReq.setQuantidade(request.getStock());
+            movReq.setTipoMovimento("ENTRADA");
+            movReq.setObservacao("Estoque inicial - Cadastro de Artigo");
+            movReq.setFornecedorId(request.getFornecedorId());
+            movReq.setPrecoCustoUnitario(request.getPrecoCusto());
+            
+            movimentoEstoqueService.criar(movReq);
+            
+            artigo = buscarEntidade(artigo.getId());
+        }
 
         return toResponse(artigo);
     }

@@ -64,7 +64,7 @@ export default function NovoArtigo() {
         categoriaId: form.categoriaId,
         fornecedorId: form.fornecedorId,
         preco: Number(form.preco),
-        precoCusto: Number(form.precoCusto || 0),
+        precoCusto: form.precoCusto ? Number(form.precoCusto) : null,
         taxaIva: taxaIvaFromSelect(form.taxaIva),
         motivoIsencao: form.taxaIva === "isento(0%)" ? form.motivoIsencao : null,
         unidadeMedida: form.unidadeMedida,

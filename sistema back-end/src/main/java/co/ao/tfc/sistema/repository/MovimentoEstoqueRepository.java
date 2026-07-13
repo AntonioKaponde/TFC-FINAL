@@ -34,6 +34,20 @@ public interface MovimentoEstoqueRepository extends JpaRepository<MovimentoEstoq
             @Param("fim") LocalDateTime fim);
 
     /**
+     * Encontra movimentos ENTRADA com fornecedor que ainda não têm IVA dedutível calculado.
+     */
+    @Query("""
+        SELECT m
+        FROM MovimentoEstoque m
+        WHERE m.empresa = :empresa
+          AND m.tipoMovimento = 'ENTRADA'
+          AND m.fornecedor IS NOT NULL
+          AND m.ivaCompra IS NULL
+    """)
+    List<MovimentoEstoque> findByEmpresaAndTipoMovimentoAndFornecedorIsNotNullAndIvaCompraIsNull(
+            @Param("empresa") Empresa empresa);
+
+    /**
      * Resumo mensal de IVA dedutível (compras a fornecedor) para um dado ano.
      */
     @Query("""

@@ -26,6 +26,7 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
   });
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState(null);
 
   useEffect(() => {
     if (open) {
@@ -50,11 +51,18 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
     }
   }, [open, artigoIdProp]);
 
+  const [formatKz] = useState(() => (valor) => {
+    if (valor == null) return 'Kz 0,00';
+    const num = typeof valor === 'number' ? valor : Number(valor);
+    return `Kz ${num.toLocaleString('pt-AO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  });
+
   const handleSave = async () => {
     setErro("");
+    setSucesso(null);
     setSalvando(true);
     try {
-      await movimentosEstoqueApi.criar({
+      const response = await movimentosEstoqueApi.criar({
         artigoId: form.artigoId,
         quantidade: Number(form.quantidade),
         tipoMovimento: form.tipoMovimento,
@@ -62,8 +70,23 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
         fornecedorId: form.fornecedorId || null,
         precoCustoUnitario: form.precoCustoUnitario ? Number(form.precoCustoUnitario) : null
       });
-      onSucesso();
-      onClose();
+
+      // Se a API retornou ivaCompra, mostrar feedback
+      const ivaValor = response?.ivaCompra;
+      if (ivaValor != null && Number(ivaValor) > 0) {
+        setSucesso(`✓ IVA Dedutível calculado: ${formatKz(ivaValor)}`);
+      } else if (form.tipoMovimento === "ENTRADA" && form.fornecedorId) {
+        setSucesso(`✓ Movimento registado (sem IVA dedutível — informe o preço de custo para calcular)`);
+      } else {
+        setSucesso(`✓ Movimento registado com sucesso`);
+      }
+
+      // Aguardar 1.5s para mostrar o feedback antes de fechar
+      setTimeout(() => {
+        onSucesso();
+        onClose();
+        setSucesso(null);
+      }, 1500);
     } catch (e) {
       setErro("Erro ao movimentar stock: " + (e.response?.data?.message || e.response?.data || e.message));
     } finally {
@@ -76,6 +99,7 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
       <DialogTitle sx={{ fontWeight: 'bold' }}>Movimentar Stock</DialogTitle>
       <DialogContent>
         {erro && <Typography color="error" sx={{ mb: 2 }}>{erro}</Typography>}
+        {sucesso && <Typography color="success.main" sx={{ mb: 2, fontWeight: 600, p: 1.5, bgcolor: '#f0fdf4', borderRadius: 1, border: '1px solid #bbf7d0' }}>{sucesso}</Typography>}
         <FormControl fullWidth sx={{ mt: 2 }}>
           <Typography variant="caption" fontWeight="bold">Artigo</Typography>
           <Select

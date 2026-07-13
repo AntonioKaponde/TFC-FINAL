@@ -22,4 +22,10 @@ public interface ArtigoRepository extends JpaRepository<Artigo, Long> {
     BigDecimal calcularIvaARecuperarPorEmpresa(co.ao.tfc.sistema.model.Empresa empresa);
 
     boolean existsByNomeIgnoreCaseAndEmpresa(String nome, co.ao.tfc.sistema.model.Empresa empresa);
+
+    /**
+     * Encontra artigos de uma empresa com um determinado precoCusto.
+     * Usado para corrigir artigos existentes com precoCusto = 0 (bug da versão anterior).
+     */
+    List<Artigo> findByEmpresaAndPrecoCusto(co.ao.tfc.sistema.model.Empresa empresa, BigDecimal precoCusto);
 }

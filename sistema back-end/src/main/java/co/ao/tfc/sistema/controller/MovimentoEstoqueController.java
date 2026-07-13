@@ -25,6 +25,28 @@ public class MovimentoEstoqueController {
         return movimentoEstoqueService.listar();
     }
 
+    @PostMapping("/corrigir-artigos")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public java.util.Map<String, Object> corrigirArtigos() {
+        int corrigidos = movimentoEstoqueService.corrigirArtigosPrecoCustoZero();
+        return java.util.Map.of(
+            "mensagem", "Artigos corrigidos: " + corrigidos,
+            "corrigidos", corrigidos
+        );
+    }
+
+    @PostMapping("/recalcular-iva")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public java.util.Map<String, Object> recalcularIva() {
+        int recalculados = movimentoEstoqueService.recalcularIvaMovimentosExistentes();
+        return java.util.Map.of(
+            "mensagem", "Movimentos recalculados: " + recalculados,
+            "recalculados", recalculados
+        );
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")

@@ -66,6 +66,8 @@ export const categoriasApi = {
 export const movimentosEstoqueApi = {
   listar: () => api.get('/api/movimentos-estoque'),
   criar: (data) => api.post('/api/movimentos-estoque', data),
+  corrigirArtigos: () => api.post('/api/movimentos-estoque/corrigir-artigos'),
+  recalcularIva: () => api.post('/api/movimentos-estoque/recalcular-iva'),
 };
 
 export const saftApi = {
