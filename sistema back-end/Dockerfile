@@ -1,15 +1,10 @@
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM maven:3-eclipse-temurin-21-alpine AS build
 WORKDIR /app
-COPY mvnw .
-COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
 
-# Garante que o script mvnw tenha permissão de execução
-RUN chmod +x ./mvnw
-
 # Instala as dependências e constrói o jar
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
