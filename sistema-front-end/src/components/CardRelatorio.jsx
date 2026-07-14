@@ -33,14 +33,14 @@ export default function CardRelatorio() {
   }
 
   const iva = Number(indicadores.ivaAPagar);
-  const irt = Number(indicadores.irtRetido ?? 0);
-  const industrial = Number(indicadores.outrosImpostos ?? 0);
+  const volumeVendas = Number(indicadores.volumeVendas ?? 0);
+  const volumeCompras = Number(indicadores.volumeCompras ?? 0);
 
   const cards = [
-    { titulo: `IVA a Liquidar (${indicadores.taxaIvaAplicada}%)`, valor: formatKz(iva), icon: <AccountBalanceOutlinedIcon sx={{ fontSize: '2rem' }} /> },
-    { titulo: 'IRT Retido', valor: formatKz(irt), icon: <PeopleAltOutlinedIcon sx={{ fontSize: '2rem' }} /> },
-    { titulo: 'Imposto Industrial', valor: formatKz(industrial), icon: <ApprovalOutlinedIcon sx={{ fontSize: '2rem' }} /> },
-    { titulo: 'Lucros Retidos', valor: formatKz(indicadores.lucroRetido), icon: <TrendingUpOutlinedIcon sx={{ fontSize: '2rem' }} /> },
+    { titulo: `IVA Liquidado (${indicadores.taxaIvaAplicada}%)`, valor: formatKz(iva), icon: <AccountBalanceOutlinedIcon sx={{ fontSize: '2rem' }} /> },
+    { titulo: 'Volume de Vendas', valor: formatKz(volumeVendas), icon: <TrendingUpOutlinedIcon sx={{ fontSize: '2rem' }} /> },
+    { titulo: 'Volume de Compras', valor: formatKz(volumeCompras), icon: <ApprovalOutlinedIcon sx={{ fontSize: '2rem' }} /> },
+    { titulo: 'Lucros Retidos', valor: formatKz(indicadores.lucroRetido), icon: <AccountBalanceOutlinedIcon sx={{ fontSize: '2rem' }} /> },
   ];
 
   return (

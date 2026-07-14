@@ -64,9 +64,14 @@ public class DashboardService {
         BigDecimal ivaARecuperar = BigDecimal.ZERO;
         boolean regimeGeralOuNulo = configFiscal.getRegimeIva() == null || configFiscal.getRegimeIva() == RegimeIva.GERAL;
 
+        LocalDateTime inicioLdt = inicio.atStartOfDay();
+        LocalDateTime fimLdt = fim.atTime(23, 59, 59);
+
+        BigDecimal volumeCompras = movimentoEstoqueRepository.somarVolumeComprasPorPeriodo(empresa, inicioLdt, fimLdt);
+        if (volumeCompras == null) volumeCompras = BigDecimal.ZERO;
+        BigDecimal volumeVendas = faturacaoBruta;
+
         if (regimeGeralOuNulo) {
-            LocalDateTime inicioLdt = inicio.atStartOfDay();
-            LocalDateTime fimLdt = fim.atTime(23, 59, 59);
             ivaARecuperar = movimentoEstoqueRepository.somarIvaDedutiveisPorPeriodo(empresa, inicioLdt, fimLdt);
             if (ivaARecuperar == null) ivaARecuperar = BigDecimal.ZERO;
         }
@@ -85,6 +90,8 @@ public class DashboardService {
                 .totalImpostos(totalImpostos)
                 .lucroRetido(lucroRetido)
                 .taxaIvaAplicada(taxaIva)
+                .volumeVendas(volumeVendas)
+                .volumeCompras(volumeCompras)
                 .build();
     }
 

@@ -113,11 +113,15 @@ public class RelatorioImpostosPdfService {
 
         // IVA Dedutível
         BigDecimal ivaDedutivel = BigDecimal.ZERO;
+        BigDecimal volumeCompras = BigDecimal.ZERO;
+        LocalDateTime inicioLdt = inicio.atStartOfDay();
+        LocalDateTime fimLdt = fim.atTime(23, 59, 59);
+
         if (regimeGeral) {
-            LocalDateTime inicioLdt = inicio.atStartOfDay();
-            LocalDateTime fimLdt = fim.atTime(23, 59, 59);
             ivaDedutivel = nvl(movimentoEstoqueRepository.somarIvaDedutiveisPorPeriodo(empresa, inicioLdt, fimLdt));
         }
+        
+        volumeCompras = nvl(movimentoEstoqueRepository.somarVolumeComprasPorPeriodo(empresa, inicioLdt, fimLdt));
 
         BigDecimal ivaLiquido     = totalIvaFaturas.subtract(ivaDedutivel);
         BigDecimal ivaAPagar      = ivaLiquido.compareTo(BigDecimal.ZERO) > 0 ? ivaLiquido : BigDecimal.ZERO;
@@ -204,11 +208,12 @@ public class RelatorioImpostosPdfService {
         tblResumo.setSpacingAfter(14);
         tblResumo.setWidths(new float[]{3.2f, 1.5f});
 
-        addLinhaResumo(tblResumo, "Faturação Bruta (Base Tributável)",          fmtKz(baseTributavel),    fNormal, fNegrito, false);
-        addLinhaResumo(tblResumo, "Total Faturado (Base + IVA)",                fmtKz(totalFaturado),     fNormal, fNegrito, true);
-        addLinhaResumo(tblResumo, "Total de Documentos Emitidos",               fmtLong(totalDocumentos), fNormal, fNegrito, false);
-        addLinhaResumo(tblResumo, "IVA Liquidado nas Vendas (Art. 22.º CIVA)",  fmtKz(totalIvaFaturas),   fNormal, fNegrito, true);
-        addLinhaResumo(tblResumo, "IVA Dedutível nas Compras (Art. 19.º CIVA)", regimeGeral ? fmtKz(ivaDedutivel) : "N/A — Regime não permite dedução", fNormal, fNegrito, false);
+        addLinhaResumo(tblResumo, "Volume de Vendas (Base Tributável)",         fmtKz(baseTributavel),    fNormal, fNegrito, false);
+        addLinhaResumo(tblResumo, "Total Faturado de Vendas (Base + IVA)",      fmtKz(totalFaturado),     fNormal, fNegrito, true);
+        addLinhaResumo(tblResumo, "Volume de Compras (Custo + IVA Suportado)",  fmtKz(volumeCompras),     fNormal, fNegrito, false);
+        addLinhaResumo(tblResumo, "Total de Documentos Emitidos",               fmtLong(totalDocumentos), fNormal, fNegrito, true);
+        addLinhaResumo(tblResumo, "IVA Liquidado nas Vendas (Art. 22.º CIVA)",  fmtKz(totalIvaFaturas),   fNormal, fNegrito, false);
+        addLinhaResumo(tblResumo, "IVA Dedutível nas Compras (Art. 19.º CIVA)", regimeGeral ? fmtKz(ivaDedutivel) : "N/A — Regime não permite dedução", fNormal, fNegrito, true);
 
         // Linha destaque IVA a pagar
         Font fLabelVerm = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, COR_VERMELHO);

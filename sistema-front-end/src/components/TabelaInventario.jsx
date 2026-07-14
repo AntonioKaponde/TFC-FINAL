@@ -27,7 +27,7 @@ import {
 
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import CompareArrowsOutlinedIcon from "@mui/icons-material/CompareArrowsOutlined";
+import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -289,17 +289,17 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
                     </IconButton>
 
                     <IconButton size="small" onClick={() => onMovimentar && onMovimentar(row.id)}>
-                      <CompareArrowsOutlinedIcon sx={{ fontSize: 18 }} />
+                      <AddIcon sx={{ fontSize: 18 }} />
                     </IconButton>
 
                     <IconButton size="small">
                       <MoreVertOutlinedIcon sx={{ fontSize: 18 }} />
                     </IconButton>
-                    {isAdmin && (
+                    {/**{isAdmin && (
                       <IconButton size="small" onClick={() => handleRemoverClick(row.id)} color="error">
                         <DeleteOutlineIcon sx={{ fontSize: 18 }} />
                       </IconButton>
-                    )}
+                    )} */}
                   </TableCell>
                 </TableRow>
               );

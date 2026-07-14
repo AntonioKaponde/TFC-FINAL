@@ -37,7 +37,7 @@ export default function DoughnutRelatorio({ valores: valoresProp }) {
   return (
     <Doughnut
       data={{
-        labels: ["IVA a Pagar", "IVA Dedutível (A Recuperar)"],
+        labels: ["IVA Liquidado (Vendas)", "IVA Dedutível (Compras)"],
         datasets: [
           {
             label: "Valor",

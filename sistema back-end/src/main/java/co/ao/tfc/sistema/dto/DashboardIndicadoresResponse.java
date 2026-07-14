@@ -19,4 +19,7 @@ public class DashboardIndicadoresResponse {
     private BigDecimal totalImpostos;
     private BigDecimal lucroRetido;
     private BigDecimal taxaIvaAplicada;
+
+    private BigDecimal volumeVendas;
+    private BigDecimal volumeCompras;
 }

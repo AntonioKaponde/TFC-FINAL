@@ -64,5 +64,18 @@ public interface MovimentoEstoqueRepository extends JpaRepository<MovimentoEstoq
     List<Object[]> resumoMensalIvaDedutivel(
             @Param("empresa") Empresa empresa,
             @Param("ano") int ano);
+
+    @Query("""
+        SELECT COALESCE(SUM((COALESCE(m.precoCustoUnitario, 0) * m.quantidade) + COALESCE(m.ivaCompra, 0)), 0)
+        FROM MovimentoEstoque m
+        WHERE m.empresa = :empresa
+          AND m.tipoMovimento = 'ENTRADA'
+          AND m.fornecedor IS NOT NULL
+          AND m.dataHora BETWEEN :inicio AND :fim
+    """)
+    BigDecimal somarVolumeComprasPorPeriodo(
+            @Param("empresa") Empresa empresa,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fim") LocalDateTime fim);
 }
 

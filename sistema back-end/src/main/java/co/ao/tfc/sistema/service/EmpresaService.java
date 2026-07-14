@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import co.ao.tfc.sistema.model.ConfiguracaoFiscal;
+import co.ao.tfc.sistema.repository.ConfiguracaoFiscalRepository;
+import co.ao.tfc.sistema.model.enums.RegimeIva;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -24,6 +27,7 @@ import java.util.Optional;
 public class EmpresaService {
     private final EmpresaRepository empresaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ConfiguracaoFiscalRepository configuracaoFiscalRepository;
 
     private Usuario getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -79,7 +83,14 @@ public class EmpresaService {
                     .regimeIva(register.getRegimeIva())
                     .anoFiscal(LocalDate.now())
                     .build();
-            empresaRepository.save(newEmpresa);
+            newEmpresa = empresaRepository.save(newEmpresa);
+            
+            ConfiguracaoFiscal configFiscal = ConfiguracaoFiscal.builder()
+                    .regimeIva(register.getRegimeIva() != null ? register.getRegimeIva() : RegimeIva.GERAL)
+                    .taxaIva(java.math.BigDecimal.valueOf(14))
+                    .empresa(newEmpresa)
+                    .build();
+            configuracaoFiscalRepository.save(configFiscal);
         }else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Empresa já existe com este nif");
         }

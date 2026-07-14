@@ -46,7 +46,7 @@ const TaxRow = ({ label, value, totalPercentage, color, tooltip }) => (
     </Box>
     <BorderLinearProgress variant="determinate" value={Math.min(totalPercentage, 100)} barcolor={color} />
     <Typography variant="caption" sx={{ color: '#94a3b8', mt: 0.5, display: 'block' }}>
-      {totalPercentage}% do total de impostos
+      {totalPercentage}% do IVA Liquidado
     </Typography>
   </Box>
 );
@@ -73,9 +73,11 @@ export default function FiscalCard() {
   const ivaAPagar = Number(indicadores?.ivaAPagar ?? 0);
   const ivaARecuperar = Number(indicadores?.ivaARecuperar ?? 0);
   const ivaLiquido = Number(indicadores?.ivaLiquido ?? Math.max(0, ivaAPagar - ivaARecuperar));
-  const total = ivaAPagar || 1; // evitar divisão por zero
+  
+  const totalImpostos = ivaAPagar + ivaARecuperar;
+  const total = totalImpostos > 0 ? totalImpostos : 1; // evitar divisão por zero
 
-  const pct = (valor) => (total > 0 ? Math.round((valor / total) * 100) : 0);
+  const pct = (valor) => Math.round((valor / total) * 100);
 
   return (
     <Card sx={{ width: '22.3rem', boxShadow: '0px 4px 20px rgba(0,0,0,0.05)', p: 2, height: '42rem', margin: '0 auto' }}>

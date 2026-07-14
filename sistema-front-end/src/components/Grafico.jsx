@@ -41,11 +41,23 @@ export default function Grafico() {
             backgroundColor: "#0B6E4F",
           },
           {
-            label: "Imposto a Pagar(IVA,IRT)",
+            label: "Imposto (IVA Liquidado)",
             data: dados.map((d) => d.imposto),
             backgroundColor: "#EF4444",
           },
         ],
+      }}
+      options={{
+        scales: {
+          y: {
+            type: 'logarithmic',
+            display: true,
+            title: {
+              display: true,
+              text: 'Valor (Kz)'
+            }
+          }
+        }
       }}
     />
   );
