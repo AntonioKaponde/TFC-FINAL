@@ -46,7 +46,7 @@ const TabelaFicheiro = () => {
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="subtitle1" fontWeight="700">Histórico de Ficheiros Gerados</Typography>
               <Box>
-                <Button size="small" onClick={() => exportarPDF('tabela-historico-ficheiros', 'Historico_Ficheiros')} startIcon={<DownloadIcon />} sx={{ textTransform: 'none', color: '#64748b', mr: 2 }}>Exportar PDF</Button>
+                <Button size="small" disabled onClick={() => exportarPDF('tabela-historico-ficheiros', 'Historico_Ficheiros')} startIcon={<DownloadIcon />} sx={{ textTransform: 'none', color: '#64748b', mr: 2 }}>Exportar PDF</Button>
                 <Button size="small" startIcon={<FilterIcon />} sx={{ textTransform: 'none', color: '#64748b' }}>Filtrar</Button>
               </Box>
             </Box>
@@ -77,7 +77,6 @@ const TabelaFicheiro = () => {
                         </TableCell>
                         <TableCell>
                           <Stack direction="row" spacing={1}>
-                            <IconButton size="small"><DownloadIcon sx={{ fontSize: 18 }} /></IconButton>
                             <IconButton size="small"><MoreVertIcon sx={{ fontSize: 18 }} /></IconButton>
                           </Stack>
                         </TableCell>

@@ -96,14 +96,14 @@ export default function FiscalCard() {
           </IconButton>
         </Box>
 
-        {/* IVA Bruto das Vendas */}
+        {/* IVA Bruto das Vendas 
         <TaxRow
           label={`IVA (${indicadores?.taxaIvaAplicada ?? 14}%) — Vendas`}
           value={formatKzSemPrefixo(ivaAPagar)}
           totalPercentage={100}
           color="#6366f1"
           tooltip="IVA total liquidado nas facturas de venda (Art. 22.º CIVA Angola)"
-        />
+        />*/}
 
         {/* IVA a Pagar ao Estado */}
         <TaxRow
