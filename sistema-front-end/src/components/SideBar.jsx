@@ -48,6 +48,7 @@ export default function SideBar() {
     localStorage.removeItem('token');
     localStorage.removeItem('userRoles');
     localStorage.removeItem('userName');
+    sessionStorage.removeItem('session_active');
     navigate('/');
   };
 

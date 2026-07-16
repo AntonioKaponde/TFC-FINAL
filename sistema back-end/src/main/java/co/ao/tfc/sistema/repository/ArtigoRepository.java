@@ -4,6 +4,7 @@ import co.ao.tfc.sistema.model.Artigo;
 import co.ao.tfc.sistema.model.enums.EstadoArtigo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,7 +12,12 @@ import java.util.List;
 public interface ArtigoRepository extends JpaRepository<Artigo, Long> {
     List<Artigo> findByEstado(EstadoArtigo estado);
 
-    List<Artigo> findByEmpresa(co.ao.tfc.sistema.model.Empresa empresa);
+    /**
+     * JOIN FETCH para carregar artigos com categoria e fornecedor numa única query.
+     * Elimina o N+1 ao listar o inventário.
+     */
+    @Query("SELECT a FROM Artigo a LEFT JOIN FETCH a.categoria LEFT JOIN FETCH a.fornecedor WHERE a.empresa = :empresa ORDER BY a.nome ASC")
+    List<Artigo> findByEmpresa(@Param("empresa") co.ao.tfc.sistema.model.Empresa empresa);
 
     /**
      * Calcula o IVA dedutível (IVA a Recuperar) da empresa.

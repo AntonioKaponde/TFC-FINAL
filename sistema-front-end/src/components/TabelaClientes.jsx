@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Card,
@@ -97,8 +97,8 @@ export default function TabelaClientes() {
     carregar();
   }, []);
 
-  // Filtros locais
-  const clientesFiltrados = clientes.filter((cliente) => {
+  // Filtros locais — useMemo evita recalcular em cada render
+  const clientesFiltrados = useMemo(() => clientes.filter((cliente) => {
     // Text filter
     const search = pesquisa.toLowerCase();
     const matchPesquisa =
@@ -117,12 +117,18 @@ export default function TabelaClientes() {
     if (filtroTipo === "Com Dívida") matchTipo = cliente.saldo < 0;
 
     return matchPesquisa && matchTipo;
-  });
+  }), [clientes, pesquisa, filtroTipo]);
 
-  const startIndex = paginaAtual * itensPorPagina;
-  const endIndex = startIndex + itensPorPagina;
-  const clientesPaginados = clientesFiltrados.slice(startIndex, endIndex);
-  const totalPaginas = Math.ceil(clientesFiltrados.length / itensPorPagina);
+  const { startIndex, endIndex, clientesPaginados, totalPaginas } = useMemo(() => {
+    const start = paginaAtual * itensPorPagina;
+    const end = start + itensPorPagina;
+    return {
+      startIndex: start,
+      endIndex: end,
+      clientesPaginados: clientesFiltrados.slice(start, end),
+      totalPaginas: Math.ceil(clientesFiltrados.length / itensPorPagina),
+    };
+  }, [clientesFiltrados, paginaAtual]);
 
   const handleAnterior = () => {
     if (paginaAtual > 0) setPaginaAtual((p) => p - 1);

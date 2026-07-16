@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -94,8 +94,8 @@ export default function TabelaFornecedor() {
     carregar();
   }, []);
 
-  // Filtros locais
-  const fornecedoresFiltrados = fornecedores.filter((fornecedor) => {
+  // Filtros locais — useMemo evita recalcular em cada render
+  const fornecedoresFiltrados = useMemo(() => fornecedores.filter((fornecedor) => {
     // Text filter
     const search = pesquisa.toLowerCase();
     const matchPesquisa =
@@ -110,12 +110,18 @@ export default function TabelaFornecedor() {
     if (filtroTipo === "Inativos") matchTipo = fornecedor.ativo === false;
 
     return matchPesquisa && matchTipo;
-  });
+  }), [fornecedores, pesquisa, filtroTipo]);
 
-  const startIndex = paginaAtual * itensPorPagina;
-  const endIndex = startIndex + itensPorPagina;
-  const fornecedoresPaginados = fornecedoresFiltrados.slice(startIndex, endIndex);
-  const totalPaginas = Math.ceil(fornecedoresFiltrados.length / itensPorPagina);
+  const { startIndex, endIndex, fornecedoresPaginados, totalPaginas } = useMemo(() => {
+    const start = paginaAtual * itensPorPagina;
+    const end = start + itensPorPagina;
+    return {
+      startIndex: start,
+      endIndex: end,
+      fornecedoresPaginados: fornecedoresFiltrados.slice(start, end),
+      totalPaginas: Math.ceil(fornecedoresFiltrados.length / itensPorPagina),
+    };
+  }, [fornecedoresFiltrados, paginaAtual]);
 
   const handleAnterior = () => {
     if (paginaAtual > 0) setPaginaAtual((p) => p - 1);

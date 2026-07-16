@@ -57,6 +57,7 @@ export default function Login() {
       const response = await api.post('/api/auth/login', { email, password });
       if (response.accessToken) {
         localStorage.setItem('token', response.accessToken);
+        sessionStorage.setItem('session_active', 'true');
         if (response.nome) {
           localStorage.setItem('userName', response.nome);
         }

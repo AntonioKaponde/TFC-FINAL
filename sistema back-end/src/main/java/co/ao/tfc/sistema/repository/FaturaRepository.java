@@ -1,5 +1,3 @@
-package co.ao.tfc.sistema.repository;
-
 import co.ao.tfc.sistema.model.Empresa;
 import co.ao.tfc.sistema.model.Fatura;
 import co.ao.tfc.sistema.model.enums.EstadoFatura;
@@ -14,7 +12,12 @@ import java.util.List;
 public interface FaturaRepository extends JpaRepository<Fatura, Long> {
     List<Fatura> findByEstado(EstadoFatura estado);
 
-    List<Fatura> findByEmpresa(Empresa empresa);
+    /**
+     * JOIN FETCH elimina o problema N+1: carrega as faturas e os seus clientes numa única query.
+     * Sem isso, para N faturas o Hibernate faria N+1 SELECTs (1 para lista + 1 por cada cliente).
+     */
+    @Query("SELECT DISTINCT f FROM Fatura f JOIN FETCH f.cliente WHERE f.empresa = :empresa ORDER BY f.dataEmissao DESC")
+    List<Fatura> findByEmpresa(@Param("empresa") Empresa empresa);
 
     List<Fatura> findByEmpresaAndDataEmissaoBetween(Empresa empresa, LocalDate inicio, LocalDate fim);
 

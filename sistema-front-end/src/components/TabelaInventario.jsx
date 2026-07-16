@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -96,8 +96,8 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
     carregar();
   }, [refreshKey]);
 
-  // Filtros locais
-  const artigosFiltrados = artigos.filter((artigo) => {
+  // Filtros locais — useMemo evita recalcular em cada render
+  const artigosFiltrados = useMemo(() => artigos.filter((artigo) => {
     // Text filter
     const search = pesquisa.toLowerCase();
     const matchPesquisa =
@@ -110,15 +110,20 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
     let matchTipo = true;
     if (filtroTipo === "Produtos Físicos") matchTipo = artigo.stock !== null;
     if (filtroTipo === "Serviços") matchTipo = artigo.stock === null;
-    // se for categorias, pode ser uma view diferente, mas para já filtramos tudo
     
     return matchPesquisa && matchTipo;
-  });
+  }), [artigos, pesquisa, filtroTipo]);
 
-  const startIndex = paginaAtual * itensPorPagina;
-  const endIndex = startIndex + itensPorPagina;
-  const artigosPaginados = artigosFiltrados.slice(startIndex, endIndex);
-  const totalPaginas = Math.ceil(artigosFiltrados.length / itensPorPagina);
+  const { startIndex, endIndex, artigosPaginados, totalPaginas } = useMemo(() => {
+    const start = paginaAtual * itensPorPagina;
+    const end = start + itensPorPagina;
+    return {
+      startIndex: start,
+      endIndex: end,
+      artigosPaginados: artigosFiltrados.slice(start, end),
+      totalPaginas: Math.ceil(artigosFiltrados.length / itensPorPagina),
+    };
+  }, [artigosFiltrados, paginaAtual]);
 
   const handleAnterior = () => {
     if (paginaAtual > 0) setPaginaAtual((p) => p - 1);

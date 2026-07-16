@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -57,8 +57,8 @@ export default function FaturasTable() {
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos");
 
-  // Filtros Locais
-  const faturasFiltradas = faturas.filter((fatura) => {
+  // Filtros Locais — useMemo evita recalcular em cada render
+  const faturasFiltradas = useMemo(() => faturas.filter((fatura) => {
     // text filter
     const search = pesquisa.toLowerCase();
     const matchPesquisa =
@@ -79,12 +79,18 @@ export default function FaturasTable() {
       matchTipo = fatura.numero && fatura.numero.startsWith("NC");
 
     return matchPesquisa && matchTipo;
-  });
+  }), [faturas, pesquisa, filtroTipo]);
 
-  const startIndex = paginaAtual * itensPorPagina;
-  const endIndex = startIndex + itensPorPagina;
-  const faturasPaginadas = faturasFiltradas.slice(startIndex, endIndex);
-  const totalPaginas = Math.ceil(faturasFiltradas.length / itensPorPagina);
+  const { startIndex, endIndex, faturasPaginadas, totalPaginas } = useMemo(() => {
+    const start = paginaAtual * itensPorPagina;
+    const end = start + itensPorPagina;
+    return {
+      startIndex: start,
+      endIndex: end,
+      faturasPaginadas: faturasFiltradas.slice(start, end),
+      totalPaginas: Math.ceil(faturasFiltradas.length / itensPorPagina),
+    };
+  }, [faturasFiltradas, paginaAtual]);
 
   const handleAnterior = () => {
     if (paginaAtual > 0) setPaginaAtual((p) => p - 1);

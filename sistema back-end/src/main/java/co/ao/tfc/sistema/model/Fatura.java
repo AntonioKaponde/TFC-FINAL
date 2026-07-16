@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "faturas")
+@Table(name = "faturas", indexes = {
+    @Index(name = "idx_fatura_empresa", columnList = "empresaId"),
+    @Index(name = "idx_fatura_empresa_data", columnList = "empresaId, dataEmissao")
+})
 @Getter
 @Setter
 @NoArgsConstructor

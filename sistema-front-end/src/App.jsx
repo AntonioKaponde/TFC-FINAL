@@ -1,5 +1,6 @@
 import React from "react"
 import {Routes, Route, BrowserRouter} from "react-router-dom"
+import PrivateRoute from "./components/PrivateRoute"
 import Dashboard from "./pages/Dashboard"
 import Faturacao from "./pages/Faturacao"
 import Inventário from "./pages/Inventario"
@@ -33,25 +34,25 @@ function App() {
           <Routes>
             <Route  path="/"  element = {<Login />}></Route>
             <Route  path="/cadastro"  element = {<Cadastro />}></Route>
-            <Route  path="/dashboard"  element = {<Dashboard />}></Route>
-            <Route  path="/faturacao" element = {<Faturacao />}></Route>
-            <Route  path="/inventario" element = {<Inventário />}></Route>
-            <Route  path="/clientes" element = {<Clientes />}></Route>
-            <Route  path="/fornecedores" element = {<Fornecedores />}></Route>
-            <Route  path="/ficheiro" element = {<Ficheiro/>}></Route>
-            <Route  path="/relatorio" element = {<Relatorio />}></Route>
-            <Route  path="/configuracoes" element = {<Configuracoes />}></Route>
-             <Route  path="/gestaoUsuarios" element = {<GestaoDeUsuarios />} />
-             <Route  path="/permissoes" element = {<PapeisPermissoes />} />
-            <Route  path="/venda" element = {<Vendas />} />
-            <Route  path="/novoFornecedor" element = {<NovoFornecedor/>}></Route>
-            <Route  path="/novoCliente" element = {<NovoCliente />}></Route>
-             <Route  path="/novoArtigo" element = {<NovoArtigo />}></Route>
-             <Route  path="/novoUsuario" element = {<CriarUsuarios />}></Route>
-             <Route  path="/novoPapel" element = {<CriarPapel />}></Route>
-             <Route  path="/resumo-empresa" element = {<ResumoEmpresa />}></Route>
-             <Route  path="/categorias" element = {<Categorias />}></Route>
-             <Route  path="/auditoria" element = {<Auditoria />}></Route>
+            <Route  path="/dashboard"  element = {<PrivateRoute><Dashboard /></PrivateRoute>}></Route>
+            <Route  path="/faturacao" element = {<PrivateRoute><Faturacao /></PrivateRoute>}></Route>
+            <Route  path="/inventario" element = {<PrivateRoute><Inventário /></PrivateRoute>}></Route>
+            <Route  path="/clientes" element = {<PrivateRoute><Clientes /></PrivateRoute>}></Route>
+            <Route  path="/fornecedores" element = {<PrivateRoute><Fornecedores /></PrivateRoute>}></Route>
+            <Route  path="/ficheiro" element = {<PrivateRoute><Ficheiro/></PrivateRoute>}></Route>
+            <Route  path="/relatorio" element = {<PrivateRoute><Relatorio /></PrivateRoute>}></Route>
+            <Route  path="/configuracoes" element = {<PrivateRoute><Configuracoes /></PrivateRoute>}></Route>
+             <Route  path="/gestaoUsuarios" element = {<PrivateRoute><GestaoDeUsuarios /></PrivateRoute>} />
+             <Route  path="/permissoes" element = {<PrivateRoute><PapeisPermissoes /></PrivateRoute>} />
+            <Route  path="/venda" element = {<PrivateRoute><Vendas /></PrivateRoute>} />
+            <Route  path="/novoFornecedor" element = {<PrivateRoute><NovoFornecedor/></PrivateRoute>}></Route>
+            <Route  path="/novoCliente" element = {<PrivateRoute><NovoCliente /></PrivateRoute>}></Route>
+             <Route  path="/novoArtigo" element = {<PrivateRoute><NovoArtigo /></PrivateRoute>}></Route>
+             <Route  path="/novoUsuario" element = {<PrivateRoute><CriarUsuarios /></PrivateRoute>}></Route>
+             <Route  path="/novoPapel" element = {<PrivateRoute><CriarPapel /></PrivateRoute>}></Route>
+             <Route  path="/resumo-empresa" element = {<PrivateRoute><ResumoEmpresa /></PrivateRoute>}></Route>
+             <Route  path="/categorias" element = {<PrivateRoute><Categorias /></PrivateRoute>}></Route>
+             <Route  path="/auditoria" element = {<PrivateRoute><Auditoria /></PrivateRoute>}></Route>
           </Routes>
         </BrowserRouter>
       </MenuProvider>
