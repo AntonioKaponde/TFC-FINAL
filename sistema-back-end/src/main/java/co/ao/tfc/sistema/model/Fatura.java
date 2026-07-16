@@ -84,6 +84,7 @@ public class Fatura {
 
     @OneToMany
     @JoinColumn(name = "artigoId")
+    @Builder.Default
     private Set<Artigo> artigos = new HashSet<>();
 
     @OneToMany(mappedBy = "fatura")

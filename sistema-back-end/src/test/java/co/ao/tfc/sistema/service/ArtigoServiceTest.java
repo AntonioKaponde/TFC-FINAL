@@ -6,6 +6,7 @@ import co.ao.tfc.sistema.model.Artigo;
 import co.ao.tfc.sistema.model.Categoria;
 import co.ao.tfc.sistema.model.Empresa;
 import co.ao.tfc.sistema.model.Usuario;
+import co.ao.tfc.sistema.dto.MovimentoEstoqueResponse;
 import co.ao.tfc.sistema.repository.ArtigoRepository;
 import co.ao.tfc.sistema.repository.CategoriaRepository;
 import co.ao.tfc.sistema.repository.FornecedorRepository;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import co.ao.tfc.sistema.model.enums.EstadoArtigo;
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -42,6 +44,9 @@ class ArtigoServiceTest {
 
     @Mock
     private FornecedorRepository fornecedorRepository;
+
+    @Mock
+    private MovimentoEstoqueService movimentoEstoqueService;
 
     @Mock
     private SecurityContext securityContext;
@@ -91,7 +96,7 @@ class ArtigoServiceTest {
         request.setCategoriaId(1L);
         request.setPreco(new BigDecimal("5000.00"));
         request.setPrecoCusto(new BigDecimal("4000.00"));
-        request.setTaxaIva(14.0);
+        request.setTaxaIva(new BigDecimal("14.0"));
         request.setStock(10);
         request.setStockMinimo(5);
         request.setUnidadeMedida("UN");
@@ -105,17 +110,19 @@ class ArtigoServiceTest {
                 .categoria(categoriaMock)
                 .preco(new BigDecimal("5000.00"))
                 .stock(10)
-                .estado("Em Stock")
+                .estado(EstadoArtigo.EM_STOCK)
                 .empresa(empresaMock)
                 .build();
 
+        when(movimentoEstoqueService.criar(any())).thenReturn(MovimentoEstoqueResponse.builder().build());
         when(artigoRepository.save(any(Artigo.class))).thenReturn(artigoSalvo);
+        when(artigoRepository.findById(1L)).thenReturn(Optional.of(artigoSalvo));
 
         ArtigoResponse response = artigoService.criar(request);
 
         assertNotNull(response);
         assertEquals("Notebook Dell", response.getNome());
-        assertEquals("Em Stock", response.getEstado());
+        assertEquals(EstadoArtigo.EM_STOCK, response.getEstado());
         verify(artigoRepository, times(1)).save(any(Artigo.class));
     }
 }

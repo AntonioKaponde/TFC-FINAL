@@ -48,6 +48,7 @@ public class Empresa {
     private IsencaoIva iva;
 
     @Column(name = "ano_fiscal")
+    @Builder.Default
     private LocalDate anoFiscal = LocalDate.now();
 
     @Column(name = "prefixo_fatura")
@@ -57,15 +58,18 @@ public class Empresa {
     private List<Fatura> fatura;
 
     @OneToMany(mappedBy = "empresa",cascade = CascadeType.ALL,orphanRemoval = true)
+    @Builder.Default
     private Set<Usuario> usuarios = new HashSet<>();
 
     @OneToMany(mappedBy = "empresa")
     private List<PerfilRole> perfilRole;
 
     @OneToMany(mappedBy = "empresa")
+    @Builder.Default
     private Set<Cliente> cliente = new HashSet<>();
 
     @OneToMany(mappedBy = "empresa")
+    @Builder.Default
     private Set<Fornecedor> fornecedor = new HashSet<>();
 
 

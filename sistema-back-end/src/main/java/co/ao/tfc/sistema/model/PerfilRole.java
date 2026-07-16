@@ -24,6 +24,7 @@ public class PerfilRole {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Set<Permissao> permissoes = new HashSet<>();
 
     @ManyToOne
@@ -31,6 +32,7 @@ public class PerfilRole {
     private Empresa empresa;
 
     @ManyToMany(mappedBy="perfilRoles")
+    @Builder.Default
     private Set<Usuario> usuarios = new HashSet<>();
 
 }

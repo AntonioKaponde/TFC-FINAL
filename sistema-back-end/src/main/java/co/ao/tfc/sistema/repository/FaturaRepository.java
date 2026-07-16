@@ -1,3 +1,5 @@
+package co.ao.tfc.sistema.repository;
+
 import co.ao.tfc.sistema.model.Empresa;
 import co.ao.tfc.sistema.model.Fatura;
 import co.ao.tfc.sistema.model.enums.EstadoFatura;

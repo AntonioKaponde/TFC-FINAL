@@ -21,6 +21,7 @@ public class EmpresaRegisterRequest {
     private String telefone;
     private TipoEmpresa tipoEmpresa;
     private RegimeIva regimeIva;
+    @Builder.Default
     private LocalDate anoFiscal = LocalDate.now();
 
 }
