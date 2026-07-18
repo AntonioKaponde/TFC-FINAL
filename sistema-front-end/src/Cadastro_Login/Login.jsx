@@ -72,13 +72,19 @@ export default function Login() {
         navigate('/dashboard');
       }
     } catch (err) {
-      const status = err.response?.status;
-      if (status === 401 || status === 403) {
+      // O erro tem a propriedade .status quando vem do nosso client.js
+      // ou pode ser um TypeError de rede (fetch sem resposta)
+      const status = err.status;
+      if (status === 400) {
+        setError('Dados inválidos. Verifique o email e a palavra-passe.');
+      } else if (status === 401 || status === 403) {
         setError('Credenciais inválidas. O email ou a palavra-passe não estão corretos.');
       } else if (status === 404) {
         setError('Utilizador não encontrado. Verifique se introduziu o email correto.');
       } else if (status === 500) {
         setError('Erro interno do servidor. Por favor, tente novamente mais tarde.');
+      } else if (err instanceof TypeError && err.message === 'Failed to fetch') {
+        setError('Não foi possível conectar ao servidor. Verifique a sua ligação à internet ou tente novamente.');
       } else {
         setError('Não foi possível iniciar sessão. Verifique a sua ligação ou tente novamente.');
       }

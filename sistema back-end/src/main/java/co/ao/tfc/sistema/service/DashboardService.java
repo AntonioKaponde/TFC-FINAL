@@ -77,7 +77,7 @@ public class DashboardService {
         }
 
         // IVA Líquido a Entregar ao Estado = IVA a Pagar - IVA a Recuperar (Art. 22.º CIVA)
-        BigDecimal ivaLiquido = ivaAPagar.subtract(ivaARecuperar).max(BigDecimal.ZERO);
+        BigDecimal ivaLiquido = ivaAPagar.subtract(ivaARecuperar);
 
         BigDecimal totalImpostos = ivaAPagar;
         BigDecimal lucroRetido = faturacaoBruta.subtract(totalImpostos);

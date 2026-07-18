@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -35,6 +36,7 @@ public class SaftService {
         return user.getEmpresa();
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportarSaft(int ano, int mes) {
         Empresa empresa = getEmpresaLogada();
         LocalDate dataInicio = LocalDate.of(ano, mes, 1);

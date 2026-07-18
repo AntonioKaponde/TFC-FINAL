@@ -71,6 +71,7 @@ public class FaturaService {
                 .numero(gerarNumero(tipoDocumento))
                 .cliente(cliente)
                 .dataEmissao(request.getDataEmissao())
+                .dataHoraEmissao(java.time.LocalDateTime.now())
                 .dataVencimento(request.getDataVencimento())
                 .pagoPronto(request.isPagoPronto())
                 .metodoPagamento(request.getMetodoPagamento())

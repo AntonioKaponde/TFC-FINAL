@@ -27,6 +27,7 @@ export default function NovoArtigo() {
   const [fornecedores, setFornecedores] = useState([]);
   const [form, setForm] = useState({
     nome: "",
+    sku: "",
     categoriaId: "",
     fornecedorId: "",
     preco: "",
@@ -61,6 +62,7 @@ export default function NovoArtigo() {
     try {
       await artigosApi.criar({
         nome: form.nome,
+        sku: form.sku,
         categoriaId: form.categoriaId,
         fornecedorId: form.fornecedorId,
         preco: Number(form.preco),
@@ -134,13 +136,15 @@ export default function NovoArtigo() {
                   </Typography>
                   <input
                     type="text"
+                    value={form.sku}
+                    onChange={(e) => setForm({ ...form, sku: e.target.value })}
                     placeholder="Ex:LAP-PRO-X"
                     style={{
                       width: "500px",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
-                      border: ".1px solid#05040444",
+                      border: ".1px solid #05040444",
                       margin: "2px 0",
                     }}
                   />
@@ -323,13 +327,7 @@ export default function NovoArtigo() {
                   <Select
                     value={form.unidadeMedida}
                     onChange={(e) => setForm({ ...form, unidadeMedida: e.target.value })}
-                    style={{
-                      width: "330px",
-                      height: "2.1em",
-                      padding: 10,
-                      border: ".1px solid#05040444",
-                      margin: "2px 0",
-                    }}
+                    sx={{ width: "330px", height: "2.1em", margin: "2px 0" }}
                   >
                     <MenuItem value="UN">Unidade (UN)</MenuItem>
                     <MenuItem value="KG">Quilograma (KG)</MenuItem>

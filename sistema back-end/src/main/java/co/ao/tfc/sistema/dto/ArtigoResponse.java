@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 public class ArtigoResponse {
     private Long id;
     private String nome;
+    private String sku;
     private Long categoriaId;
     private String categoria; // Nome da categoria
     private Long fornecedorId;

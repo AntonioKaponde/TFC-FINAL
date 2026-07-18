@@ -59,6 +59,7 @@ export default function FiscalCard() {
     dashboardApi
       .indicadores(ANO_REFERENCIA)
       .then(setIndicadores)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -70,14 +71,16 @@ export default function FiscalCard() {
     );
   }
 
-  const ivaAPagar = Number(indicadores?.ivaAPagar ?? 0);
+  const ivaAPagar     = Number(indicadores?.ivaAPagar     ?? 0);
   const ivaARecuperar = Number(indicadores?.ivaARecuperar ?? 0);
-  const ivaLiquido = Number(indicadores?.ivaLiquido ?? Math.max(0, ivaAPagar - ivaARecuperar));
-  
-  const totalImpostos = ivaAPagar + ivaARecuperar;
-  const total = totalImpostos > 0 ? totalImpostos : 1; // evitar divisão por zero
+  const ivaLiquido    = Number(indicadores?.ivaLiquido    ?? (ivaAPagar - ivaARecuperar));
 
-  const pct = (valor) => Math.round((valor / total) * 100);
+  const totalImpostos = ivaAPagar + ivaARecuperar;
+  const total = totalImpostos > 0 ? totalImpostos : 1;
+
+  // IVA Liquidado usa ivaAPagar (bruto das vendas) — cresce a cada factura
+  // IVA Dedutivel usa ivaARecuperar (das compras)
+  const pct = (valor) => Math.round((Math.abs(valor) / total) * 100);
 
   return (
     <Card sx={{ width: '22.3rem', boxShadow: '0px 4px 20px rgba(0,0,0,0.05)', p: 2, height: '42rem', margin: '0 auto' }}>
@@ -96,25 +99,16 @@ export default function FiscalCard() {
           </IconButton>
         </Box>
 
-        {/* IVA Bruto das Vendas 
+        {/* IVA Liquidado — IVA cobrado nas vendas */}
         <TaxRow
-          label={`IVA (${indicadores?.taxaIvaAplicada ?? 14}%) — Vendas`}
+          label="IVA Liquidado"
           value={formatKzSemPrefixo(ivaAPagar)}
-          totalPercentage={100}
-          color="#6366f1"
-          tooltip="IVA total liquidado nas facturas de venda (Art. 22.º CIVA Angola)"
-        />*/}
-
-        {/* IVA a Pagar ao Estado */}
-        <TaxRow
-          label="IVA a Pagar (AGT)"
-          value={formatKzSemPrefixo(ivaLiquido)}
-          totalPercentage={pct(ivaLiquido)}
+          totalPercentage={pct(ivaAPagar)}
           color="#ef4444"
-          tooltip="IVA líquido a entregar ao Estado = IVA das Vendas − IVA das Compras (Art. 22.º CIVA Angola)"
+          tooltip="IVA cobrado aos clientes nas facturas emitidas. (Art. 22.º CIVA Angola)"
         />
 
-        {/* IVA a Recuperar (Dedutível) */}
+        {/* IVA Dedutível — verde */}
         <TaxRow
           label="IVA Dedutível (A Recup.)"
           value={formatKzSemPrefixo(ivaARecuperar)}
@@ -141,7 +135,7 @@ export default function FiscalCard() {
           <Divider sx={{ my: 1 }} />
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="caption" sx={{ fontWeight: 700, color: '#1e293b' }}>A Entregar à AGT</Typography>
-            <Typography variant="caption" sx={{ fontWeight: 700, color: '#ef4444' }}>Kz {formatKzSemPrefixo(ivaLiquido)}</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 700, color: '#ef4444' }}>Kz {formatKzSemPrefixo(Math.abs(ivaLiquido))}</Typography>
           </Box>
         </Box>
       </CardContent>

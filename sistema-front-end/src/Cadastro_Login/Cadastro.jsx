@@ -1,4 +1,3 @@
-
 import {
   Box,
   Grid,
@@ -6,30 +5,24 @@ import {
   TextField,
   Button,
   MenuItem,
-  Checkbox,
-  FormControlLabel,
   Card,
   IconButton,
   InputAdornment,
-  ToggleButtonGroup,
-  ToggleButton,
   Divider,
   FormControl,
-  FormLabel,
   Select,
   Snackbar,
   Alert
 } from '@mui/material';
 import {
-  CorporateFare,
   Visibility,
   VisibilityOff,
-  Security,
-  ArrowBack
+  Security
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { api } from '../api/client';
+
 export default function Cadastro() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -76,7 +69,7 @@ export default function Cadastro() {
       await api.post('/api/auth/register', formData);
       setSuccessMsg("Empresa e Administrador criados com sucesso! Bem-vindo ao Kamba Gestão.");
       setTimeout(() => {
-        navigate('/'); // Redireciona para o login em caso de sucesso
+        navigate('/');
       }, 3000);
     } catch (err) {
       setError(err.response?.data?.message || err.response?.data || err.message || 'Erro ao registrar');
@@ -85,53 +78,53 @@ export default function Cadastro() {
 
   return (
     <Grid container sx={{ minHeight: '100vh', bgcolor: '#f4f6f9' }}>
-      
-      {/* COLUNA ESQUERDA: Painel Informativo e Passos */}
-      <Grid 
-        item 
-        xs={12} 
-        md={5} 
-        sx={{ 
-          p: { xs: 4, md: 8 }, 
-          display: 'flex', 
-          flexDirection: 'column', 
+
+      {/* COLUNA ESQUERDA: Painel Informativo */}
+      <Grid
+        item
+        xs={12}
+        md={6.5}
+        sx={{
+          p: { xs: 4, md: 8 },
+          display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'space-between',
-          bgcolor: '#ffffff',
-          borderRight: '1px solid #e0e0e0'
+          borderRight: '1px solid #E2E8F0'
         }}
       >
         <Box>
-          {/* Logo e Nome */}
+          {/* Logo */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
             <Box sx={{ bgcolor: '#083927', color: 'white', p: 0.8, borderRadius: 1.5, display: 'flex' }}>
-             <Security sx={{ color: '#fff' }} />
+              <Security sx={{ color: '#fff' }} />
             </Box>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>
               Kamba Gestão
             </Typography>
           </Box>
-          <Typography variant="caption" color="textSecondary" display="block" sx={{ mb: 4 }}>
+          <Typography variant="body2" color="textSecondary" display="block" sx={{ mb: 4, color: '#64748B' }}>
             Configuração inicial da conta empresarial
           </Typography>
 
-          {/* Badge informativa 
-          <Box sx={{ display: 'inline-block', bgcolor: '#e8eaf6', px: 2, py: 0.5, borderRadius: 2, mb: 3 }}>
-            <Typography variant="caption" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
-              ⚙️ Registo empresarial com utilizador administrador
-            </Typography>
-          </Box>*/}
-          
-
           {/* Título Principal */}
-          <Typography variant="h4" sx={{ fontWeight: 800, mb: 3, color: '#111111', lineHeight: 1.2 }}>
-            Crie a empresa, defina o <br /> utilizador  principal e  comece a <br /> faturar com conformidade AGT.
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 600,
+              color: '#0F172A',
+              mb: 2,
+              fontSize: { xs: '2rem', md: '2.75rem' },
+              lineHeight: 1.2
+            }}
+          >
+            Crie a empresa, defina o <br /> utilizador principal e comece a <br /> faturar com conformidade AGT.
           </Typography>
 
-          <Typography variant="body1" color="textSecondary" sx={{ mb: 5 }}>
-            Este fluxo reúne os dados da organização e do administrador responsável para acelerar <br /> a ativação do sistema de inventário e faturação.
+          <Typography variant="body1" sx={{ color: '#64748B', mb: 6, maxWidth: 540 }}>
+            Este fluxo reúne os dados da organização e do administrador responsável para acelerar a ativação do sistema de inventário e faturação.
           </Typography>
 
-          {/* Indicadores de Passos (Lista Visual) */}
+          {/* Indicadores de Passos */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {[
               { num: 1, title: 'Dados da empresa', desc: 'Nome legal, NIF, setor, regime fiscal e contactos principais.', active: true },
@@ -139,20 +132,20 @@ export default function Cadastro() {
               { num: 3, title: 'Segurança e ativação', desc: 'Configuração de palavra-passe, segundo fator e preparação para emissão certificada.' }
             ].map((step) => (
               <Box key={step.num} sx={{ display: 'flex', gap: 2 }}>
-                <Box sx={{ 
-                  width: 32, height: 32, borderRadius: '50%', 
-                  bgcolor: step.active ? '#083927' : '#e0e0e0', 
-                  color: step.active ? 'white' : '#666',
+                <Box sx={{
+                  width: 36, height: 36, borderRadius: '50%',
+                  bgcolor: step.active ? '#083927' : '#E2E8F0',
+                  color: step.active ? 'white' : '#94A3B8',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontWeight: 'bold', fontSize: 14, flexShrink: 0
+                  fontWeight: 700, fontSize: 15, flexShrink: 0
                 }}>
                   {step.num}
                 </Box>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0F172A' }}>
                     {step.title}
                   </Typography>
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="body2" sx={{ color: '#64748B' }}>
                     {step.desc}
                   </Typography>
                 </Box>
@@ -160,303 +153,305 @@ export default function Cadastro() {
             ))}
           </Box>
         </Box>
-
-        {/* Rodapé da esquerda
-        <Box sx={{ mt: 4, bgcolor: '#e8eaf6', p: 1.5, borderRadius: 1.5, textAlign: 'center' }}>
-          <Typography variant="caption" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
-            Pronto para grossistas, distribuidores e retalho tecnológico
-          </Typography>
-        </Box> */}
-        
       </Grid>
 
-
       {/* COLUNA DIREITA: Formulário */}
-     <Grid
-        container
-        spacing={2}
+      <Grid
+        item
+        xs={12}
+        md={5.5}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          p:2
+          display: 'flex',
+          alignItems: 'center',
+          width: '54rem',
+          ml:11,
+          justifyContent: 'center',
+          p: { xs: 4, md: 8 }
         }}
       >
-        <Card sx={{ width:"60rem"}}>
-          <Box sx={{ p: 5 }}>
-            <Grid>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Criar Conta</Typography>
-              <Typography variant="body1" color="textSecondary">
-                Registre a empresa e o utilizador administrador no mesmo
-                processo.
-              </Typography>
-            </Grid>
-              <Grid>
-                <Typography variant="h6" sx={{ fontWeight: 'bold',mb:2 }}>Informações da Empresa</Typography>
-              <form action="">
+        <Card sx={{ width: '100%', maxWidth: 800, borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <Box sx={{ p: { xs: 3, md: 4 } }}>
+            {/* Cabeçalho */}
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+              Criar Conta
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+              Registre a empresa e o utilizador administrador no mesmo processo.
+            </Typography>
+
+            {/* Secção: Empresa */}
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#222', mb: 2 }}>
+              Informações da Empresa
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+              <FormControl fullWidth>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                  Nome legal da empresa
+                </Typography>
+                <TextField
+                  type="text"
+                  name="nomeEmpresa"
+                  value={formData.nomeEmpresa}
+                  onChange={handleChange}
+                  placeholder="TechDistribuição Angola, Lda"
+                  size="small"
+                  fullWidth
+                />
+              </FormControl>
+
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                 <FormControl fullWidth>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>Nome legal da empresa </Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    NIF
+                  </Typography>
                   <TextField
                     type="text"
-                    name="nomeEmpresa"
-                    value={formData.nomeEmpresa}
+                    name="nif"
+                    value={formData.nif}
                     onChange={handleChange}
-                    placeholder="TechDistribuição Angola,Lda"
-                    sx={{ mb: 2 }}
+                    placeholder="5000123456"
+                    size="small"
+                    fullWidth
                   />
                 </FormControl>
-                <FormControl
-                  sx={{
-                    width: "20rem",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 5,
-                  }}
-                >
-                  <FormLabel>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>NIF</Typography>
-                    <TextField
-                      type="text"
-                      name="nif"
-                      value={formData.nif}
-                      onChange={handleChange}
-                      placeholder="5000123456"
-                      sx={{ width: "26rem" }}
-                    />
-                  </FormLabel>
 
-                  <FormLabel>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>Telefone</Typography>
-                    <TextField
-                      type="number"
-                      name="telefoneEmpresa"
-                      value={formData.telefoneEmpresa}
-                      onChange={handleChange}
-                      placeholder="943093943"
-                      inputProps={{ min: 0 }}
-                      onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
-                      sx={{ width: "26.5rem" }}
-                    />
-                  </FormLabel>
-                </FormControl>
-                <FormControl sx={{ width: "20rem" }}></FormControl>
                 <FormControl fullWidth>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>Endereço</Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Telefone
+                  </Typography>
                   <TextField
-                    name="endereco"
-                    value={formData.endereco}
+                    type="number"
+                    name="telefoneEmpresa"
+                    value={formData.telefoneEmpresa}
                     onChange={handleChange}
-                    placeholder="Talatona, Luanda, Angola"
-                    sx={{ mb: 2 }}
+                    placeholder="943093943"
+                    size="small"
+                    fullWidth
+                    inputProps={{ min: 0 }}
+                    onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                  />
+                </FormControl>
+              </Box>
+
+              <FormControl fullWidth>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                  Endereço
+                </Typography>
+                <TextField
+                  name="endereco"
+                  value={formData.endereco}
+                  onChange={handleChange}
+                  placeholder="Talatona, Luanda, Angola"
+                  size="small"
+                  fullWidth
+                />
+              </FormControl>
+
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Sector
+                  </Typography>
+                  <Select
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleChange}
+                    fullWidth
+                    size="small"
+                  >
+                    <MenuItem value="BEBIDAS">Bebidas</MenuItem>
+                    <MenuItem value="ELECTRONICO">Electrónico</MenuItem>
+                    <MenuItem value="COSMETICOS">Cosméticos</MenuItem>
+                    <MenuItem value="PAPELARIA">Papelaria</MenuItem>
+                    <MenuItem value="AUTOMOVEL">Automóvel</MenuItem>
+                    <MenuItem value="AGRICULTURA">Agricultura</MenuItem>
+                    <MenuItem value="VESTUARIO">Vestuário</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Regime de IVA
+                  </Typography>
+                  <Select
+                    name="regimeIva"
+                    value={formData.regimeIva}
+                    onChange={handleChange}
+                    fullWidth
+                    size="small"
+                  >
+                    <MenuItem value="GERAL">Regime Geral (14%)</MenuItem>
+                    <MenuItem value="SIMPLIFICADO">Regime Simplificado</MenuItem>
+                    <MenuItem value="EXCLUSAO">Regime de Exclusão</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 2.5 }} />
+
+            {/* Secção: Administrador */}
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#222', mb: 2 }}>
+              Administrador
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Nome Completo
+                  </Typography>
+                  <TextField
+                    type="text"
+                    name="nomeAdministrador"
+                    value={formData.nomeAdministrador}
+                    onChange={handleChange}
+                    placeholder="António Caponde"
+                    size="small"
+                    fullWidth
                   />
                 </FormControl>
 
-                <FormControl
-                  size="small"
-                  sx={{
-                    mt: 1,
-                    width: "20rem",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 5,
-                  }}
-                >
-                  <FormLabel>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', }}>Sector</Typography>
-                    <Select
-                      name="sector"
-                      value={formData.sector}
-                      onChange={handleChange}
-                      sx={{ width: "26rem", height: "55px" }}
-                    >
-                      <MenuItem value={"FARMACIA"}>Farmácia</MenuItem>
-                      <MenuItem value={"CANTINA"}>Cantina</MenuItem>
-                      <MenuItem value={"SUPERMERCADO"}>Supermercado</MenuItem>
-                      <MenuItem value={"BARBEARIA"}>Barbearia</MenuItem>
-                      <MenuItem value={"RESTAURANTE"}>Restaurante</MenuItem>
-                      <MenuItem value={"TECNOLOGIA"}>Tecnologia</MenuItem>
-                      <MenuItem value={"PAPELARIA"}>Papelaria</MenuItem>
-                      <MenuItem value={"LIVRARIA"}>Livraria</MenuItem>
-                    </Select>
-                  </FormLabel>
-                  <FormLabel>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>Regime de IVA</Typography>
-                    <Select
-                      name="regimeIva"
-                      value={formData.regimeIva}
-                      onChange={handleChange}
-                      sx={{ width: "26.5rem", height: "55px",mb: 2,textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2  }}
-                    >
-                      <MenuItem value={"GERAL"}>Regime Geral (14%)</MenuItem>
-                      <MenuItem value={"SIMPLIFICADO"}>Regime Simplificado</MenuItem>
-                      <MenuItem value={"EXCLUSAO"}>Regime de Exclusão</MenuItem>
-                    </Select>
-                  </FormLabel>
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Email
+                  </Typography>
+                  <TextField
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="admin@gmail.com"
+                    size="small"
+                    fullWidth
+                  />
                 </FormControl>
-              </form>
-              </Grid>
-              <Divider sx={{m:"2rem 0"}}/>
-              <Grid>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' ,mb:2}}>Administrador</Typography>
-              <form action="">
-                <FormControl
-                  sx={{
-                    width: "20rem",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 5,
-                    mb:2
-                  }}
-                >
-                  <FormLabel>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#222' }}>Nome Completo</Typography>
-                    <TextField
-                      type="text"
-                      name="nomeAdministrador"
-                      value={formData.nomeAdministrador}
-                      onChange={handleChange}
-                      placeholder="António Caponde"
-                      sx={{width: "26rem",mb: 2,textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2  }}
-                    />
-                  </FormLabel>
+              </Box>
 
-                  <FormLabel>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222' }}>Email</Typography>
-                    <TextField
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="admin@gmail.co.ao"
-                      sx={{width: "26.5rem", mb: 2,textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2 , 
-              fontWeight: 600
-             }}
-                    />
-                  </FormLabel>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Palavra-passe
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Mínimo 8 caracteres"
+                    size="small"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 </FormControl>
-                 {/* Campo: Senha */}
-                           <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
-                             Palavra-passe
-                           </Typography>
-                             <TextField
-                               fullWidth
-                               type={showPassword ? 'text' : 'password'}
-                               name="password"
-                               value={formData.password}
-                               onChange={handleChange}
-                               variant="outlined"
-                               sx={{ mb: 2,textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2 }}
-                             InputProps={{
-                               endAdornment: (
-                                 <InputAdornment position="end">
-                                   <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                     {showPassword ? <VisibilityOff /> : <Visibility />}
-                                   </IconButton>
-                                 </InputAdornment>
-                               ),
-                               style: { borderRadius: 8 }
-                             }}
-                           />
-                           {/* Campo: Senha */}
-                                     <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
-                                       Confirmar Palavra-passe
-                                     </Typography>
-                                     <TextField
-                                       fullWidth
-                                       type={showPassword ? 'text' : 'password'}
-                                       name="confirmPassword"
-                                       value={formData.confirmPassword}
-                                       onChange={handleChange}
-                                       variant="outlined"
-                                       sx={{ mb: 2 ,textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2,
-              }}
-                                       InputProps={{
-                                         endAdornment: (
-                                           <InputAdornment position="end">
-                                             <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                               {showPassword ? <VisibilityOff /> : <Visibility />}
-                                             </IconButton>
-                                           </InputAdornment>
-                                         ),
-                                         style: { borderRadius: 8 }
-                                       }}
-                                     />
-              </form>
-              </Grid>
+
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#222', mb: 0.5, fontSize: '0.85rem' }}>
+                    Confirmar Palavra-passe
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    type={showPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Repita a palavra-passe"
+                    size="small"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </FormControl>
+              </Box>
+            </Box>
+
+            {/* Mensagem de erro */}
             {error && (
-              <Typography color="error" sx={{ mt: 2, textAlign: 'center' }}>
+              <Alert severity="error" sx={{ mt: 1, mb: 1, borderRadius: 1.5, bgcolor: '#FEF2F2', color: '#991B1B', border: '1px solid #FCA5A5' }}>
                 {error}
-              </Typography>
+              </Alert>
             )}
-            <Grid sx={{mt:5,display:"flex",gap:5,mb:5}}>
-              <Button onClick={handleRegister} sx={{bgcolor:"#083927",color:"#fff",width:"26rem",height:"3rem",fontWeight:"bold",textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2,
-              mb: 2,}} variant="outlined">Criar empresa e utilizador</Button>
-              <Button sx={{bgcolor:"#f6fcfa",color:"#050505",height:"3rem",fontWeight:"bold",border:"1px solid #38323228"
-                ,color: "inherit",
-    "&.active": {
-      bgcolor: "primary.main",
-      color: "white",
-    },
-    "&:focus": {
-      outline: "none",
-    },
-              }} variant="outlined" >
-                 <Link style={{textDecoration:"none",color:"black",textTransform: 'none', 
-              fontWeight: 600, 
-              py: 1.5, 
-              borderRadius: 2,
-              mb: 2,}} to="/">
-                  Voltar ao login
-            </Link>
+
+            {/* Botões */}
+            <Box sx={{ mt: 3, display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+              <Button
+                onClick={handleRegister}
+                variant="contained"
+                sx={{
+                  bgcolor: '#083927',
+                  '&:hover': { bgcolor: '#065F46' },
+                  color: '#fff',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  py: 1.3,
+                  px: 3,
+                  borderRadius: 2,
+                  flex: 1.5,
+                  minWidth: 0,
+                  fontSize: '0.9rem'
+                }}
+              >
+                Criar empresa e utilizador
               </Button>
-            </Grid>
+
+              <Button
+                component={Link}
+                to="/"
+                variant="outlined"
+                sx={{
+                  borderColor: '#E2E8F0',
+                  color: '#475569',
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  py: 1.3,
+                  px: 3,
+                  borderRadius: 2,
+                  flex: 1,
+                  minWidth: 0,
+                  fontSize: '0.9rem',
+                  '&:hover': {
+                    borderColor: '#CBD5E1',
+                    bgcolor: '#F8FAFC'
+                  }
+                }}
+              >
+                Voltar ao login
+              </Button>
+            </Box>
           </Box>
         </Card>
       </Grid>
 
-          {/* Links do Rodapé 
-           <Box sx={{ display: 'flex', justifyContent: 'between', mt: 4, pt: 2, borderTop: '1px solid #eee' }}>
-            <Typography variant="caption" color="textSecondary">
-              Já tem conta? <Box component="span" sx={{ color: '#1976d2', cursor: 'pointer', fontWeight: 'bold' }}>Iniciar sessão</Box>
-            </Typography>
-            <Box sx={{ flexGrow: 1 }} />
-            <Typography variant="caption" sx={{ color: '#1976d2', cursor: 'pointer', fontWeight: 'bold' }}>
-              Falar com suporte
-            </Typography>
-          </Box>*/}
+      {/* Snackbar de sucesso */}
       <Snackbar
         open={Boolean(successMsg)}
         autoHideDuration={6000}
         onClose={() => setSuccessMsg(null)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           onClose={() => setSuccessMsg(null)}
           severity="success"
-          sx={{ width: "100%", borderRadius: 2 }}
+          sx={{ width: '100%', borderRadius: 2, fontWeight: 500 }}
         >
           {successMsg}
         </Alert>
       </Snackbar>
     </Grid>
-
   );
 }

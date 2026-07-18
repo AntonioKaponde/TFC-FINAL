@@ -52,7 +52,7 @@ export default function Clientes() {
             <Box
               sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" },ml: { xs: 0, sm: "34rem" } }}
             >
-              <Button
+              {/*<Button
                 onClick={() => exportarPDF('area-impressao', 'Clientes')}
                 variant="contained"
                 startIcon={<PictureAsPdfIcon />}
@@ -67,7 +67,7 @@ export default function Clientes() {
                 }}
               >
                 Exportar PDF
-              </Button>
+              </Button> */}
               {!isContabilista && (
                 <Button
                   variant="contained"
@@ -80,7 +80,8 @@ export default function Clientes() {
                     boxShadow: 'none',
                     fontWeight: 600,
                     borderRadius: 2,
-                    textTransform: 'none'
+                    textTransform: 'none',
+                    ml:29
                   }}
                 >
                   <Link style={{textDecoration:"none", color: "inherit", width: "100%", textAlign: "center"}} to="/novoCliente">

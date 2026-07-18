@@ -1,5 +1,21 @@
 const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
+/** Limpa todos os dados de autenticação e redireciona para o login */
+function limparSessaoERedirecionar() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('userRoles');
+  localStorage.removeItem('userName');
+  sessionStorage.removeItem('session_active');
+  window.location.href = '/';
+}
+
+/** Cria um erro estruturado com código HTTP */
+function criarErro(mensagem, status) {
+  const error = new Error(mensagem);
+  error.status = status;
+  return error;
+}
+
 async function request(path, options = {}) {
   const token = localStorage.getItem('token');
   const headers = {
@@ -17,13 +33,23 @@ async function request(path, options = {}) {
   });
 
   if (!response.ok) {
+    // Se o token expirou ou é inválido (401) em rotas protegidas,
+    // redireciona automaticamente para o login
+    if (response.status === 401 && !path.startsWith('/api/auth/')) {
+      limparSessaoERedirecionar();
+      return; // nunca atinge este ponto, mas previne erro
+    }
+
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.mensagem || error.message || error.error || `Erro ${response.status}`);
+      const errorBody = await response.json().catch(() => ({}));
+      throw criarErro(
+        errorBody.mensagem || errorBody.message || errorBody.error || `Erro ${response.status}`,
+        response.status
+      );
     } else {
       const errorText = await response.text();
-      throw new Error(errorText || `Erro ${response.status}`);
+      throw criarErro(errorText || `Erro ${response.status}`, response.status);
     }
   }
 
@@ -50,6 +76,12 @@ export const api = {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {},
     });
     if (!response.ok) {
+      // Redireciona automaticamente se token expirou
+      if (response.status === 401 && !path.startsWith('/api/auth/')) {
+        limparSessaoERedirecionar();
+        return;
+      }
+
       let mensagem = `Erro ao baixar: ${response.status}`;
       try {
         const contentType = response.headers.get('content-type');
@@ -61,7 +93,9 @@ export const api = {
           if (text) mensagem = text;
         }
       } catch (_) {}
-      throw new Error(mensagem);
+      const error = new Error(mensagem);
+      error.status = response.status;
+      throw error;
     }
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);

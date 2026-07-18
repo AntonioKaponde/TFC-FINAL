@@ -11,6 +11,9 @@ public class ArtigoRequest {
     @NotBlank
     private String nome;
 
+    @NotBlank(message = "O código SKU é obrigatório")
+    private String sku;
+
     @NotNull(message = "A categoria é obrigatória")
     private Long categoriaId;
 

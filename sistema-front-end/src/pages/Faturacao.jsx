@@ -46,7 +46,7 @@ export default function Faturacao() {
             <Box
               sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" },ml: { xs: 0, sm: "29rem" } }}
             >
-              <Button
+              {/*<Button
                 onClick={() => exportarPDF('area-impressao', 'Faturacao')}
                 variant="contained"
                 startIcon={<PictureAsPdfIcon />}
@@ -62,7 +62,7 @@ export default function Faturacao() {
                 }}
               >
                 Exportar PDF
-              </Button>
+              </Button>*/}
               <Button
                 component={Link}
                 to="/venda"
@@ -78,7 +78,8 @@ export default function Faturacao() {
                   fontWeight: 600, 
                   px: 2.5, 
                   boxShadow: 'none', 
-                  textDecoration: 'none' 
+                  textDecoration: 'none',
+                  ml:28 
                 }}
               >
                 Nova Fatura

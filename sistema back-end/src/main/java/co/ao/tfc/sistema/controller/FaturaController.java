@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class FaturaController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping("/{id}/pdf")
+    @Transactional(readOnly = true)
     public ResponseEntity<byte[]> baixarPdf(@PathVariable Long id) {
         try {
             co.ao.tfc.sistema.model.Fatura fatura = faturaService.buscarEntidade(id);

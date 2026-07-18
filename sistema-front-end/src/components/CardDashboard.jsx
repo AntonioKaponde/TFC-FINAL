@@ -48,14 +48,15 @@ export default function CardDashboard() {
       valor: formatKz(indicadores.faturacaoBruta),
       icon: <DescriptionOutlinedIcon sx={{ fontSize: '2rem', color: '#64748b' }} />,
     },
+    
     {
-      titulo: `IVA a Pagar (${indicadores.taxaIvaAplicada}%)`,
+      titulo: 'IVA Liquidado',
       valor: formatKz(indicadores.ivaAPagar),
       icon: <PaymentsOutlinedIcon sx={{ fontSize: '2rem', color: '#64748b' }} />,
     },
     {
-      titulo: 'Total Impostos',
-      valor: formatKz(indicadores.totalImpostos),
+      titulo: 'IVA a Pagar (AGT)',
+      valor: formatKz(indicadores.ivaLiquido ?? Math.max(0, Number(indicadores.ivaAPagar || 0) - Number(indicadores.ivaARecuperar || 0))),
       icon: <CreditCardOutlinedIcon sx={{ fontSize: '2rem', color: '#64748b' }} />,
       cor: '#ff250d',
     },

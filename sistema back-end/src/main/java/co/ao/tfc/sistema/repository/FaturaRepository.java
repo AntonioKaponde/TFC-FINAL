@@ -18,16 +18,16 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
      * JOIN FETCH elimina o problema N+1: carrega as faturas e os seus clientes numa única query.
      * Sem isso, para N faturas o Hibernate faria N+1 SELECTs (1 para lista + 1 por cada cliente).
      */
-    @Query("SELECT DISTINCT f FROM Fatura f JOIN FETCH f.cliente WHERE f.empresa = :empresa ORDER BY f.dataEmissao DESC")
+    @Query("SELECT DISTINCT f FROM Fatura f JOIN FETCH f.cliente WHERE f.empresa = :empresa ORDER BY f.dataEmissao ASC, f.numero ASC")
     List<Fatura> findByEmpresa(@Param("empresa") Empresa empresa);
 
     List<Fatura> findByEmpresaAndDataEmissaoBetween(Empresa empresa, LocalDate inicio, LocalDate fim);
 
     @Query("SELECT COALESCE(SUM(f.total), 0) FROM Fatura f WHERE f.empresa = :empresa AND f.dataEmissao BETWEEN :inicio AND :fim")
-    BigDecimal somarTotalPorPeriodo(Empresa empresa, LocalDate inicio, LocalDate fim);
+    BigDecimal somarTotalPorPeriodo(@Param("empresa") Empresa empresa, @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 
     @Query("SELECT COALESCE(SUM(f.totalIva), 0) FROM Fatura f WHERE f.empresa = :empresa AND f.dataEmissao BETWEEN :inicio AND :fim")
-    BigDecimal somarIvaPorPeriodo(Empresa empresa, LocalDate inicio, LocalDate fim);
+    BigDecimal somarIvaPorPeriodo(@Param("empresa") Empresa empresa, @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 
     /**
      * Resumo mensal: mês, faturação base (sem IVA), IVA liquidado e quantidade de documentos emitidos.

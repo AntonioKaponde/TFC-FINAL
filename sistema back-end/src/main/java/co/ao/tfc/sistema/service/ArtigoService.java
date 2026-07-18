@@ -73,6 +73,7 @@ public class ArtigoService {
 
         Artigo artigo = Artigo.builder()
                 .nome(request.getNome())
+                .sku(request.getSku())
                 .categoria(categoria)
                 .fornecedor(fornecedor)
                 .preco(request.getPreco())
@@ -120,6 +121,7 @@ public class ArtigoService {
         }
 
         artigo.setNome(request.getNome());
+        artigo.setSku(request.getSku());
         artigo.setCategoria(categoria);
         artigo.setFornecedor(fornecedor);
         artigo.setPreco(request.getPreco());
@@ -176,6 +178,7 @@ public class ArtigoService {
         return ArtigoResponse.builder()
                 .id(artigo.getId())
                 .nome(artigo.getNome())
+                .sku(artigo.getSku())
                 .categoriaId(artigo.getCategoria() != null ? artigo.getCategoria().getId() : null)
                 .categoria(artigo.getCategoria() != null ? artigo.getCategoria().getNome() : null)
                 .fornecedorId(artigo.getFornecedor() != null ? artigo.getFornecedor().getId() : null)

@@ -3,6 +3,7 @@ package co.ao.tfc.sistema.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 
 /**
@@ -43,5 +44,6 @@ public class Auditoria {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
+    @JsonIgnore
     private Empresa empresa;
 }

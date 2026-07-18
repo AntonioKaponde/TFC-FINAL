@@ -133,7 +133,7 @@ export function resumoMensalImpostos(comparativo) {
     // O 'imposto' do backend = IVA Liquidado
     // O 'ivaDedutivel' do backend = IVA Dedutível das compras
     // IVA a Entregar = IVA Liquidado - IVA Dedutível
-    const ivaEntregar = Math.max(0, imposto - ivaDedutivel);
+    const ivaEntregar = imposto - ivaDedutivel;
     return {
       id: index + 1,
       periodo: item.mes,

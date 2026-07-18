@@ -8,10 +8,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "faturas", indexes = {
@@ -38,6 +37,10 @@ public class Fatura {
 
     @Column(nullable = false)
     private LocalDate dataEmissao;
+
+    /** Hora exacta de emissão da factura — usada no PDF e auditoria. */
+    @Column
+    private LocalDateTime dataHoraEmissao;
 
     @Column(nullable = false)
     private LocalDate dataVencimento;
@@ -81,11 +84,6 @@ public class Fatura {
     @ManyToOne
     @JoinColumn(name = "empresaId")
     private Empresa empresa;
-
-    @OneToMany
-    @JoinColumn(name = "artigoId")
-    @Builder.Default
-    private Set<Artigo> artigos = new HashSet<>();
 
     @OneToMany(mappedBy = "fatura")
     private List<NotaCredito> notaCredito;

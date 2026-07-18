@@ -25,6 +25,9 @@ public class Artigo {
     @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false, length = 50)
+    private String sku;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "categoriaId")
     private Categoria categoria;

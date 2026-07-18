@@ -37,8 +37,11 @@ public class Cliente {
     @Column(nullable = false, length = 20)
     private String codigoCliente;
 
+    @Column
+    private String tipoCliente;
+
     @Column(nullable = false)
-    private boolean ativo;
+    private boolean ativo = true;
 
     @ManyToOne
     @JoinColumn(name = "empresaId")

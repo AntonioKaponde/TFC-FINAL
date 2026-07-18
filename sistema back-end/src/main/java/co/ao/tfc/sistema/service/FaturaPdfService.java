@@ -31,7 +31,8 @@ public class FaturaPdfService {
     private static final Color COR_VERDE = new Color(11, 110, 79);
     private static final Color COR_CINZA_CLARO = new Color(248, 249, 250);
     private static final Color COR_CINZA = new Color(100, 116, 139);
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter FORMATTER      = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter FORMATTER_HORA  = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public byte[] gerarFaturaPdf(Fatura fatura) throws DocumentException {
         Document document = new Document();
@@ -113,7 +114,14 @@ public class FaturaPdfService {
         PdfPCell docCell = new PdfPCell();
         docCell.setBorder(PdfPCell.NO_BORDER);
         docCell.addElement(new Paragraph("DADOS DO DOCUMENTO", fontSmallBold));
-        docCell.addElement(new Paragraph("Data de Emissão: " + fatura.getDataEmissao().format(FORMATTER), fontNormal));
+        // Data de emissão com hora (se disponível)
+        String dataEmissaoStr;
+        if (fatura.getDataHoraEmissao() != null) {
+            dataEmissaoStr = fatura.getDataHoraEmissao().format(FORMATTER_HORA);
+        } else {
+            dataEmissaoStr = fatura.getDataEmissao().format(FORMATTER);
+        }
+        docCell.addElement(new Paragraph("Data de Emissão: " + dataEmissaoStr, fontNormal));
         docCell.addElement(new Paragraph("Data de Vencimento: " + fatura.getDataVencimento().format(FORMATTER), fontNormal));
         docCell.addElement(new Paragraph("Tipo: " + nomeTipoDoc, fontNormal));
         docCell.addElement(new Paragraph("Estado: " + labelEstado(fatura), fontNormal));
@@ -204,7 +212,7 @@ public class FaturaPdfService {
         document.add(rodape1);
 
         Paragraph rodape2 = new Paragraph(
-            "Processado por computador — Kamba Gestão (Software certificado pela AGT, n.º 00/AGT/2026)", fontSmall);
+            "Processado por computador — Kamba Gestão (Software não certificado pela AGT, n.º 00/AGT/2026)", fontSmall);
         rodape2.setAlignment(Element.ALIGN_CENTER);
         document.add(rodape2);
 

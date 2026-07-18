@@ -62,8 +62,9 @@ export default function Inventário() {
             <Box
               sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" },ml: { xs: 0, sm: "29rem" } }}
             >
-              <Button
+              {/*<Button
                 onClick={() => exportarPDF('area-impressao', 'Inventario')}
+                disabled
                 variant="contained"
                 startIcon={<PictureAsPdfIcon />}
                 sx={{
@@ -75,7 +76,7 @@ export default function Inventário() {
                 }}
               >
                 Exportar PDF
-              </Button>
+              </Button>*/}
               {!hideAdd && (
                 <Button
                   variant="contained"
@@ -89,7 +90,8 @@ export default function Inventário() {
                     textTransform: 'none',
                     fontWeight: 600,
                     px: 2.5,
-                    boxShadow: 'none'
+                    boxShadow: 'none',
+                    ml:29
                   }}
                 >
                   <Link style={{ textDecoration: "none", color: "inherit", width: "100%", textAlign: "center" }} to="/novoArtigo">
