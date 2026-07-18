@@ -2,10 +2,10 @@ spring:
   application:
     name: sistema-api
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/sistema}
     driver-class-name: org.postgresql.Driver
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:

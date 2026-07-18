@@ -168,14 +168,14 @@ export default function TabelaFornecedor() {
                 </Button>
               ))}
             </Box>
-            <Button
+            {/*<Button
             disabled
               variant="text"
               sx={{ color: "black", textTransform: 'none', fontWeight: 600, px: 2.5 }}
             >
               <FileDownloadOutlinedIcon sx={{ mr: 1 }} />
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Exportar</Box>
-            </Button>
+            </Button>*/}
           </CardContent>
         </Card>
       </Box>

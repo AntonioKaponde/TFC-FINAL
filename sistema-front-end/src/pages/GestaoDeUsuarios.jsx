@@ -129,7 +129,7 @@ export default function GestaoDeUsuarios() {
       <NavBar />
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1 ,mt:10}}>
+        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1 ,mt:10,ml:10}}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>

@@ -43,7 +43,7 @@ export default function FiscalRelatorio() {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box sx={{ width: 12, height: 12, bgcolor: '#ef4444', borderRadius: '2px' }} />
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>IVA a Pagar</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>IVA Liquidado</Typography>
                   </Box>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>{percentagens.ivaAPagar}%</Typography>
                 </Box>

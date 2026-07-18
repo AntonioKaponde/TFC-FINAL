@@ -115,7 +115,7 @@ export default function Categorias() {
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Gestão de Categorias
             </Typography>
-            <Button variant="contained" sx={{ bgcolor: "#0B6E4F" }} onClick={handleOpen}>
+            <Button variant="contained" sx={{ bgcolor: "#083927" }} onClick={handleOpen}>
               Nova Categoria
             </Button>
           </Box>

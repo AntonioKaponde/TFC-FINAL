@@ -24,7 +24,7 @@ public class CorsConfig {
         configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Applies CORS to all paths, including /auth and /api
+    
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

@@ -129,7 +129,6 @@ const PerfilEmpresa = forwardRef((props, ref) => {
               />
               {jaConfigurado('capitalSocial') && (
                 <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5 }}>
-                  Capital social já configurado. Apenas o telefone pode ser alterado.
                 </Typography>
               )}
             </FormControl>
@@ -179,7 +178,6 @@ const PerfilEmpresa = forwardRef((props, ref) => {
               />
               {jaConfigurado('email') && (
                 <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5 }}>
-                  Email já configurado. Apenas o telefone pode ser alterado.
                 </Typography>
               )}
             </FormControl>
@@ -202,7 +200,6 @@ const PerfilEmpresa = forwardRef((props, ref) => {
               />
               {jaConfigurado('endereco') && (
                 <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5 }}>
-                  Endereço já configurado. Apenas o telefone pode ser alterado.
                 </Typography>
               )}
             </FormControl>

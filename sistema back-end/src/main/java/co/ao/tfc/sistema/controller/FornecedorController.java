@@ -25,10 +25,7 @@ public class FornecedorController {
         return fornecedorService.listar(pesquisa);
     }
 
-    /**
-     * Endpoint para auto-preenchimento do fornecedor ao criar um artigo.
-     * Devolve o fornecedor que fornece o produto com o nome indicado.
-     */
+  
     @GetMapping("/por-produto")
     public org.springframework.http.ResponseEntity<FornecedorResponse> buscarPorProduto(@RequestParam String nome) {
         return fornecedorService.buscarPorProduto(nome)

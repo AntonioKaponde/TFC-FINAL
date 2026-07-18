@@ -48,7 +48,7 @@ export default function Fornecedores() {
                   startIcon={<AddIcon />}
                   sx={{ 
                     color: "#fff", 
-                    background: "#0B6E4F", 
+                    background: "#083927", 
                     height: "40px",
                     width: { xs: "100%", sm: "auto" },
                     borderRadius: 2, 

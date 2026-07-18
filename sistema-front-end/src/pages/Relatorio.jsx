@@ -56,7 +56,7 @@ export default function Relatorio() {
             <Box
               sx={{p:"20px 10px", display: "flex", gap: 2,ml:36}}
             >
-              <Button
+              {/*<Button
                 onClick={handleExportarPDF}
                 variant="contained"
                 startIcon={<PrintOutlinedIcon />}
@@ -70,13 +70,13 @@ export default function Relatorio() {
                 }}
               >
                Imprimir
-              </Button>
+              </Button>*/}
               <Button
                 onClick={handleExportarPDF}
                 variant="contained"
                 startIcon={<PictureAsPdfIcon />}
                 sx={{ borderRadius: 2, width: "215px",
-                  height: "40px",textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#0B6E4F"}}
+                  height: "40px",textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#083927",ml:45}}
               >
                Exportar PDF
               </Button>

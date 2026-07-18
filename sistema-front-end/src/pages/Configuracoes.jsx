@@ -74,7 +74,7 @@ export default function Configuracoes() {
         <NavBar />
         <Box  display={"flex"}>
           <SideBar />
-          <Box component={"main"} sx={{margin:"90px 90px",display:"flex", width: "100%", paddingBottom: "50px"}}>
+          <Box component={"main"} sx={{margin:"90px 100px 0px 200px",display:"flex", width: "100%", paddingBottom: "50px"}}>
            <Grid container spacing={2} sx={{display:"flex", flexDirection:"column"}}>
             <Grid sx={{ml:10}}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }} >Definições Gerais</Typography>
@@ -89,10 +89,20 @@ export default function Configuracoes() {
             </Grid>
             <Grid>
               <SerieDocumentos ref={serieRef} />
+              <Grid sx={{ display: "flex", justifyContent: "flex-end", mt: 4, ml: 10, width: "60em" }}>
+               <Button 
+                 variant="contained" 
+                 onClick={handleSaveAll}
+                 disabled={saving}
+                 sx={{ bgcolor: "#0B6E4F", color: "#fff", textTransform: "none", px: 4, py: 1.5, fontWeight: "bold" }}
+               >
+                 {saving ? <CircularProgress size={24} color="inherit" /> : "Guardar Todas as Alterações"}
+               </Button>
+            </Grid>
             </Grid>
             {isAdmin && (
               <Grid sx={{ ml: 10, mt: 4 }}>
-                <Card sx={{ p: 3, maxWidth: '800px', bgcolor: '#fffbeb', border: '1px solid #fde68a' }}>
+                {/*<Card sx={{ p: 3, maxWidth: '800px', bgcolor: '#fffbeb', border: '1px solid #fde68a' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                     <BuildCircleOutlinedIcon sx={{ color: '#d97706' }} />
                     <Typography variant="h6" sx={{ fontWeight: 700, color: '#92400e', fontSize: '1rem' }}>
@@ -127,19 +137,9 @@ export default function Configuracoes() {
                   <Typography variant="caption" sx={{ color: '#92400e', mt: 2, display: 'block' }}>
                     ⚠️ Estas operações afetam dados existentes. Execute apenas se necessário.
                   </Typography>
-                </Card>
+                </Card>*/}
               </Grid>
             )}
-            <Grid sx={{ display: "flex", justifyContent: "flex-end", mt: 4, ml: 10, width: "60em" }}>
-               <Button 
-                 variant="contained" 
-                 onClick={handleSaveAll}
-                 disabled={saving}
-                 sx={{ bgcolor: "#0B6E4F", color: "#fff", textTransform: "none", px: 4, py: 1.5, fontWeight: "bold" }}
-               >
-                 {saving ? <CircularProgress size={24} color="inherit" /> : "Guardar Todas as Alterações"}
-               </Button>
-            </Grid>
            </Grid>
           </Box>
         </Box>

@@ -149,7 +149,7 @@ export default function Login() {
               },
               {
                 icon: <BarChart sx={{ color: "#083927" }} />,
-                title: "Painel de IVA, IRT e Imposto Industrial",
+                title: "Painel de IVA",
                 desc: "Compare imposto a pagar, retenções e lucros retidos com leitura executiva."
               },
               {

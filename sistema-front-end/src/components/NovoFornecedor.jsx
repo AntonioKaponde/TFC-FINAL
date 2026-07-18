@@ -175,7 +175,6 @@ const NovoFornecedor = () => {
                     placeholder="Ex: Computadores, Impressoras, Monitores, Acessórios informáticos"
                     size="small"
                     sx={{ maxWidth: '44rem' }}
-                    helperText="Esta informação é usada para associar automaticamente o fornecedor correcto ao criar um artigo."
                   />
                 </Grid>
               </Grid>
@@ -260,7 +259,7 @@ const NovoFornecedor = () => {
                 </Grid>
               </Grid>
 
-              {/* Definições Financeiras */}
+              {/* Definições Financeiras 
               <SectionHeader icon={<AccountBalanceIcon />} title="Definições Financeiras" />
               <Grid container spacing={3} sx={{ mb: 3 }}>
                 <Grid item xs={12} md={6}>
@@ -288,7 +287,7 @@ const NovoFornecedor = () => {
                   </Typography>
                   <TextField fullWidth multiline rows={3} placeholder="Notas adicionais sobre o fornecedor..." />
                 </Grid>
-              </Grid>
+              </Grid>*/}
 
               {erro && (
                 <Alert severity="error" sx={{ mt: 2, mb: 2 }}>{erro}</Alert>

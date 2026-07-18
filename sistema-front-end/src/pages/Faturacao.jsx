@@ -70,7 +70,7 @@ export default function Faturacao() {
                 startIcon={<AddIcon />}
                 sx={{ 
                   color: "#fff", 
-                  background: "#0B6E4F", 
+                  background: "#083927", 
                   width: { xs: "100%", sm: "215px" },
                   height: "40px", 
                   borderRadius: 2, 

@@ -178,21 +178,6 @@ export default function NovoArtigo() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid sx={{ mt: 3 }}>
-                <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Descrição(Opcional)</Typography>
-                <br />
-                <TextareaAutosize
-                  placeholder="Descrição detalhada do artigo"
-                  style={{
-                    width: "1018px",
-                    height: "5em",
-                    padding: 15,
-                    borderRadius: 5,
-                    border: ".1px solid #05040444",
-                    margin: "2px 0",
-                  }}
-                ></TextareaAutosize>
-              </Grid>
               <Divider sx={{ m: "20px 0" }} />
               <Grid>
                 <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>
