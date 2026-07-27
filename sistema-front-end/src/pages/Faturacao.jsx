@@ -22,6 +22,11 @@ import { Link } from "react-router-dom";
 import { exportarPDF } from "../utils/pdfExport";
 
 export default function Faturacao() {
+  const rolesString = localStorage.getItem('userRoles');
+  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
+  const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+  const hideNovaFatura = isGerente || isContabilista;
   return (
     <div>
       <NavBar />
@@ -63,27 +68,29 @@ export default function Faturacao() {
               >
                 Exportar PDF
               </Button>*/}
-              <Button
-                component={Link}
-                to="/venda"
-                variant="contained"
-                startIcon={<AddIcon />}
-                sx={{ 
-                  color: "#fff", 
-                  background: "#083927", 
-                  width: { xs: "100%", sm: "215px" },
-                  height: "40px", 
-                  borderRadius: 2, 
-                  textTransform: 'none', 
-                  fontWeight: 600, 
-                  px: 2.5, 
-                  boxShadow: 'none', 
-                  textDecoration: 'none',
-                  ml:28 
-                }}
-              >
-                Nova Fatura
-              </Button>
+              {!hideNovaFatura && (
+                <Button
+                  component={Link}
+                  to="/venda"
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  sx={{ 
+                    color: "#fff", 
+                    background: "#083927", 
+                    width: { xs: "100%", sm: "215px" },
+                    height: "40px", 
+                    borderRadius: 2, 
+                    textTransform: 'none', 
+                    fontWeight: 600, 
+                    px: 2.5, 
+                    boxShadow: 'none', 
+                    textDecoration: 'none',
+                    ml:28 
+                  }}
+                >
+                  Nova Fatura
+                </Button>
+              )}
             </Box>
           </Box>
           <Box>

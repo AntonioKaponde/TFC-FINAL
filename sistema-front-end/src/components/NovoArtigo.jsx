@@ -34,7 +34,7 @@ export default function NovoArtigo() {
     precoCusto: "",
     taxaIva: "IVA Normal(14%)",
     motivoIsencao: "Selecione um motivo (Apenas se isento)",
-    unidadeMedida: "UN",
+    unidadeMedida: "",
     stock: "",
     stockMinimo: "5",
   });

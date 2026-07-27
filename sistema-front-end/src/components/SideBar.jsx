@@ -29,6 +29,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import BusinessIcon from '@mui/icons-material/Business';
 import { useMenu } from "../context/MenuContext";
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import CategoryIcon from '@mui/icons-material/Category';
 
 const drawerWidth = 300;
 
@@ -43,6 +45,7 @@ export default function SideBar() {
   const userRoles = rolesString ? JSON.parse(rolesString) : [];
   const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
+  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -74,7 +77,7 @@ export default function SideBar() {
         <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>
           VISÃO GERAL
         </Typography>
-        {!isOperador && (
+        {!isOperador && !isGerente && (
           <ListItem
             onClick={() => {
               navigate("/resumo-empresa");
@@ -155,7 +158,7 @@ export default function SideBar() {
               ":hover": { background: "#083927" },
             }}
           >
-            <Inventory2OutlinedIcon sx={{ opacity: 0.7, mr: 1 }} />
+            <CategoryIcon  sx={{  mr: 1 }} />
             <Typography sx={{ fontSize: '0.95rem' }}>Categorias</Typography>
           </ListItemButton>
         </ListItem>
@@ -253,7 +256,7 @@ export default function SideBar() {
         </>
       )}
 
-      {!isOperador && (
+      {!isOperador && !isGerente && (
         <>
           <Divider sx={{ color: "#fff" }} />
           <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>

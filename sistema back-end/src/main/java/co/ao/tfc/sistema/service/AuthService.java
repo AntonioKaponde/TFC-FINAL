@@ -6,7 +6,9 @@ import co.ao.tfc.sistema.dto.RegistroEmpresaUsuarioRequest;
 import co.ao.tfc.sistema.model.Empresa;
 import co.ao.tfc.sistema.model.PerfilRole;
 import co.ao.tfc.sistema.model.Usuario;
+import co.ao.tfc.sistema.model.enums.Permissao;
 import co.ao.tfc.sistema.repository.EmpresaRepository;
+import java.util.*;
 import co.ao.tfc.sistema.repository.PerfilRoleRepository;
 import co.ao.tfc.sistema.repository.UsuarioRepository;
 import co.ao.tfc.sistema.security.JwtTokenProvider;
@@ -88,10 +90,45 @@ public class AuthService {
         empresa = empresaRepository.save(empresa);
 
         // Criar perfis padrão para a empresa
-        PerfilRole adminRole = perfilRoleRepository.save(PerfilRole.builder().nome("Admin").empresa(empresa).build());
-        perfilRoleRepository.save(PerfilRole.builder().nome("Gerente").empresa(empresa).build());
-        perfilRoleRepository.save(PerfilRole.builder().nome("Contabilista").empresa(empresa).build());
-        perfilRoleRepository.save(PerfilRole.builder().nome("Operador").empresa(empresa).build());
+        PerfilRole adminRole = perfilRoleRepository.save(PerfilRole.builder()
+                .nome("Admin")
+                .permissoes(new HashSet<>(Arrays.asList(Permissao.values())))
+                .empresa(empresa).build());
+        perfilRoleRepository.save(PerfilRole.builder()
+                .nome("Gerente de estoque")
+                .permissoes(new HashSet<>(Arrays.asList(
+                        Permissao.USUARIO_VIEW,
+                        Permissao.FORNECEDOR_VIEW, Permissao.FORNECEDOR_EDIT,
+                        Permissao.DASHBOARD_VIEW,
+                        Permissao.FATURAMENTO_VIEW,
+                        Permissao.INVENTARIO_VIEW, Permissao.INVENTARIO_EDIT,
+                        Permissao.CLIENTES_VIEW,
+                        Permissao.CONFIG_VIEW,
+                        Permissao.AUDITORIA_VIEW
+                )))
+                .empresa(empresa).build());
+        perfilRoleRepository.save(PerfilRole.builder()
+                .nome("Contabilista")
+                .permissoes(new HashSet<>(Arrays.asList(
+                        Permissao.DASHBOARD_VIEW,
+                        Permissao.FATURAMENTO_VIEW,
+                        Permissao.SAFT_VIEW,
+                        Permissao.CONFIG_VIEW,
+                        Permissao.AUDITORIA_VIEW
+                )))
+                .empresa(empresa).build());
+        perfilRoleRepository.save(PerfilRole.builder()
+                .nome("Operador")
+                .permissoes(new HashSet<>(Arrays.asList(
+                        Permissao.USUARIO_VIEW,
+                        Permissao.FORNECEDOR_VIEW, Permissao.FORNECEDOR_EDIT,
+                        Permissao.DASHBOARD_VIEW,
+                        Permissao.FATURAMENTO_VIEW, Permissao.FATURAMENTO_EDIT,
+                        Permissao.INVENTARIO_VIEW,
+                        Permissao.CLIENTES_VIEW, Permissao.CLIENTES_EDIT,
+                        Permissao.CONFIG_VIEW
+                )))
+                .empresa(empresa).build());
 
         // Criar Usuario Administrador
         Usuario usuario = Usuario.builder()

@@ -95,7 +95,7 @@ export default function Inventário() {
                   }}
                 >
                   <Link style={{ textDecoration: "none", color: "inherit", width: "100%", textAlign: "center" }} to="/novoArtigo">
-                    Novo Artigo
+                    NovoArtigo
                   </Link>
                 </Button>
               )}

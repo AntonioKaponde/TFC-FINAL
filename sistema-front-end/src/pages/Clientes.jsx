@@ -25,6 +25,8 @@ export default function Clientes() {
   const rolesString = localStorage.getItem('userRoles');
   const userRoles = rolesString ? JSON.parse(rolesString) : [];
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
+  const hideNovoCliente = isContabilista || isGerente;
 
   return (
     <div>
@@ -68,7 +70,7 @@ export default function Clientes() {
               >
                 Exportar PDF
               </Button> */}
-              {!isContabilista && (
+              {!hideNovoCliente && (
                 <Button
                   variant="contained"
                   startIcon={<AddIcon />}

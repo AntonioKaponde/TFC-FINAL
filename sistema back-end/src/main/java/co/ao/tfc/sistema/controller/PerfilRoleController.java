@@ -38,4 +38,11 @@ public class PerfilRoleController {
         auditoriaService.registrarAuditoria("ATUALIZOU", "Papel", "Atualizou o papel com ID " + id);
         return ResponseEntity.ok("Papel atualizado com sucesso");
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarRole(@PathVariable Long id) {
+        perfilRoleService.deletarRole(id);
+        auditoriaService.registrarAuditoria("REMOVEU", "Papel", "Removeu o papel com ID " + id);
+        return ResponseEntity.ok("Papel removido com sucesso");
+    }
 }

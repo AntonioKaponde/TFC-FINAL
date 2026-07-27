@@ -22,13 +22,13 @@ export default function TabelaRelatorio() {
     if (paginaAtual < totalPaginas - 1) setPaginaAtual(p => p + 1);
   };
 
-  useEffect(() => {
+ useEffect(() => {
     dashboardApi
       .comparativoMensal(ANO_REFERENCIA)
       .then((data) => setRows(resumoMensalImpostos(data)))
       .finally(() => setLoading(false));
   }, []);
-
+ 
   return (
     <div>
       <Grid container spacing={2}>
@@ -63,8 +63,8 @@ export default function TabelaRelatorio() {
                       </TableCell>
                       <TableCell>
                         <Stack direction="row" spacing={1}>
-                          <IconButton size="small" onClick={() => dashboardApi.baixarRelatorioImpostosPdf(ANO_REFERENCIA)}><DownloadIcon sx={{ fontSize: 18 }} /></IconButton>
                           <IconButton size="small"><MoreVertIcon sx={{ fontSize: 18 }} /></IconButton>
+                          {/*<IconButton size="small" onClick={() => dashboardApi.baixarRelatorioImpostosPdf(ANO_REFERENCIA)}></IconButton>*/}
                         </Stack>
                       </TableCell>
                     </TableRow>

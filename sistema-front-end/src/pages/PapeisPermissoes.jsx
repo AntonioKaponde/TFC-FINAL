@@ -24,11 +24,17 @@ import {
   TextField,
   CircularProgress,
   Snackbar,
-  Alert
+  Alert,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   Add as AddIcon,
   MoreVert as MoreVertIcon,
+  Delete as DeleteIcon,
+  Shield as ShieldIcon,
 } from '@mui/icons-material';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
@@ -54,22 +60,38 @@ export default function PapeisPermissoes() {
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [newRoleName, setNewRoleName] = useState('');
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  
+  // Menu de contexto
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [menuRole, setMenuRole] = useState(null);
   
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+
+  const MAX_ROLES = 10;
 
   const fetchRoles = async () => {
     try {
       setLoading(true);
       const data = await api.get('/api/roles');
-      setRoles(data);
-      if (data.length > 0 && !selectedRole) {
+      setRoles(data || []);
+      if (data && data.length > 0 && !selectedRole) {
         handleSelectRole(data[0]);
-      } else if (selectedRole) {
+      } else if (selectedRole && data) {
         const updatedSelected = data.find(r => r.id === selectedRole.id);
-        if (updatedSelected) handleSelectRole(updatedSelected);
+        if (updatedSelected) {
+          handleSelectRole(updatedSelected);
+        } else if (data.length > 0) {
+          handleSelectRole(data[0]);
+        } else {
+          setSelectedRole(null);
+          setModules([...initialModulesTemplate]);
+        }
       }
     } catch (error) {
-      showNotification('Erro ao carregar papéis', 'error');
+      const msg = error.message || 'Erro ao carregar papéis';
+      showNotification(msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -80,9 +102,9 @@ export default function PapeisPermissoes() {
   }, []);
 
   const handleSelectRole = (role) => {
+    if (!role) return;
     setSelectedRole(role);
     
-    // Convert permissions array from backend to modules state
     const perms = role.permissoes || [];
     const updatedModules = initialModulesTemplate.map(mod => ({
       ...mod,
@@ -103,8 +125,8 @@ export default function PapeisPermissoes() {
 
   const handleSavePermissions = async () => {
     if (!selectedRole) return;
+    setSaveLoading(true);
     
-    // Convert modules state to permissions array for backend
     const permissoes = [];
     modules.forEach(mod => {
       if (mod.view) permissoes.push(`${mod.id}_VIEW`);
@@ -120,16 +142,22 @@ export default function PapeisPermissoes() {
       showNotification('Permissões salvas com sucesso!', 'success');
       fetchRoles();
     } catch (error) {
-      showNotification(error.message || 'Erro ao salvar permissões', 'error');
+      const msg = error.message || 'Erro ao salvar permissões';
+      showNotification(msg, 'error');
+    } finally {
+      setSaveLoading(false);
     }
   };
 
   const handleCreateRole = async () => {
-    if (!newRoleName.trim()) return;
+    if (!newRoleName.trim()) {
+      showNotification('O nome do papel é obrigatório', 'warning');
+      return;
+    }
     
     try {
       await api.post('/api/roles', {
-        nome: newRoleName,
+        nome: newRoleName.trim(),
         permissoes: []
       });
       setOpenModal(false);
@@ -137,99 +165,142 @@ export default function PapeisPermissoes() {
       showNotification('Papel criado com sucesso!', 'success');
       fetchRoles();
     } catch (error) {
-      showNotification(error.message || 'Erro ao criar papel', 'error');
+      const msg = error.message || 'Erro ao criar papel';
+      showNotification(msg, 'error');
     }
+  };
+
+  const handleDeleteRole = async () => {
+    if (!menuRole) return;
+    setConfirmDeleteOpen(false);
+    
+    try {
+      await api.delete(`/api/roles/${menuRole.id}`);
+      showNotification(`Papel "${menuRole.nome}" removido com sucesso!`, 'success');
+      if (selectedRole?.id === menuRole.id) {
+        setSelectedRole(null);
+        setModules([...initialModulesTemplate]);
+      }
+      setMenuRole(null);
+      fetchRoles();
+    } catch (error) {
+      const msg = error.message || 'Erro ao remover papel';
+      showNotification(msg, 'error');
+    }
+  };
+
+  // Menu handlers
+  const handleMenuOpen = (event, role) => {
+    setAnchorEl(event.currentTarget);
+    setMenuRole(role);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setMenuRole(null);
+  };
+
+  const handleDeleteClick = () => {
+    handleMenuClose();
+    setConfirmDeleteOpen(true);
   };
 
   const showNotification = (message, severity) => {
     setNotification({ open: true, message, severity });
   };
 
+  const canCreateMore = roles.length < MAX_ROLES;
+
   return (
    <div>
     <NavBar />
     <Box sx={{display:"flex"}}>
       <SideBar />
-       <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1,mt:10,ml:15 }}>
+       <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: 15 }}>
          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 3 }}>
            <Box>
              <Typography variant="h6" sx={{ fontWeight: 800, color: "#111" }}>
                Papéis e Permissões
              </Typography>
              <Typography variant="caption" color="textSecondary">
-               Configure o nível de acesso para cada função do sistema.
+               Visualize o nível de acesso para cada função padrão do sistema. O sistema suporta apenas 4 papéis: Admin, Gerente de estoque, Contabilista e Operador.
              </Typography>
            </Box>
-           {roles.length < 4 && (
-             <Button
-               variant="contained"
-               startIcon={<AddIcon />}
-               onClick={() => setOpenModal(true)}
-               sx={{ borderRadius: 2, textTransform: "none", fontWeight: 600, px: 2.5, boxShadow: "none", bgcolor: "#083927", mr:16 }}
-             >
-               Criar Novo Papel
-             </Button>
-           )}
          </Box>
 
+         {loading && roles.length === 0 ? (
+           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+             <CircularProgress />
+           </Box>
+         ) : (
          <Grid container spacing={3}>
-           {/* Esquerda: Lista de Papéis */}
+           {/* Left: Role List */}
            <Grid item xs={12} md={4}>
-             <Stack spacing={2} >
-               {loading && roles.length === 0 ? <CircularProgress /> : roles.map((role) => {
-                 const isSelected = selectedRole?.id === role.id;
-                 return (
-                   <Card
-                     key={role.id}
-                     variant="outlined"
-                     sx={{
-                       borderRadius: 3,
-                       border: isSelected ? "2px solid #083927" : "1px solid #e0e0e0",
-                       boxShadow: isSelected ? "0px 4px 12px rgba(25, 118, 210, 0.05)" : "none",
-                       cursor: "pointer",
-                       transition: "all 0.2s ease",
-                     }}
-                     onClick={() => handleSelectRole(role)}
-                   >
-                     <Box sx={{ p: 2.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                       <Box>
-                         <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#222" }}>
-                           {role.nome}
-                         </Typography>
-                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5 }}>
-                           <Chip
-                             label={`${role.usersCount} ${role.usersCount === 1 ? "Usuário" : "Usuários"}`}
-                             size="small"
-                             sx={{
-                               bgcolor: isSelected ? "#e3f2fd" : "#f5f5f5",
-                               color: isSelected ? "#083927" : "#666",
-                               fontSize: 11, fontWeight: 700, borderRadius: "6px", height: 22,
-                             }}
-                           />
-                           {isSelected && (
-                             <Typography variant="caption" sx={{ color: "#083927", fontWeight: 700, fontSize: 11 }}>
-                               Editando
-                             </Typography>
-                           )}
-                         </Stack>
-                       </Box>
-                       <IconButton size="small" sx={{ color: "#888" }}>
-                         <MoreVertIcon fontSize="small" />
-                       </IconButton>
-                     </Box>
-                   </Card>
-                 );
-               })}
+             <Stack spacing={2}>
+               {roles.length === 0 ? (
+                 <Paper variant="outlined" sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
+                   <ShieldIcon sx={{ fontSize: 48, color: '#ccc', mb: 2 }} />
+                   <Typography variant="body2" color="textSecondary">
+                     Nenhum papel encontrado.
+                   </Typography>
+                 </Paper>
+               ) : (
+                 roles.map((role) => {
+                   const isSelected = selectedRole?.id === role.id;
+                   return (
+                     <Card
+                       key={role.id}
+                       variant="outlined"
+                       sx={{
+                         borderRadius: 3,
+                         border: isSelected ? "2px solid #083927" : "1px solid #e0e0e0",
+                         boxShadow: isSelected ? "0px 4px 12px rgba(8, 57, 39, 0.08)" : "none",
+                         cursor: "pointer",
+                         transition: "all 0.2s ease",
+                         '&:hover': {
+                           borderColor: isSelected ? '#083927' : '#bbb',
+                           boxShadow: '0px 2px 8px rgba(0,0,0,0.04)',
+                         },
+                       }}
+                       onClick={() => handleSelectRole(role)}
+                     >
+                       <Box sx={{ p: 2.5, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                         <Box>
+                           <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#222" }}>
+                             {role.nome}
+                           </Typography>
+                           <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5 }}>
+                             <Chip
+                               label={`${role.usersCount || 0} ${(role.usersCount || 0) === 1 ? "Usuário" : "Usuários"}`}
+                               size="small"
+                               sx={{
+                                 bgcolor: isSelected ? "#e3f2fd" : "#f5f5f5",
+                                 color: isSelected ? "#083927" : "#666",
+                                 fontSize: 11, fontWeight: 700, borderRadius: "6px", height: 22,
+                               }}
+                             />
+                             {isSelected && (
+                               <Typography variant="caption" sx={{ color: "#083927", fontWeight: 700, fontSize: 11 }}>
+                                 Editando
+                               </Typography>
+                             )}
+                           </Stack>
+                         </Box>
+                         </Box>
+                       </Card>
+                   );
+                 })
+               )}
              </Stack>
            </Grid>
 
-           {/* Direita: Matriz de Permissões */}
+           {/* Right: Permission Matrix */}
            <Grid item xs={12} md={8}>
-             <Paper variant="outlined" sx={{ borderRadius: 3, bgcolor: "#ffffff", display: "flex", flexDirection: "column", height: "100%", width:"65rem" }}>
+             <Paper variant="outlined" sx={{ borderRadius: 3, bgcolor: "#ffffff", display: "flex", flexDirection: "column", height: "100%" }}>
                <Box sx={{ p: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                  <Box>
                    <Typography variant="subtitle1" sx={{ fontWeight: 700, display: "inline", color: "#222" }}>
-                     Permissões:{" "}
+                     Permissões:{' '}
                    </Typography>
                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#083927", display: "inline" }}>
                      {selectedRole ? selectedRole.nome : 'Selecione um papel'}
@@ -240,6 +311,15 @@ export default function PapeisPermissoes() {
                  </Box>
                </Box>
 
+               {!selectedRole ? (
+                 <Box sx={{ p: 6, textAlign: 'center' }}>
+                   <ShieldIcon sx={{ fontSize: 56, color: '#e0e0e0', mb: 2 }} />
+                   <Typography variant="body1" color="textSecondary">
+                     Selecione um papel à esquerda para editar suas permissões.
+                   </Typography>
+                 </Box>
+               ) : (
+               <>
                <TableContainer>
                  <Table size="small">
                    <TableHead sx={{ bgcolor: "#f8f9fa" }}>
@@ -252,16 +332,37 @@ export default function PapeisPermissoes() {
                    </TableHead>
                    <TableBody>
                      {modules.map((row) => (
-                       <TableRow key={row.id}>
+                       <TableRow 
+                         key={row.id}
+                         sx={{ 
+                           '&:hover': { bgcolor: '#fafafa' },
+                           transition: 'background-color 0.15s ease',
+                         }}
+                       >
                          <TableCell sx={{ fontWeight: 600, py: 2, pl: 3, color: "#333", borderBottom: "1px solid #f0f0f0" }}>{row.name}</TableCell>
                          <TableCell align="center" sx={{ borderBottom: "1px solid #f0f0f0" }}>
-                           <Checkbox checked={row.view} onChange={() => handlePermissionChange(row.id, "view")} disabled={!selectedRole} color="primary" size="small" />
+                           <Checkbox 
+                             checked={row.view} 
+                             disabled
+                             color="primary" 
+                             size="small" 
+                           />
                          </TableCell>
                          <TableCell align="center" sx={{ borderBottom: "1px solid #f0f0f0" }}>
-                           <Checkbox checked={row.edit} onChange={() => handlePermissionChange(row.id, "edit")} disabled={!selectedRole} color="primary" size="small" />
+                           <Checkbox 
+                             checked={row.edit} 
+                             disabled
+                             color="primary" 
+                             size="small"
+                           />
                          </TableCell>
                          <TableCell align="center" sx={{ borderBottom: "1px solid #f0f0f0" }}>
-                           <Checkbox checked={row.delete} onChange={() => handlePermissionChange(row.id, "delete")} disabled={!selectedRole} color="primary" size="small" />
+                           <Checkbox 
+                             checked={row.delete} 
+                             disabled
+                             color="primary" 
+                             size="small"
+                           />
                          </TableCell>
                        </TableRow>
                      ))}
@@ -273,22 +374,22 @@ export default function PapeisPermissoes() {
                <Divider sx={{ borderColor: "#f0f0f0" }} />
 
                <Box sx={{ p: 2.5, display: "flex", justifyContent: "flex-end", gap: 2, bgcolor: "#fafafa", borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
-                 <Button variant="outlined" color="inherit" onClick={() => selectedRole && handleSelectRole(selectedRole)} disabled={!selectedRole} sx={{ textTransform: "none", fontWeight: 600, px: 3, borderRadius: 2, borderColor: "#e0e0e0", bgcolor: "#fff" }}>
-                   Descartar Alterações
-                 </Button>
-                 <Button onClick={handleSavePermissions} disabled={!selectedRole} sx={{ textTransform: "none", fontWeight: 600, px: 3, borderRadius: 2, boxShadow: "none", color:"#fff", bgcolor:"#083927", '&:hover': {bgcolor: '#06291c'} }}>
-                   Salvar Permissões
-                 </Button>
+                 <Typography variant="caption" color="textSecondary">
+                   As permissões são fixas para os papéis padrão do sistema.
+                 </Typography>
                </Box>
+               </>
+               )}
              </Paper>
            </Grid>
          </Grid>
+         )}
        </Box>
     </Box>
 
-    {/* Modal Criar Papel */}
+    {/* Create Role Dialog */}
     <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 'bold' }}>Criar Novo Papel</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, color: '#222' }}>Criar Novo Papel</DialogTitle>
         <DialogContent>
             <TextField
                 autoFocus
@@ -298,18 +399,81 @@ export default function PapeisPermissoes() {
                 variant="outlined"
                 value={newRoleName}
                 onChange={(e) => setNewRoleName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateRole()}
                 sx={{ mt: 2 }}
             />
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-            <Button onClick={() => setOpenModal(false)} sx={{ color: 'text.secondary' }}>Cancelar</Button>
-            <Button onClick={handleCreateRole} variant="contained" sx={{ bgcolor: "#083927", '&:hover': {bgcolor: '#06291c'} }}>Criar</Button>
+            <Button onClick={() => { setOpenModal(false); setNewRoleName(''); }} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleCreateRole} 
+              variant="contained" 
+              disabled={!newRoleName.trim()}
+              sx={{ bgcolor: "#083927", '&:hover': { bgcolor: '#06291c' }, textTransform: 'none', fontWeight: 600 }}
+            >
+              Criar
+            </Button>
         </DialogActions>
     </Dialog>
 
-    {/* Notificações */}
-    <Snackbar open={notification.open} autoHideDuration={4000} onClose={() => setNotification({...notification, open: false})} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
+    {/* Delete Confirmation Dialog */}
+    <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, color: '#d32f2f' }}>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Tem certeza que deseja remover o papel <strong>{menuRole?.nome}</strong>?
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            Esta ação não pode ser desfeita. Usuários associados a este papel precisarão ser reatribuídos.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+            <Button onClick={() => setConfirmDeleteOpen(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleDeleteRole} 
+              variant="contained" 
+              color="error"
+              sx={{ textTransform: 'none', fontWeight: 600 }}
+            >
+              Remover Papel
+            </Button>
+        </DialogActions>
+    </Dialog>
+
+    {/* Context Menu for role actions */}
+    <Menu
+      anchorEl={anchorEl}
+      open={Boolean(anchorEl)}
+      onClose={handleMenuClose}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+    >
+      <MenuItem onClick={handleDeleteClick} sx={{ color: '#d32f2f' }}>
+        <ListItemIcon>
+          <DeleteIcon fontSize="small" sx={{ color: '#d32f2f' }} />
+        </ListItemIcon>
+        <ListItemText>Remover Papel</ListItemText>
+      </MenuItem>
+    </Menu>
+
+    {/* Notifications */}
+    <Snackbar 
+      open={notification.open} 
+      autoHideDuration={4000} 
+      onClose={() => setNotification({...notification, open: false})} 
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <Alert 
+        severity={notification.severity} 
+        sx={{ width: '100%', borderRadius: 2 }}
+        onClose={() => setNotification({...notification, open: false})}
+      >
+        {notification.message}
+      </Alert>
     </Snackbar>
    </div>
   );

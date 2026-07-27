@@ -30,6 +30,11 @@ import { categoriasApi } from "../api";
 
 export default function Categorias() {
   const [categorias, setCategorias] = useState([]);
+
+  const rolesString = localStorage.getItem('userRoles');
+  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+  const hideAdd = isContabilista;
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
@@ -115,9 +120,11 @@ export default function Categorias() {
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Gestão de Categorias
             </Typography>
-            <Button variant="contained" sx={{ bgcolor: "#083927" }} onClick={handleOpen}>
-              Nova Categoria
-            </Button>
+            {!hideAdd && (
+              <Button variant="contained" sx={{ bgcolor: "#083927" }} onClick={handleOpen}>
+                Nova Categoria
+              </Button>
+            )}
           </Box>
 
           <TableContainer component={Paper} elevation={0} variant="outlined">

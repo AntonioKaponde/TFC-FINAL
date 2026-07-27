@@ -16,8 +16,9 @@ export default function ResumoEmpresa() {
     const rolesString = localStorage.getItem('userRoles');
     const userRoles = rolesString ? JSON.parse(rolesString) : [];
     const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
+    const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
 
-    if (isOperador) {
+    if (isOperador || isGerente) {
       navigate('/faturacao');
       return;
     }

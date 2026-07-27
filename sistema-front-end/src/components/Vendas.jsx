@@ -35,6 +35,17 @@ const linhaVazia = () => ({ artigoId: "", quantidade: 1 });
 
 export default function Vendas() {
   const navigate = useNavigate();
+
+  const rolesString = localStorage.getItem('userRoles');
+  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
+  const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+
+  useEffect(() => {
+    if (isGerente || isContabilista) {
+      navigate('/faturacao');
+    }
+  }, [isGerente, isContabilista, navigate]);
   const [clientes, setClientes] = useState([]);
   const [artigos, setArtigos] = useState([]);
   const [loading, setLoading] = useState(true);

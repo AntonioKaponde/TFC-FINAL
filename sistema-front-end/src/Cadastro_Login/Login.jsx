@@ -332,6 +332,7 @@ export default function Login() {
           <Button 
             fullWidth 
             variant="text" 
+            disabled={true}
             sx={{ 
               bgcolor: '#EFF6FF', 
               color: '#083927',
@@ -339,7 +340,7 @@ export default function Login() {
               textTransform: 'none', 
               fontWeight: 600, 
               py: 1.2, 
-              borderRadius: 2 
+              borderRadius: 2,    
             }}
           >
             Usar código de recuperação
