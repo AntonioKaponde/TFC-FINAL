@@ -277,7 +277,7 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
                   </TableCell>
 
                   <TableCell sx={{ fontSize: "0.85rem", color: "#64748b" }}>
-                    {row.stock != null ? `${row.stock} un.` : "-"}
+                    {row.stock != null ? `${row.stock} ${row.unidadeMedida || 'UN'}` : "-"}
                   </TableCell>
 
                   <TableCell sx={{ fontSize: "0.85rem", color: "#64748b" }}>

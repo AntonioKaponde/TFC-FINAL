@@ -129,14 +129,25 @@ public class PerfilRoleService {
             }
         }
         
-        return roles.stream().map(role -> {
-            return PerfilRoleDto.builder()
-                    .id(role.getId())
-                    .nome(role.getNome())
-                    .permissoes(role.getPermissoes())
-                    .usersCount(role.getUsuarios() != null ? role.getUsuarios().size() : 0)
-                    .build();
-        }).collect(Collectors.toList());
+        // Remover possíveis papéis duplicados pelo nome que possam ter sido criados anteriormente
+        Map<String, PerfilRoleDto> rolesUnicos = new HashMap<>();
+        for (PerfilRole role : roles) {
+            String nome = role.getNome();
+            if (!rolesUnicos.containsKey(nome)) {
+                rolesUnicos.put(nome, PerfilRoleDto.builder()
+                        .id(role.getId())
+                        .nome(nome)
+                        .permissoes(role.getPermissoes())
+                        .usersCount(role.getUsuarios() != null ? role.getUsuarios().size() : 0)
+                        .build());
+            } else {
+                // Se já existir, podemos somar os usuários para o DTO (opcional, mas bom se houver usuários no papel duplicado)
+                PerfilRoleDto existente = rolesUnicos.get(nome);
+                existente.setUsersCount(existente.getUsersCount() + (role.getUsuarios() != null ? role.getUsuarios().size() : 0));
+            }
+        }
+        
+        return new ArrayList<>(rolesUnicos.values());
     }
 
     @Transactional

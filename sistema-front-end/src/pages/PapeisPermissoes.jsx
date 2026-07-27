@@ -216,7 +216,7 @@ export default function PapeisPermissoes() {
     <NavBar />
     <Box sx={{display:"flex"}}>
       <SideBar />
-       <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: 15 }}>
+       <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: 25 }}>
          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 3 }}>
            <Box>
              <Typography variant="h6" sx={{ fontWeight: 800, color: "#111" }}>
@@ -296,7 +296,7 @@ export default function PapeisPermissoes() {
 
            {/* Right: Permission Matrix */}
            <Grid item xs={12} md={8}>
-             <Paper variant="outlined" sx={{ borderRadius: 3, bgcolor: "#ffffff", display: "flex", flexDirection: "column", height: "100%" }}>
+             <Paper variant="outlined" sx={{ borderRadius: 3, bgcolor: "#ffffff", display: "flex", flexDirection: "column", height: "100%",width:"200%" }}>
                <Box sx={{ p: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                  <Box>
                    <Typography variant="subtitle1" sx={{ fontWeight: 700, display: "inline", color: "#222" }}>

@@ -68,7 +68,7 @@ export default function ResumoEmpresa() {
       <NavBar />
       <Box display={"flex"}>
         <SideBar />
-        <Box component={"main"} sx={{ margin: "90px 90px", display: "flex", width: "100%" }}>
+        <Box component={"main"} sx={{ margin: "90px 90px", display: "flex", width: "100%",ml:20 }}>
           <Grid container spacing={2} sx={{ display: "flex", flexDirection: "column" }}>
             <Grid sx={{ ml: 10, mb: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111', display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -80,7 +80,7 @@ export default function ResumoEmpresa() {
             </Grid>
 
             <Grid item sx={{ ml: 10 }}>
-              <Card sx={{ p: 4, width: "60em", borderRadius: 2, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
+              <Card sx={{ p: 4, width: "70em", borderRadius: 2, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                   <Box>
                     <Typography variant="h5" sx={{ fontWeight: 700, color: '#083927' }}>
@@ -119,8 +119,8 @@ export default function ResumoEmpresa() {
                   </Grid>
 
                   {/* Coluna 2: Informações Fiscais e Jurídicas */}
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1e293b', mb: 2, textTransform: 'uppercase', letterSpacing: 1 }}>
+                  <Grid item xs={12} md={6} >
+                    <Typography variant="subtitle2" sx={{fontWeight: 700, color: '#1e293b', mb: 2, textTransform: 'uppercase', letterSpacing: 1 }}>
                       Informações Fiscais e Jurídicas
                     </Typography>
                     
