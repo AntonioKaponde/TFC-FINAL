@@ -40,6 +40,50 @@ export default function NovoArtigo() {
   });
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [produtosDisponiveis, setProdutosDisponiveis] = useState([]);
+
+  const handleFornecedorChange = (e) => {
+    const fornecedorId = e.target.value;
+    const fornecedor = fornecedores.find(f => f.id === fornecedorId);
+    
+    let novosProdutos = [];
+    if (fornecedor && fornecedor.produtosFornecidos) {
+      novosProdutos = fornecedor.produtosFornecidos.split(/[,;]+/).map(p => p.trim()).filter(p => p);
+    }
+    
+    setProdutosDisponiveis(novosProdutos);
+    
+    setForm(prev => {
+       const newState = { ...prev, fornecedorId };
+       if (novosProdutos.length > 0) {
+         newState.nome = novosProdutos[0];
+         const fPrefix = fornecedor.nome.substring(0, 3).toUpperCase();
+         const pPrefix = novosProdutos[0].substring(0, 3).toUpperCase();
+         const rand = Math.floor(100 + Math.random() * 900);
+         newState.sku = `${fPrefix}-${pPrefix}-${rand}`;
+       } else {
+         newState.nome = "";
+         newState.sku = "";
+       }
+       return newState;
+    });
+  };
+
+  const handleNomeChange = (e) => {
+    const novoNome = e.target.value;
+    const fornecedor = fornecedores.find(f => f.id === form.fornecedorId);
+    
+    setForm(prev => {
+       const newState = { ...prev, nome: novoNome };
+       if (fornecedor && novoNome) {
+         const fPrefix = fornecedor.nome.substring(0, 3).toUpperCase();
+         const pPrefix = novoNome.substring(0, 3).toUpperCase();
+         const rand = Math.floor(100 + Math.random() * 900);
+         newState.sku = `${fPrefix}-${pPrefix}-${rand}`;
+       }
+       return newState;
+    });
+  };
 
   useEffect(() => {
     Promise.all([categoriasApi.listar(), fornecedoresApi.listar()])
@@ -111,25 +155,43 @@ export default function NovoArtigo() {
               </Grid>
               <Grid sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <FormControl>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Fornecedor <span style={{ color: "red" }}>*</span></Typography>
+                  <Select
+                    value={form.fornecedorId}
+                    onChange={handleFornecedorChange}
+                    sx={{ width: "500px", height: "2.1em", margin: "2px 0" }}
+                    displayEmpty
+                  >
+                    <MenuItem value=""><em>Selecione o Fornecedor</em></MenuItem>
+                    {fornecedores.map(forn => (
+                      <MenuItem key={forn.id} value={forn.id}>{forn.nome}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                 <FormControl>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Nome do Artigo <span style={{ color: "red" }}>*</span>
                   </Typography>
-                  <input
-                    type="text"
+                  <Select
                     value={form.nome}
-                    onChange={(e) => setForm({ ...form, nome: e.target.value })}
-                    placeholder="Ex:Computador Portátil Pro X"
-                    style={{
-                      width: "500px",
-                      height: "2.5em",
-                      padding: 10,
-                      borderRadius: 5,
-                      border: ".1px solid #05040444",
-                      margin: "2px 0",
-                    }}
-                    className="input"
-                  />
+                    onChange={handleNomeChange}
+                    displayEmpty
+                    disabled={!form.fornecedorId || produtosDisponiveis.length === 0}
+                    sx={{ width: "500px", height: "2.5em", margin: "2px 0" }}
+                  >
+                    <MenuItem value="" disabled>
+                      {form.fornecedorId 
+                        ? (produtosDisponiveis.length > 0 ? "Selecione o artigo" : "Fornecedor sem produtos registados")
+                        : "Selecione o fornecedor primeiro"}
+                    </MenuItem>
+                    {produtosDisponiveis.map((prod, idx) => (
+                      <MenuItem key={idx} value={prod}>{prod}</MenuItem>
+                    ))}
+                  </Select>
                 </FormControl>
+              </Grid>
+              <Grid sx={{ mt: 3, display: "flex", gap: 2 }}>
+               
                 <FormControl>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Código(SKU)<span style={{ color: "red" }}>*</span>
@@ -138,7 +200,7 @@ export default function NovoArtigo() {
                     type="text"
                     value={form.sku}
                     onChange={(e) => setForm({ ...form, sku: e.target.value })}
-                    placeholder="Ex:LAP-PRO-X"
+                    placeholder="Gerado automaticamente"
                     style={{
                       width: "500px",
                       height: "2.5em",
@@ -149,8 +211,6 @@ export default function NovoArtigo() {
                     }}
                   />
                 </FormControl>
-              </Grid>
-              <Grid sx={{ mt: 3, display: "flex", gap: 2 }}>
                 <FormControl>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Categoria</Typography>
                   <Select
@@ -160,20 +220,6 @@ export default function NovoArtigo() {
                   >
                     {categorias.map(cat => (
                       <MenuItem key={cat.id} value={cat.id}>{cat.nome}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Fornecedor <span style={{ color: "red" }}>*</span></Typography>
-                  <Select
-                    value={form.fornecedorId}
-                    onChange={(e) => setForm({ ...form, fornecedorId: e.target.value })}
-                    sx={{ width: "500px", height: "2.1em", margin: "2px 0" }}
-                    displayEmpty
-                  >
-                    <MenuItem value=""><em>Selecione o Fornecedor</em></MenuItem>
-                    {fornecedores.map(forn => (
-                      <MenuItem key={forn.id} value={forn.id}>{forn.nome}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
