@@ -1,4 +1,4 @@
-import React, { useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clientesApi } from "../api";
 import {
@@ -20,7 +20,6 @@ import BusinessIcon from "@mui/icons-material/Business";
 import PersonIcon from "@mui/icons-material/Person";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 
@@ -32,28 +31,26 @@ const NovoCliente = () => {
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
 
-  // Gera código de cliente automaticamente baseado no total de clientes
   useEffect(() => {
-    clientesApi.listar().then(clientes => {
+    clientesApi.listar().then((clientes) => {
       const total = clientes.length;
-      setCodigoGerado(`C-${String(total + 1).padStart(6, '0')}`);
+      setCodigoGerado(`C-${String(total + 1).padStart(6, "0")}`);
     }).catch(() => {});
   }, []);
 
   const handleSalvar = async () => {
     setErro("");
-    
+
     if (!/^(5\d{9}|00\d{7}[A-Za-z]{2}\d{3})$/.test(form.nif)) {
       setErro("O NIF deve ser de uma Empresa (10 dígitos iniciados por 5) ou Particular (14 caracteres iniciados por 00 com 2 letras).");
       return;
     }
 
-    if (!form.email.endsWith('@gmail.com')) {
+    if (!form.email.endsWith("@gmail.com")) {
       setErro("O email deve ser um endereço @gmail.com");
       return;
     }
 
-    // Validação do telefone: 9 dígitos, começa com 9
     if (!/^9\d{8}$/.test(form.telefone)) {
       setErro("O telefone deve ter exatamente 9 dígitos e começar com 9.");
       return;
@@ -78,54 +75,42 @@ const NovoCliente = () => {
     }
   };
 
+  const isB2B = tipoCliente === "B2B";
+
   return (
     <div>
       <NavBar />
       <Box sx={{ display: "flex" }}>
         <SideBar />
-        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: "70px", width: "100%", boxSizing: "border-box" }}>
           <Container maxWidth="lg">
-            {/* 1. Breadcrumbs */}
+            {/* Breadcrumbs */}
             <Breadcrumbs
               separator={<NavigateNextIcon fontSize="small" />}
               aria-label="breadcrumb"
               sx={{ mb: 2, "& .MuiTypography-root": { fontSize: "0.85rem" } }}
             >
-              <Link style={{textDecoration:"none"}} to="/clientes">
+              <Link style={{ textDecoration: "none" }} to="/clientes">
                 Clientes
               </Link>
               <Typography color="text.primary">Novo Cliente</Typography>
             </Breadcrumbs>
 
-            {/* 2. Título e Subtítulo */}
+            {/* Título */}
             <Box sx={{ mb: 4 }}>
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: 800, color: '#111' }}
-              >
+              <Typography variant="h5" sx={{ fontWeight: 800, color: "#111" }}>
                 Adicionar Novo Cliente
               </Typography>
-              <Typography  variant="caption" color="textSecondary" sx={{ color: "#64748b", mt: 0.5 }}>
-                Preencha os dados abaixo para registar um novo cliente no
-                sistema.
+              <Typography variant="caption" color="textSecondary" sx={{ color: "#64748b", mt: 0.5 }}>
+                Preencha os dados abaixo para registar um novo cliente no sistema.
               </Typography>
             </Box>
 
-            {/* 3. Card do Formulário */}
-            <Paper
-              elevation={0}
-              sx={{
-                p: { xs: 2, md: 5 },
-                borderRadius: 3,
-                border: "1px solid #e2e8f0",
-              }}
-            >
+            {/* Formulário */}
+            <Paper elevation={0} sx={{ p: { xs: 2, md: 5 }, borderRadius: 3, border: "1px solid #e2e8f0" }}>
+
               {/* Tipo de Cliente */}
-              <Typography
-                variant="subtitle2"
-                gutterBottom
-                sx={{ fontWeight: 600, mb: 1.5 }}
-              >
+              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, mb: 1.5 }}>
                 Tipo de Cliente <span style={{ color: "#ef4444" }}>*</span>
               </Typography>
               <ToggleButtonGroup
@@ -134,7 +119,7 @@ const NovoCliente = () => {
                 onChange={(e, val) => {
                   if (val) {
                     setTipoCliente(val);
-                    setForm({ ...form, nif: "" }); // Reset nif when changing type
+                    setForm({ ...form, nif: "" });
                   }
                 }}
                 sx={{
@@ -162,66 +147,69 @@ const NovoCliente = () => {
               </ToggleButtonGroup>
 
               {/* Seção: Informações Gerais */}
-              <SectionHeader
-                icon={<DescriptionIcon />}
-                title="Informações Gerais"
-              />
+              <SectionHeader icon={<DescriptionIcon />} title="Informações Gerais" />
               <Grid container spacing={3} sx={{ mb: 5 }}>
                 <Grid item xs={12}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Nome Completo *</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: "#0F172A", mb: 1, display: "block" }}>
+                    Nome Completo *
+                  </Typography>
                   <TextField
                     fullWidth
                     value={form.nome}
                     onChange={(e) => setForm({ ...form, nome: e.target.value })}
-                    placeholder="Ex: João Manuel António"
+                    placeholder={isB2B ? "Ex: Empresa XYZ Lda." : "Ex: João Manuel António"}
                     size="small"
-                    sx={{width:"20rem"}}
+                    sx={{ width: "20rem" }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>NIF / N.º de Identificação *</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: "#0F172A", mb: 1, display: "block" }}>
+                    NIF / N.º de Identificação *
+                  </Typography>
                   <TextField
                     fullWidth
                     value={form.nif}
                     onChange={(e) => {
                       const val = e.target.value;
-                      const limite = tipoCliente === "B2B" ? 10 : 14;
-                      if (val.length <= limite) {
-                        setForm({ ...form, nif: val });
-                      }
+                      const limite = isB2B ? 10 : 14;
+                      if (val.length <= limite) setForm({ ...form, nif: val });
                     }}
-                    placeholder="Ex: 000000000LA000"
+                    placeholder={isB2B ? "Ex: 5000000000" : "Ex: 000000000LA000"}
                     size="small"
-                    sx={{width:"20rem"}}
+                    sx={{ width: "20rem" }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Código de Cliente</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: "#0F172A", mb: 1, display: "block" }}>
+                    Código de Cliente
+                  </Typography>
                   <TextField
                     fullWidth
                     value={codigoGerado}
                     size="small"
                     disabled
-                    sx={{width:"19rem"}}
+                    sx={{ width: "19rem" }}
                   />
                 </Grid>
               </Grid>
 
-              {/* Seção: Contactos e Morada */}
+              {/* Seção: Contactos — B2C só mostra email e telefone; B2B mostra tudo */}
               <SectionHeader
                 icon={<LocationOnIcon />}
-                title="Contactos e Morada"
+                title={isB2B ? "Contactos e Morada" : "Contactos"}
               />
               <Grid container spacing={3} sx={{ mb: 5 }}>
                 <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Email *</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700, color: "#0F172A", mb: 1, display: "block" }}>
+                    Email *
+                  </Typography>
                   <TextField
                     fullWidth
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="Ex: contacto@cliente.com"
+                    placeholder="Ex: contacto@gmail.com"
                     size="small"
-                    sx={{width:"17rem"}}
+                    sx={{ width: "17rem" }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -231,10 +219,8 @@ const NovoCliente = () => {
                     type="tel"
                     value={form.telefone}
                     onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '');
-                      if (val.length <= 9) {
-                        setForm({ ...form, telefone: val });
-                      }
+                      const val = e.target.value.replace(/\D/g, "");
+                      if (val.length <= 9) setForm({ ...form, telefone: val });
                     }}
                     placeholder="900000000"
                     size="small"
@@ -243,142 +229,67 @@ const NovoCliente = () => {
                     helperText={form.telefone.length > 0 && !/^9\d{8}$/.test(form.telefone) ? "O telefone deve ter 9 dígitos e começar com 9" : ""}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Morada Completa</Typography>
-                  <TextField
-                    fullWidth
-                    placeholder="Rua, Bairro, Edifício..."
-                    size="small"
-                    sx={{width:"11rem"}}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Cidade / Província *</Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    defaultValue="Luanda"
-                    size="small"
-                  >
-                    <MenuItem value="Luanda">Luanda</MenuItem>
-                    <MenuItem value="cuanza norte">C.Norte</MenuItem>
-                    <MenuItem value="bengo">Bengo</MenuItem>
-                    <MenuItem value="moxico">Moxico</MenuItem>
-                    <MenuItem value="cabinda">Cabinda</MenuItem>
-                    <MenuItem value="cunene">Cunene</MenuItem>
-                    <MenuItem value="huila">Huíla</MenuItem>
-                    <MenuItem value="lunda sul">L.Sul</MenuItem>
-                    <MenuItem value="lunda norte">L.Norte</MenuItem>
-                    <MenuItem value="uige">Uíge</MenuItem>
-                    <MenuItem value="namibe">Namibe</MenuItem>
-                    <MenuItem value="cuando">Cuando</MenuItem>
-                    <MenuItem value="cubango">Cubango</MenuItem>
-                    <MenuItem value="benguela">Benguela</MenuItem>
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>País *</Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    defaultValue="Angola"
-                    size="small"
-                  >
-                    <MenuItem value="Angola">Angola</MenuItem>
-                    <MenuItem value="portugal">Portugal</MenuItem>
-                    <MenuItem value="africa do sul">A.Sul</MenuItem>
-                    <MenuItem value="moçambique">Moz</MenuItem>
-                    <MenuItem value="namibia">Namibia</MenuItem>
-                  </TextField>
-                </Grid>
+
+                {/* Campos de morada — apenas visíveis para Empresas (B2B) */}
+                {isB2B && (
+                  <>
+                    <Grid item xs={12}>
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: "#0F172A", mb: 1, display: "block" }}>
+                        Morada Completa
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        placeholder="Rua, Bairro, Edifício..."
+                        size="small"
+                        sx={{ width: "25rem" }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: "#0F172A", mb: 1, display: "block" }}>
+                        Cidade / Província *
+                      </Typography>
+                      <TextField select fullWidth defaultValue="Luanda" size="small">
+                        <MenuItem value="Luanda">Luanda</MenuItem>
+                        <MenuItem value="cuanza norte">C.Norte</MenuItem>
+                        <MenuItem value="bengo">Bengo</MenuItem>
+                        <MenuItem value="moxico">Moxico</MenuItem>
+                        <MenuItem value="cabinda">Cabinda</MenuItem>
+                        <MenuItem value="cunene">Cunene</MenuItem>
+                        <MenuItem value="huila">Huíla</MenuItem>
+                        <MenuItem value="lunda sul">L.Sul</MenuItem>
+                        <MenuItem value="lunda norte">L.Norte</MenuItem>
+                        <MenuItem value="uige">Uíge</MenuItem>
+                        <MenuItem value="namibe">Namibe</MenuItem>
+                        <MenuItem value="cuando cubango">Cuando Cubango</MenuItem>
+                        <MenuItem value="benguela">Benguela</MenuItem>
+                      </TextField>
+                    </Grid>
+                  </>
+                )}
               </Grid>
 
-              {/* Seção: Informações Fiscais 
-              <SectionHeader
-                icon={<AccountBalanceIcon />}
-                title="Informações Fiscais & Comerciais"
-              />
-              <Grid container spacing={3} sx={{display:"flex",justifyContent:"space-between"}}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Regime de IVA</Typography>
-                  <TextField
-                    select
-                    fullWidth
-                    defaultValue="geral"
-                    size="small"
-                    sx={{width:"18rem"}}
-                  >
-                    <MenuItem value="geral">
-                      Regime Geral
-                    </MenuItem>
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Desconto Comercial Padrão (%)</Typography>
-                  <TextField
-                    fullWidth
-                    type="number"
-                    defaultValue="0"
-                    size="small"
-                    inputProps={{ min: 0 }}
-                    onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Motivo de Isenção (Caso aplicável)</Typography>
-                  <TextField
-                    select
-                    defaultValue=""
-                    size="small"
-                    displayEmpty
-                    disabled
-                    sx={{width:"13em"}}
-                  >
-                    <MenuItem value="" disabled>
-                      Selecione o motivo de isenção de IVA
-                    </MenuItem>
-                  </TextField>
-                </Grid>
-              </Grid>
-              <br/>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sx={{ width: "60vw" }}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Observações Internas</Typography>
-                  <TextField
-                    sx={{width:"62rem"}}
-                    multiline
-                    rows={4}
-                    placeholder="Notas adicionais sobre o cliente..."
-                  />
-                </Grid>
-              </Grid>*/}
+              {/* Mensagem de erro */}
               {erro && (
-                <Typography color="error" sx={{ mt: 2 }}>{erro}</Typography>
+                <Typography color="error" sx={{ mt: 2, mb: 1 }}>
+                  {erro}
+                </Typography>
               )}
-              <Box
-                sx={{
-                  marginTop: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginRight: "55px",
-                }}
-              >
-                <div></div>
-                <Box sx={{ display: "flex", gap: 3, justifyContent: "flex-end", width: "100%" }}>
-                  <Button
-                    onClick={() => navigate("/clientes")}
-                    sx={{ background: "#0B6E4F", color: "#fff" ,textTransform:"none" }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleSalvar}
-                    disabled={salvando}
-                    sx={{ background: "#0B6E4F", color: "#fff",textTransform:"none" }}
-                  >
-                    {salvando ? "A guardar..." : "Guardar"}
-                  </Button>
-                </Box>
+
+              {/* Botões */}
+              <Box sx={{ mt: 3, display: "flex", gap: 2, justifyContent: "flex-end" }}>
+                <Button
+                  onClick={() => navigate("/clientes")}
+                  sx={{ background: "#f1f5f9", color: "#334155", textTransform: "none", fontWeight: 600 }}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSalvar}
+                  disabled={salvando}
+                  sx={{ background: "#0B6E4F", color: "#fff", textTransform: "none", fontWeight: 600 }}
+                >
+                  {salvando ? "A guardar..." : "Guardar"}
+                </Button>
               </Box>
             </Paper>
           </Container>
@@ -388,17 +299,12 @@ const NovoCliente = () => {
   );
 };
 
-// Componentes Auxiliares para manter o código limpo
+// Componentes auxiliares
 const SectionHeader = ({ icon, title }) => (
   <Box sx={{ mb: 3 }}>
     <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-      {React.cloneElement(icon, {
-        sx: { fontSize: 20, color: "#64748b", mr: 1 },
-      })}
-      <Typography
-        variant="subtitle1"
-        sx={{ fontWeight: 700, color: "#334155" }}
-      >
+      {React.cloneElement(icon, { sx: { fontSize: 20, color: "#64748b", mr: 1 } })}
+      <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#334155" }}>
         {title}
       </Typography>
     </Box>
@@ -407,10 +313,7 @@ const SectionHeader = ({ icon, title }) => (
 );
 
 const Label = ({ children }) => (
-  <Typography
-    variant="body2"
-    sx={{ mb: 0.8, fontWeight: 500, color: "#334155" }}
-  >
+  <Typography variant="body2" sx={{ mb: 0.8, fontWeight: 500, color: "#334155" }}>
     {children}
   </Typography>
 );

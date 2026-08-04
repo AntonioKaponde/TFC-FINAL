@@ -53,6 +53,7 @@ public class ClienteService {
                 .email(request.getEmail())
                 .saldo(request.getSaldo() != null ? request.getSaldo() : java.math.BigDecimal.ZERO)
                 .empresa(empresa)
+                .tipoCliente(request.getEmpresa())
                 .ativo(request.isAtivo())
                 .build();
         return toResponse(clienteRepository.save(cliente));
@@ -81,6 +82,7 @@ public class ClienteService {
         cliente.setTelefone(request.getTelefone());
         cliente.setEmail(request.getEmail());
         cliente.setSaldo(request.getSaldo());
+        cliente.setTipoCliente(request.getEmpresa());
         cliente.setAtivo(request.isAtivo());
         return toResponse(clienteRepository.save(cliente));
     }
@@ -108,7 +110,7 @@ public class ClienteService {
                 .telefone(cliente.getTelefone())
                 .email(cliente.getEmail())
                 .saldo(cliente.getSaldo())
-                //.empresa(cliente.getEmpresa())
+                .empresa(cliente.getTipoCliente())
                 .ativo(cliente.isAtivo())
                 .build();
     }

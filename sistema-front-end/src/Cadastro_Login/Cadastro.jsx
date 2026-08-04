@@ -117,19 +117,19 @@ export default function Cadastro() {
               lineHeight: 1.2
             }}
           >
-            Crie a empresa, defina o <br /> utilizador principal e comece a <br /> faturar com conformidade AGT.
+            Crie a empresa, defina o <br /> utilizador principal e comece a <br /> facturar com conformidade AGT.
           </Typography>
 
           <Typography variant="body1" sx={{ color: '#64748B', mb: 6, maxWidth: 540 }}>
-            Este fluxo reúne os dados da organização e do administrador responsável para acelerar a ativação do sistema de inventário e faturação.
+            Este fluxo reúne os dados da organização e do administrador responsável para acelerar a ativação do sistema de inventário e facturação.
           </Typography>
 
           {/* Indicadores de Passos */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {[
               { num: 1, title: 'Dados da empresa', desc: 'Nome legal, NIF, setor, regime fiscal e contactos principais.', active: true },
-              { num: 2, title: 'Administrador inicial', desc: 'Definição do utilizador responsável por faturação, inventário e permissões internas.' },
-              { num: 3, title: 'Segurança e ativação', desc: 'Configuração de palavra-passe, segundo fator e preparação para emissão certificada.' }
+              { num: 2, title: 'Administrador inicial', desc: 'Definição do utilizador responsável por facturação, inventário e permissões internas.' },
+              { num: 3, title: 'Segurança e ativação', desc: 'Configuração de palavra-passe, preparação para emissão certificada.' }
             ].map((step) => (
               <Box key={step.num} sx={{ display: 'flex', gap: 2 }}>
                 <Box sx={{

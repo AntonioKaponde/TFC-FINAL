@@ -136,7 +136,7 @@ export default function Login() {
           </Typography>
           
           <Typography variant="body1" sx={{ color: '#64748B', mb: 6, maxWidth: 540 }}>
-            Acompanhe faturação eletrónica, inventário, SAF-T Angola e indicadores fiscais numa única plataforma preparada para equipas empresariais.
+            Acompanhe facturação eletrónica, inventário, SAF-T Angola e indicadores fiscais numa única plataforma preparada para equipas empresariais.
           </Typography>
 
           {/* Cards de Recursos */}
@@ -363,7 +363,7 @@ export default function Login() {
             </Link>
             </Button>
           </Typography>
-          <Button variant="text" sx={{ p: 0, textTransform: 'none', fontWeight: 600, color: "#083927", minWidth: 'auto', fontSize: '0.875rem' }}>
+          <Button disabled={true} variant="text" sx={{ p: 0, textTransform: 'none', fontWeight: 600, color: "#083927", minWidth: 'auto', fontSize: '0.875rem' }}>
             Precisa de apoio técnico?
           </Button>
         </Box>

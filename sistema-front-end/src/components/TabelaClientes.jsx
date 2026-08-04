@@ -111,10 +111,10 @@ export default function TabelaClientes() {
     // Type filter
     let matchTipo = true;
     if (filtroTipo === "Empresas (B2B)")
-      matchTipo = cliente.empresa != null && cliente.empresa !== "";
+      matchTipo = cliente.empresa === "Empresa";
     if (filtroTipo === "Particulares(B2C)")
-      matchTipo = !cliente.empresa || cliente.empresa === "";
-    if (filtroTipo === "Com Dívida") matchTipo = cliente.saldo < 0;
+      matchTipo = cliente.empresa === "Particular" || !cliente.empresa || cliente.empresa === "";
+    if (filtroTipo === "Com Dívida") matchTipo = cliente.saldo > 0;
 
     return matchPesquisa && matchTipo;
   }), [clientes, pesquisa, filtroTipo]);
