@@ -39,6 +39,7 @@ public class UsuarioService {
                     .email(u.getEmail())
                     .role(roleName)
                     .status(u.isAtivo() ? "Ativo" : "Inativo")
+                    .primeiroAcesso(u.isPrimeiroAcesso())
                     .build();
         }).collect(Collectors.toList());
     }
@@ -73,17 +74,53 @@ public class UsuarioService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .empresa(empresa)
                 .ativo(true)
+                .primeiroAcesso(true)
                 .build();
                 
         novoUsuario.getPerfilRoles().add(role);
         usuarioRepository.save(novoUsuario);
     }
 
+    /**
+     * Permite ao utilizador autenticado trocar a sua própria palavra-passe.
+     * Valida a palavra-passe atual e, após a troca, marca o primeiro acesso como concluído.
+     */
+    @Transactional
+    public void alterarPassword(String senhaAtual, String novaSenha) {
+        Usuario usuario = getCurrentUser();
+
+        if (!passwordEncoder.matches(senhaAtual, usuario.getPassword())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "A palavra-passe atual está incorreta.");
+        }
+
+        if (novaSenha == null || novaSenha.length() < 8) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "A nova palavra-passe deve ter pelo menos 8 caracteres.");
+        }
+
+        if (passwordEncoder.matches(novaSenha, usuario.getPassword())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "A nova palavra-passe deve ser diferente da atual.");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(novaSenha));
+        usuario.setPrimeiroAcesso(false);
+        usuarioRepository.save(usuario);
+    }
+
+    private boolean isAdmin(Usuario usuario) {
+        return usuario.getPerfilRoles().stream()
+                .anyMatch(r -> r.getNome().equalsIgnoreCase("Admin") || r.getNome().equalsIgnoreCase("NovoAdmin"));
+    }
+
     @Transactional
     public void removerUsuario(Long id) {
         Usuario currentUser = getCurrentUser();
-        boolean isAdmin = currentUser.getPerfilRoles().stream()
-                .anyMatch(r -> r.getNome().equalsIgnoreCase("Admin") || r.getNome().equalsIgnoreCase("NovoAdmin"));
+        boolean isAdmin = isAdmin(currentUser);
         if (!isAdmin) {
             throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN, "Acesso negado: Apenas administradores podem remover usuários.");
         }

@@ -29,8 +29,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import BusinessIcon from '@mui/icons-material/Business';
 import { useMenu } from "../context/MenuContext";
+import { useNotificacoes } from "../context/NotificacoesContext";
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import CategoryIcon from '@mui/icons-material/Category';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import SupportIcon from '@mui/icons-material/LiveHelp';
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 
 const drawerWidth = 300;
 
@@ -40,6 +45,7 @@ export default function SideBar() {
   const navigate = useNavigate();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const { mobileOpen, handleDrawerToggle } = useMenu();
+  const { naoLidos } = useNotificacoes();
 
   const rolesString = localStorage.getItem('userRoles');
   const userRoles = rolesString ? JSON.parse(rolesString) : [];
@@ -143,6 +149,22 @@ export default function SideBar() {
           >
             <Inventory2OutlinedIcon sx={{ mr: 2 }} />
             Inventário
+          </ListItemButton>
+        </ListItem>
+        <ListItem
+          onClick={() => {
+            navigate("/previsao-stock");
+            if(mobileOpen) handleDrawerToggle();
+          }}
+        >
+          <ListItemButton
+            sx={{
+              borderRadius: "10px",
+              ":hover": { background: "#083927" },
+            }}
+          >
+            <QueryStatsIcon sx={{ mr: 2 }} />
+            Previsão de Stock
           </ListItemButton>
         </ListItem>
         {!isOperador && (
@@ -295,6 +317,22 @@ export default function SideBar() {
                 Relatórios de Imposto
               </ListItemButton>
             </ListItem>
+            <ListItem
+              onClick={() => {
+                navigate("/inteligencia-fiscal");
+                if(mobileOpen) handleDrawerToggle();
+              }}
+            >
+              <ListItemButton
+                sx={{
+                  borderRadius: "10px",
+                  ":hover": { background: "#083927" },
+                }}
+              >
+                <LightbulbOutlinedIcon sx={{ mr: 2 }} />
+                Inteligência Fiscal
+              </ListItemButton>
+            </ListItem>
             {isAdmin && (
             <ListItem
               onClick={() => {
@@ -316,6 +354,60 @@ export default function SideBar() {
           </List>
         </>
       )}
+
+      {/* SUPORTE */}
+      <Divider sx={{ color: "#fff" }} />
+      <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>
+        SUPORTE
+      </Typography>
+      <List sx={{ m: 1 }}>
+        <ListItem
+          onClick={() => {
+            navigate("/suporte");
+            if(mobileOpen) handleDrawerToggle();
+          }}
+        >
+          <ListItemButton
+            sx={{
+              borderRadius: "10px",
+              ":hover": { background: "#083927" },
+            }}
+          >
+            <SupportIcon sx={{ mr: 2 }} />
+            Pedido de Suporte
+          </ListItemButton>
+        </ListItem>
+        {isAdmin && (
+          <ListItem
+            onClick={() => {
+              navigate("/gestaoSuporte");
+              if(mobileOpen) handleDrawerToggle();
+            }}
+          >
+            <ListItemButton
+              sx={{
+                borderRadius: "10px",
+                ":hover": { background: "#083927" },
+              }}
+            >
+              <SupportAgentIcon sx={{ mr: 2 }} />
+              Gestão de Suporte
+              {naoLidos > 0 && (
+                <Box
+                  component="span"
+                  sx={{
+                    ml: "auto", mr: 1, bgcolor: "#EF4444", color: "#fff",
+                    borderRadius: "10px", fontSize: "11px", fontWeight: 700,
+                    px: "7px", py: "2px", lineHeight: 1.4
+                  }}
+                >
+                  {naoLidos}
+                </Box>
+              )}
+            </ListItemButton>
+          </ListItem>
+        )}
+      </List>
       <Divider sx={{ color: "#fff" }} />
       <List sx={{ m: 1, mt: 4 }}>
         <ListItem

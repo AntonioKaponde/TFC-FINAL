@@ -171,7 +171,7 @@ export default function GestaoDeUsuarios() {
                           {user.email}
                         </Typography>
                         
-                        <Stack direction="row" spacing={1} alignItems="center">
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap', gap: 0.5 }}>
                           <Chip 
                             label={user.role} 
                             size="small" 
@@ -187,6 +187,13 @@ export default function GestaoDeUsuarios() {
                               borderRadius: '6px', fontSize: 11, height: 22
                             }} 
                           />
+                          {user.primeiroAcesso && (
+                            <Chip 
+                              label="Trocar password pendente" 
+                              size="small" 
+                              sx={{ bgcolor: '#FFF7E6', color: '#B45309', fontWeight: 700, borderRadius: '6px', fontSize: 10, height: 20 }} 
+                            />
+                          )}
                         </Stack>
                       </Box>
                     </Box>

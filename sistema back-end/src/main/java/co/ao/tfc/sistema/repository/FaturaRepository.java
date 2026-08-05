@@ -151,5 +151,23 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
      */
     @Query("SELECT COALESCE(SUM(f.subtotal), 0) FROM Fatura f WHERE f.empresa = :empresa AND f.dataEmissao BETWEEN :inicio AND :fim")
     BigDecimal somarSubtotalPorPeriodo(@Param("empresa") Empresa empresa, @Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+
+    /**
+     * Consumo/vendas por artigo a partir das linhas de fatura.
+     * Retorna: artigo.id, soma das quantidades, data da última venda, nº de faturas distintas.
+     * Usado na previsão de stock (velocidade de venda e dias restantes).
+     */
+    @Query("""
+            SELECT l.artigo.id,
+                   COALESCE(SUM(l.quantidade), 0),
+                   MAX(f.dataEmissao),
+                   COUNT(DISTINCT f.id)
+            FROM Fatura f JOIN f.linhas l
+            WHERE f.empresa = :empresa AND f.dataEmissao >= :inicio
+            GROUP BY l.artigo.id
+            """)
+    List<Object[]> resumoVendasPorArtigo(
+            @Param("empresa") Empresa empresa,
+            @Param("inicio") LocalDate inicio);
 }
 

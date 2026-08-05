@@ -28,6 +28,14 @@ public class Usuario {
     @Builder.Default
     private boolean ativo = true;
 
+    /**
+     * Indica que o utilizador foi criado pelo Administrador e ainda não
+     * alterou a palavra-passe inicial. Enquanto for true, o sistema
+     * obriga a troca de palavra-passe no primeiro acesso.
+     */
+    @Builder.Default
+    private boolean primeiroAcesso = false;
+
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;

@@ -22,13 +22,20 @@ import CriarPapel from "./components/CriarPapel"
 import ResumoEmpresa from "./pages/ResumoEmpresa"
 import Categorias from "./pages/Categorias"
 import Auditoria from "./pages/Auditoria"
+import AlterarPassword from "./pages/AlterarPassword"
+import PedidoSuporte from "./pages/PedidoSuporte"
+import GestaoSuporte from "./pages/GestaoSuporte"
+import InteligenciaFiscal from "./pages/InteligenciaFiscal"
+import PrevisaoStock from "./pages/PrevisaoStock"
 import { MenuProvider } from "./context/MenuContext"
+import { NotificacoesProvider } from "./context/NotificacoesContext"
 
 function App() {
  
   return (
     <div style={{ background: "#F4F7F9", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <MenuProvider>
+        <NotificacoesProvider>
         <BrowserRouter>
           <Routes>
             <Route  path="/"  element = {<Login />}></Route>
@@ -52,8 +59,14 @@ function App() {
              <Route  path="/resumo-empresa" element = {<PrivateRoute><ResumoEmpresa /></PrivateRoute>}></Route>
              <Route  path="/categorias" element = {<PrivateRoute><Categorias /></PrivateRoute>}></Route>
              <Route  path="/auditoria" element = {<PrivateRoute><Auditoria /></PrivateRoute>}></Route>
+             <Route  path="/alterar-password" element = {<PrivateRoute><AlterarPassword /></PrivateRoute>}></Route>
+             <Route  path="/suporte" element = {<PrivateRoute><PedidoSuporte /></PrivateRoute>}></Route>
+             <Route  path="/gestaoSuporte" element = {<PrivateRoute><GestaoSuporte /></PrivateRoute>}></Route>
+             <Route  path="/inteligencia-fiscal" element = {<PrivateRoute><InteligenciaFiscal /></PrivateRoute>}></Route>
+             <Route  path="/previsao-stock" element = {<PrivateRoute><PrevisaoStock /></PrivateRoute>}></Route>
           </Routes>
         </BrowserRouter>
+        </NotificacoesProvider>
       </MenuProvider>
     </div>
   )

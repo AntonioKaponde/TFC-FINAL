@@ -27,9 +27,10 @@ import {
   VisibilityOff,
   LockOutlined,
   CheckCircleOutline
-} from '@mui/icons-material';
-import {Radio } from "@mui/material";
+} from '@mui/icons-material';import { Radio } from "@mui/material";
+import { useNotificacoes } from "../context/NotificacoesContext";
 export default function Login() {
+  const { atualizar: atualizarNotificacoes } = useNotificacoes();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,11 +64,22 @@ export default function Login() {
         }
         if (response.roles) {
           localStorage.setItem('userRoles', JSON.stringify(response.roles));
-          const isOperador = response.roles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
-          if (isOperador) {
-            navigate('/faturacao');
-            return;
-          }
+        }
+        // Utilizador criado pelo Admin ainda não trocou a palavra-passe → acesso condicionado
+        if (response.primeiroAcesso) {
+          localStorage.setItem('primeiroAcesso', 'true');
+          navigate('/alterar-password');
+          return;
+        }
+        localStorage.removeItem('primeiroAcesso');
+        // Atualiza as notificações de suporte assim que a sessão inicia
+        if (response.roles && response.roles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN')) {
+          atualizarNotificacoes();
+        }
+        const isOperador = response.roles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
+        if (isOperador) {
+          navigate('/faturacao');
+          return;
         }
         navigate('/dashboard');
       }

@@ -61,7 +61,7 @@ public class AuthService {
             // Regista login bem-sucedido na auditoria
             auditoriaService.registrarLogin(loginRequest.getEmail(), usuario.getNome(), ip);
 
-            return new JwtAuthResponse(jwt, usuario.getNome(), usuario.getEmail(), roles);
+            return new JwtAuthResponse(jwt, usuario.getNome(), usuario.getEmail(), roles, usuario.isPrimeiroAcesso());
 
         } catch (BadCredentialsException e) {
             // Regista tentativa falhada

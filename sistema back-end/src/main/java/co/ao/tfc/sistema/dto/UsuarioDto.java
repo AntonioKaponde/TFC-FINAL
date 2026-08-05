@@ -15,4 +15,7 @@ public class UsuarioDto {
     private String email;
     private String role;
     private String status;
+
+    /** true se o utilizador ainda não trocou a palavra-passe inicial */
+    private boolean primeiroAcesso;
 }

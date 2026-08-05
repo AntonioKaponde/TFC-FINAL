@@ -79,4 +79,27 @@ export const usuariosApi = {
   listar: () => api.get('/api/usuarios'),
   criar: (data) => api.post('/api/usuarios', data),
   remover: (id) => api.delete(`/api/usuarios/${id}`),
+  alterarPassword: (data) => api.put('/api/usuarios/alterar-password', data),
+};
+
+export const pedidosSuporteApi = {
+  /** Pedidos do utilizador autenticado */
+  meus: () => api.get('/api/pedidos-suporte/meus'),
+  /** Todos os pedidos da empresa (admin) com filtro opcional por estado */
+  listar: (estado) => api.get(estado ? `/api/pedidos-suporte?estado=${encodeURIComponent(estado)}` : '/api/pedidos-suporte'),
+  criar: (formData) => api.postForm('/api/pedidos-suporte', formData),
+  atualizarEstado: (id, data) => api.put(`/api/pedidos-suporte/${id}/estado`, data),
+  baixarAnexo: (anexoId, nome) => api.download(`/api/pedidos-suporte/anexos/${anexoId}`, nome),
+  obterAnexoBlob: (anexoId) => api.getBlob(`/api/pedidos-suporte/anexos/${anexoId}`),
+  /** Total de pedidos não visualizados + os mais recentes (notificações do admin) */
+  naoLidos: () => api.get('/api/pedidos-suporte/nao-lidos'),
+  marcarVistos: () => api.post('/api/pedidos-suporte/marcar-vistos'),
+};
+
+export const previsaoStockApi = {
+  previsao: () => api.get('/api/stock/previsao'),
+};
+
+export const inteligenciaFiscalApi = {
+  previsao: () => api.get('/api/fiscal/previsao'),
 };

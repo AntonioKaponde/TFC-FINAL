@@ -64,12 +64,60 @@ async function request(path, options = {}) {
   return response.text();
 }
 
+/** Faz um pedido POST com FormData (multipart) — o browser define o Content-Type */
+async function requestForm(path, formData) {
+  const token = localStorage.getItem('token');
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/api/auth/')) {
+      limparSessaoERedirecionar();
+      return;
+    }
+    const text = await response.text().catch(() => '');
+    throw criarErro(text || `Erro ${response.status}`, response.status);
+  }
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json();
+  }
+  return response.text();
+}
+
+/** Busca um ficheiro (blob) autenticado, devolvendo { blob, contentType } */
+async function getBlob(path) {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+  });
+  if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/api/auth/')) {
+      limparSessaoERedirecionar();
+      throw criarErro('Sessão expirada', 401);
+    }
+    throw criarErro(`Erro ${response.status}`, response.status);
+  }
+  return {
+    blob: await response.blob(),
+    contentType: response.headers.get('content-type') || '',
+  };
+}
+
 export const api = {
   get: (path) => request(path),
   post: (path, body) => request(path, { method: 'POST', body: JSON.stringify(body) }),
+  postForm: (path, formData) => requestForm(path, formData),
   put: (path, body) => request(path, { method: 'PUT', body: JSON.stringify(body) }),
   patch: (path) => request(path, { method: 'PATCH' }),
   delete: (path) => request(path, { method: 'DELETE' }),
+  getBlob,
   download: async (path, filename) => {
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_BASE}${path}`, {
@@ -92,7 +140,7 @@ export const api = {
           const text = await response.text();
           if (text) mensagem = text;
         }
-      } catch (_) {}
+      } catch { /* resposta não é JSON */ }
       const error = new Error(mensagem);
       error.status = response.status;
       throw error;

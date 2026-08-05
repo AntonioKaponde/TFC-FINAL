@@ -1,5 +1,6 @@
 package co.ao.tfc.sistema.controller;
 
+import co.ao.tfc.sistema.dto.AlterarPasswordRequest;
 import co.ao.tfc.sistema.dto.UsuarioDto;
 import co.ao.tfc.sistema.dto.UsuarioRequest;
 import co.ao.tfc.sistema.service.AuditoriaService;
@@ -33,6 +34,21 @@ public class UsuarioController {
             usuarioService.criarUsuario(request);
             auditoriaService.registrarAuditoria("CRIOU", "Usuario", "Criou o usuário " + request.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuário criado com sucesso");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+    /**
+     * Troca a palavra-passe do utilizador autenticado (obrigatório no primeiro acesso
+     * para utilizadores criados pelo Admin; também disponível a qualquer momento).
+     */
+    @PutMapping("/alterar-password")
+    public ResponseEntity<String> alterarPassword(@Valid @RequestBody AlterarPasswordRequest request) {
+        try {
+            usuarioService.alterarPassword(request.getSenhaAtual(), request.getNovaSenha());
+            auditoriaService.registrarAuditoria("ALTEROU", "Usuario", "Alterou a sua palavra-passe");
+            return ResponseEntity.ok("Palavra-passe alterada com sucesso.");
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
