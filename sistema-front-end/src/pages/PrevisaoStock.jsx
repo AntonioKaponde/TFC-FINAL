@@ -121,9 +121,9 @@ export default function PrevisaoStock() {
                 ))}
               </Box>
 
-              <Alert severity="info" sx={{ mb: 2, borderRadius: 2 }} icon={<InfoIcon />}>
+              {/*<Alert severity="info" sx={{ mb: 2, borderRadius: 2 }} icon={<InfoIcon />}>
                 Consumo médio mensal calculado a partir das vendas dos últimos 90 dias. Reposição sugerida cobre ~45 dias de consumo.
-              </Alert>
+              </Alert>*/}
 
               {/* Tabela */}
               <Card variant="outlined" sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
@@ -132,7 +132,7 @@ export default function PrevisaoStock() {
                     <TableHead>
                       <TableRow>
                         {['Produto', 'Categoria', 'Stock atual', 'Consumo/mês', 'Dias restantes', 'Última venda', 'Velocidade', 'Estado', 'Repor (sugestão)'].map((h) => (
-                          <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#f8f9fa', color: '#334155', fontSize: '0.78rem' }}>{h}</TableCell>
+                          <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#f8f9fa', color: '#334155', fontSize: '0.78rem',height: '75px' }}>{h}</TableCell>
                         ))}
                       </TableRow>
                     </TableHead>
@@ -144,7 +144,7 @@ export default function PrevisaoStock() {
                       )}
                       {dados.artigos?.map((a) => (
                         <TableRow key={a.id} hover sx={{ bgcolor: a.status === 'A_ACABAR' ? '#FFF7F7' : a.status === 'PARADO' ? '#FAFAFA' : 'inherit' }}>
-                          <TableCell>
+                          <TableCell sx={{height: '75px' }}>
                             <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155' }}>{a.nome}</Typography>
                             <Typography variant="caption" sx={{ color: '#94A3B8' }}>{a.sku}</Typography>
                           </TableCell>

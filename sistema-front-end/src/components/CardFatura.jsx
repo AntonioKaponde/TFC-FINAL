@@ -54,7 +54,7 @@ export default function CardFatura() {
     <div style={{ display: "flex", gap: 30, justifyContent: "center" }}>
       {cards.map((card) => (
         <Box key={card.titulo}>
-          <Card sx={{ minWidth: 329, p: 2}}>
+          <Card sx={{ minWidth: 329, p: 2,height:"10rem",borderRadius:3 }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ fontSize: '1rem', color: '#64748b' }}>{card.titulo}</Typography>

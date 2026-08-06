@@ -47,7 +47,7 @@ export default function CardRelatorio() {
     <div style={{ display: "flex", gap: 23, justifyContent: "center" }}>
       {cards.map((card) => (
         <Box key={card.titulo}>
-          <Card sx={{ minWidth: 336, p: 2,ml:0.4 }}>
+          <Card sx={{ minWidth: 336, p: 2,ml:0.4,height:"10rem",borderRadius:3 }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ fontSize: '1rem', color: '#64748b' }}>{card.titulo}</Typography>

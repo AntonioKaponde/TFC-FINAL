@@ -60,7 +60,7 @@ const CardFicheiro = () => {
         <Box sx={{ display: "flex" }}>
           <Grid item xs={12} md={6}>
             {/*Card responsável pela geração de  ficheiro saf-t */}
-            <Card sx={{ p: 5, borderRadius: 2, boxShadow: "0 2px 10px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", height: "435px", width: "40rem" }}>
+            <Card sx={{ p: 5, borderRadius: 2, boxShadow: "0 2px 10px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", height: "435px", width: "40rem",borderRadius:3 }}>
               <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                 <FileIcon sx={{ color: "#083927", mr: 1 }} />
                 <Typography variant="h6" fontWeight="bold">Gerar Ficheiro SAF-T</Typography>

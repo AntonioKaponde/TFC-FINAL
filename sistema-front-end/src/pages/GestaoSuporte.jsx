@@ -175,9 +175,9 @@ export default function GestaoSuporte() {
               { label: 'Resolvidos', valor: totalResolvidos, cor: '#22C55E' },
             ].map((s) => (
               <Grid item xs={6} md={3} key={s.label}>
-                <Card variant="outlined" sx={{ borderRadius: 2, p: 2.5,width: '20rem'}}>
+                <Card variant="outlined" sx={{ borderRadius: 2, p: 2.5,width: '20rem',height:"8rem"}}>
                   <Typography variant="h4" sx={{ fontWeight: 800, color: s.cor }}>{s.valor}</Typography>
-                  <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600,color: '#64748b',}}>{s.label}</Typography>
+                  <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600,color: '#64748b'}}>{s.label}</Typography>
                 </Card>
               </Grid>
             ))}

@@ -75,7 +75,7 @@ export default function Configuracoes() {
         <Box  display={"flex"}>
           <SideBar />
           <Box component={"main"} sx={{margin:"90px 100px 0px 200px",display:"flex", width: "100%", paddingBottom: "50px"}}>
-           <Grid container spacing={2} sx={{display:"flex", flexDirection:"column"}}>
+           <Grid container spacing={2} sx={{display:"flex", flexDirection:"column",borderRadius:3}}>
             <Grid sx={{ml:10}}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }} >Definições Gerais</Typography>
               <Typography variant="caption" color="textSecondary">Faça a gestão dos dados da sua empresa, configurações fiscais e parametrização fiscal</Typography>

@@ -131,7 +131,6 @@ export default function Categorias() {
             <Table>
               <TableHead sx={{ bgcolor: "#f8fafc" }}>
                 <TableRow>
-                  <TableCell><strong>ID</strong></TableCell>
                   <TableCell><strong>Nome</strong></TableCell>
                   <TableCell><strong>Descrição</strong></TableCell>
                   <TableCell align="right"><strong>Ações</strong></TableCell>
@@ -140,7 +139,7 @@ export default function Categorias() {
               <TableBody>
                 {categorias.map((cat) => (
                   <TableRow key={cat.id}>
-                    <TableCell>{cat.id}</TableCell>
+              
                     <TableCell>{cat.nome}</TableCell>
                     <TableCell>{cat.descricao}</TableCell>
                     <TableCell align="right">
