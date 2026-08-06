@@ -27,12 +27,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import { categoriasApi } from "../api";
+import { obterRoles } from "../utils/authStorage";
 
 export default function Categorias() {
   const [categorias, setCategorias] = useState([]);
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
   const hideAdd = isContabilista;
   const [open, setOpen] = useState(false);

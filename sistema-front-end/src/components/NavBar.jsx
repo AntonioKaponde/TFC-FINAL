@@ -23,9 +23,10 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useMenu } from "../context/MenuContext";
 import { useNotificacoes } from "../context/NotificacoesContext";
+import { obterNome, limparSessao } from "../utils/authStorage";
 
 /** Tempo relativo simples, ex.: "há 5 min", "há 2 h", "há 3 dias" */
 function tempoRelativo(dataIso) {
@@ -59,11 +60,11 @@ const routeNames = {
   "/previsao-stock": "Previsão de Stock",
 };
 
-export default function NavBar() {
+export function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [initials] = useState(() => {
-    const name = localStorage.getItem("userName");
+    const name = obterNome();
     if (!name) return "K";
     const parts = name.trim().split(" ");
     if (parts.length > 1) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -86,9 +87,7 @@ export default function NavBar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userName");
-    sessionStorage.removeItem("session_active");
+    limparSessao();
     navigate("/");
   };
 
@@ -297,3 +296,5 @@ export default function NavBar() {
     </Box>
   );
 }
+
+export default memo(NavBar);

@@ -123,9 +123,9 @@ export default function PedidoSuporte() {
       <NavBar />
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 6 }, mr: { md: 6 } }}>
+        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 15 }, mr: { md: 6 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <SupportIcon sx={{ color: '#083927', fontSize: 32 }} />
+            {/*<SupportIcon sx={{ color: '#083927', fontSize: 32 }} />*/}
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Pedido de Suporte</Typography>
               <Typography variant="caption" color="textSecondary">
@@ -137,7 +137,7 @@ export default function PedidoSuporte() {
           <Grid container spacing={3}>
             {/* Formulário */}
             <Grid item xs={12} md={5}>
-              <Card variant="outlined" sx={{ borderRadius: 3, p: 3, bgcolor: '#fff' }}>
+              <Card variant="outlined" sx={{ borderRadius: 3, p: 4, bgcolor: '#fff',width:"40rem" , height:"35rem"}}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A', mb: 2 }}>
                   Novo pedido
                 </Typography>
@@ -154,7 +154,7 @@ export default function PedidoSuporte() {
 
                 <Grid container spacing={2} sx={{ mb: 2 }}>
                   <Grid item xs={6}>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth size="small" sx={{width:"15rem"}}>
                       <InputLabel>Categoria</InputLabel>
                       <Select
                         label="Categoria"
@@ -167,7 +167,7 @@ export default function PedidoSuporte() {
                     </FormControl>
                   </Grid>
                   <Grid item xs={6}>
-                    <FormControl fullWidth size="small">
+                    <FormControl fullWidth size="small" sx={{width:"10rem"}}>
                       <InputLabel>Prioridade</InputLabel>
                       <Select
                         label="Prioridade"
@@ -236,7 +236,7 @@ export default function PedidoSuporte() {
 
             {/* Lista dos meus pedidos */}
             <Grid item xs={12} md={7}>
-              <Card variant="outlined" sx={{ borderRadius: 3, bgcolor: '#fff' }}>
+              <Card variant="outlined" sx={{ borderRadius: 3, bgcolor: '#fff' ,width:"35rem"}}>
                 <Box sx={{ p: 2.5, borderBottom: '1px solid #F1F5F9' }}>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>
                     Os meus pedidos

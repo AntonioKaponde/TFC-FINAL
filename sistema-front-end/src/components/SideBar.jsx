@@ -20,7 +20,8 @@ import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import HistoryIcon from '@mui/icons-material/History';
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { memo, useState } from "react";
+import { obterRoles, limparSessao } from "../utils/authStorage";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -40,24 +41,22 @@ import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 const drawerWidth = 300;
 
 
-export default function SideBar() {
+function SideBar() {
 
   const navigate = useNavigate();
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
   const { mobileOpen, handleDrawerToggle } = useMenu();
   const { naoLidos } = useNotificacoes();
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
+  const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+  const isGestorEstoque = userRoles.some(r => r.toUpperCase() === 'GERENTE' || r.toUpperCase() === 'GERENTE DE ESTOQUE');
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
   const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRoles');
-    localStorage.removeItem('userName');
-    sessionStorage.removeItem('session_active');
+    limparSessao();
     navigate('/');
   };
 
@@ -151,6 +150,7 @@ export default function SideBar() {
             Inventário
           </ListItemButton>
         </ListItem>
+        {!isOperador && !isContabilista && (
         <ListItem
           onClick={() => {
             navigate("/previsao-stock");
@@ -167,6 +167,7 @@ export default function SideBar() {
             Previsão de Stock
           </ListItemButton>
         </ListItem>
+        )}
         {!isOperador && (
         <ListItem
           onClick={() => {
@@ -317,6 +318,7 @@ export default function SideBar() {
                 Relatórios de Imposto
               </ListItemButton>
             </ListItem>
+            {!isGestorEstoque && (
             <ListItem
               onClick={() => {
                 navigate("/inteligencia-fiscal");
@@ -333,6 +335,7 @@ export default function SideBar() {
                 Inteligência Fiscal
               </ListItemButton>
             </ListItem>
+            )}
             {isAdmin && (
             <ListItem
               onClick={() => {
@@ -495,3 +498,5 @@ export default function SideBar() {
     </Box>
   );
 }
+
+export default memo(SideBar);

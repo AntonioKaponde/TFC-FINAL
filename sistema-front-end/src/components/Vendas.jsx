@@ -30,14 +30,14 @@ import {
   formatData,
   hojeIso,
 } from "../utils/formatters";
+import { obterRoles } from "../utils/authStorage";
 
 const linhaVazia = () => ({ artigoId: "", quantidade: 1 });
 
 export default function Vendas() {
   const navigate = useNavigate();
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
 

@@ -145,7 +145,7 @@ export default function GestaoSuporte() {
         <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 6 }, mr: { md: 6 } }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <SupportIcon sx={{ color: '#083927', fontSize: 32 }} />
+              {/* <SupportIcon sx={{ color: '#083927', fontSize: 32 }} /> */}
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Gestão de Pedidos de Suporte</Typography>
                 <Typography variant="caption" color="textSecondary">
@@ -153,7 +153,7 @@ export default function GestaoSuporte() {
                 </Typography>
               </Box>
             </Box>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack direction="row" spacing={2} alignItems="center" sx={{mr:7}}>
               <Button size="small" startIcon={<RefreshIcon />} onClick={carregar} sx={{ textTransform: 'none' }}>Atualizar</Button>
               <TextField
                 size="small" placeholder="Pesquisar pedidos..." value={pesquisa}
@@ -175,9 +175,9 @@ export default function GestaoSuporte() {
               { label: 'Resolvidos', valor: totalResolvidos, cor: '#22C55E' },
             ].map((s) => (
               <Grid item xs={6} md={3} key={s.label}>
-                <Card variant="outlined" sx={{ borderRadius: 3, p: 2.5 }}>
+                <Card variant="outlined" sx={{ borderRadius: 2, p: 2.5,width: '20rem'}}>
                   <Typography variant="h4" sx={{ fontWeight: 800, color: s.cor }}>{s.valor}</Typography>
-                  <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>{s.label}</Typography>
+                  <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600,color: '#64748b',}}>{s.label}</Typography>
                 </Card>
               </Grid>
             ))}
@@ -185,7 +185,7 @@ export default function GestaoSuporte() {
 
           {/* Filtro por estado */}
           <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-            <FilterIcon sx={{ color: '#64748b' }} />
+            {/*<FilterIcon sx={{ color: '#64748b' }} />*/}
             {['TODOS', ...Object.keys(ESTADOS)].map((estado) => (
               <Button
                 key={estado} size="small"
@@ -205,13 +205,15 @@ export default function GestaoSuporte() {
           </Box>
 
           {/* Tabela */}
-          <Card variant="outlined" sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <TableContainer sx={{ maxHeight: '60vh' }}>
+          <Card variant="outlined" sx={{boxShadow: '0 4px 12px rgba(0,0,0,0.03)',mr:6}}>
+            <TableContainer sx={{ maxHeight: '60vh'}}>
               <Table stickyHeader size="small">
-                <TableHead>
-                  <TableRow>
-                    {['ID', 'Assunto', 'Utilizador', 'Categoria', 'Prioridade', 'Estado', 'Data', ''].map((h) => (
-                      <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#f8f9fa', color: '#334155' }}>{h}</TableCell>
+                <TableHead >
+                  <TableRow >
+                    {['Assunto', 'Utilizador', 'Categoria', 'Prioridade', 'Estado', 'Data', 'Acção'].map((h) => (
+                      <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#F1F5F9',height:"60px",
+                        color: "#64748b",
+                        fontSize: "0.75rem"}}>{h}</TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -224,8 +226,8 @@ export default function GestaoSuporte() {
                     </TableCell></TableRow>
                   ) : (
                     filtrados.map((pedido) => (
-                      <TableRow key={pedido.id} hover>
-                        <TableCell sx={{ fontWeight: 700, color: '#083927' }}>{pedido.codigo}</TableCell>
+                      <TableRow  hover sx={{height:"80px"}}>
+                        {/*<TableCell sx={{ fontWeight: 700, color: '#083927' }}>{pedido.codigo}</TableCell>*/}
                         <TableCell sx={{ maxWidth: 220 }}>
                           <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {pedido.assunto}
@@ -352,7 +354,7 @@ export default function GestaoSuporte() {
       </Dialog>
 
       {/* Pré-visualização de imagem */}
-      <Dialog open={!!preview} onClose={fecharPreview} maxWidth="md">
+      <Dialog open={!!preview} onClose={fecharPreview} maxWidth="md">sx={{backgroundColor:"#F1F5F9", borderradius: "2px"}}
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pr: 2 }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{preview?.nome}</Typography>
           <IconButton onClick={fecharPreview}><CloseIcon /></IconButton>

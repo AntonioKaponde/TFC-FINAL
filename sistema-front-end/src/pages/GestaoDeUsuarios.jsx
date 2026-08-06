@@ -36,6 +36,7 @@ import {
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 import { api } from '../api/client';
+import { obterRoles } from '../utils/authStorage';
 
 export default function GestaoDeUsuarios() {
   const [users, setUsers] = useState([]);
@@ -69,8 +70,7 @@ export default function GestaoDeUsuarios() {
     fetchData();
   }, []);
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
 
   const handleCreateUser = async () => {

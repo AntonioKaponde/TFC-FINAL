@@ -11,13 +11,13 @@ import GraficoRelatorio from '../components/GraficoRelatorio';
 import FiscalRelatorio from '../components/FiscalRelatorio';
 import TabelaRelatorio from '../components/TabelaRelatorio';
 import { dashboardApi } from '../api';
+import { obterRoles } from '../utils/authStorage';
 
 export default function Relatorio() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const rolesString = localStorage.getItem('userRoles');
-    const userRoles = rolesString ? JSON.parse(rolesString) : [];
+    const userRoles = obterRoles();
     const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
     const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
 

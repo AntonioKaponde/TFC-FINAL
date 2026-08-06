@@ -8,6 +8,7 @@ import PerfilEmpresa from '../components/PerfilEmpresa'
 import ConfiguracoesFiscais from '../components/ConfiguracoesFiscais'
 import SerieDocumentos from '../components/SerieDocumentos'
 import { movimentosEstoqueApi } from '../api';
+import { obterRoles } from '../utils/authStorage';
 
 export default function Configuracoes() {
   const perfilRef = useRef(null);
@@ -19,8 +20,7 @@ export default function Configuracoes() {
   const [fixando, setFixando] = useState({ artigos: false, iva: false });
   const navigate = useNavigate();
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN');
 
   const handleCorrigirArtigos = async () => {

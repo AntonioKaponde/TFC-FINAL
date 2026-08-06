@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { obterRoles } from '../utils/authStorage';
 import {
-  Box, Typography, Card, Grid, CircularProgress, Chip, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Stack, Alert, Tooltip, Paper
+  Box, Typography, Card, CircularProgress, Chip, Table, TableBody,
+  TableCell, TableContainer, TableHead, TableRow, Alert, Tooltip
 } from '@mui/material';
 import {
   Insights as InsightsIcon,
@@ -33,11 +35,22 @@ const VELOCIDADE = {
 };
 
 export default function PrevisaoStock() {
+  const navigate = useNavigate();
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
+  // Apenas Admin e Gerente de estoque podem visualizar a previsão de stock.
   useEffect(() => {
+    const userRoles = obterRoles();
+    const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
+    const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+
+    if (isOperador || isContabilista) {
+      navigate('/faturacao');
+      return;
+    }
+
     const carregar = async () => {
       try {
         setLoading(true);
@@ -50,7 +63,7 @@ export default function PrevisaoStock() {
       }
     };
     carregar();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -65,7 +78,7 @@ export default function PrevisaoStock() {
   const cards = [
     { icon: <InventoryIcon />, label: 'Total de produtos', valor: resumo?.totalArtigos ?? 0, cor: '#083927' },
     { icon: <AlertaIcon />, label: 'Vão acabar em breve', valor: resumo?.aAcabar ?? 0, cor: '#EF4444' },
-    { icon: <WarningAmberIcon />, label: 'Stock baixo', valor: resumo?.stockBaixo ?? 0, cor: '#EAB308' },
+    
     { icon: <ParadoIcon />, label: 'Produtos parados', valor: resumo?.parados ?? 0, cor: '#64748B' },
     { icon: <ReporIcon />, label: 'Com sugestão de reposição', valor: resumo?.comSugestaoReposicao ?? 0, cor: '#22C55E' },
   ];
@@ -77,7 +90,7 @@ export default function PrevisaoStock() {
         <SideBar />
         <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 6 }, mr: { md: 6 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <InsightsIcon sx={{ color: '#083927', fontSize: 32 }} />
+            {/*<InsightsIcon sx={{ color: '#083927', fontSize: 32 }} />*/}
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Previsão de Stock</Typography>
               <Typography variant="caption" color="textSecondary">

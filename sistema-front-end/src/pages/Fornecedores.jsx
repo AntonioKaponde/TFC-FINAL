@@ -9,9 +9,9 @@ import TabelaFornecedor from "../components/TabelaFornecedor";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { Link } from "react-router-dom";
+import { obterRoles } from "../utils/authStorage";
 export default function Fornecedores() {
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
   const hideAdd = isOperador || isContabilista;

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { obterRoles } from '../utils/authStorage';
 import {
   Box, Typography, Card, Grid, CircularProgress, Chip, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, Stack, Alert, Tooltip, Paper, Divider
@@ -23,11 +25,22 @@ const STATUS_OBRIGACAO = {
 };
 
 export default function InteligenciaFiscal() {
+  const navigate = useNavigate();
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
+  // Apenas Admin, Contabilista e Gerente podem visualizar a Inteligência Fiscal.
   useEffect(() => {
+    const userRoles = obterRoles();
+    const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
+    const isGestorEstoque = userRoles.some(r => r.toUpperCase() === 'GERENTE' || r.toUpperCase() === 'GERENTE DE ESTOQUE');
+
+    if (isOperador || isGestorEstoque) {
+      navigate('/faturacao');
+      return;
+    }
+
     const carregar = async () => {
       try {
         setLoading(true);
@@ -40,7 +53,7 @@ export default function InteligenciaFiscal() {
       }
     };
     carregar();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -59,9 +72,9 @@ export default function InteligenciaFiscal() {
       <NavBar />
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 6 }, mr: { md: 6 } }}>
+        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 20 }, mr: { md: 6 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <InsightsIcon sx={{ color: '#083927', fontSize: 32 }} />
+            {/*<InsightsIcon sx={{ color: '#083927', fontSize: 32 }} />*/}
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Inteligência Fiscal</Typography>
               <Typography variant="caption" color="textSecondary">
@@ -90,14 +103,14 @@ export default function InteligenciaFiscal() {
                   </Card>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, p: 3, height: '100%' }}>
+                  <Card variant="outlined" sx={{ borderRadius: 3, p: 3, height: '9.4rem',width:'20rem' }}>
                     <TrendingUpIcon sx={{ color: '#083927', mb: 1 }} />
                     <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>PREVISÃO FATURAÇÃO</Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, mt: 0.5 }}>{formatKzSemPrefixo(dados.previsaoFaturacao)} Kz</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, mt: 1,fontSize:30}}>{formatKzSemPrefixo(dados.previsaoFaturacao)} Kz</Typography>
                   </Card>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, p: 3, height: '100%' }}>
+                  <Card variant="outlined" sx={{ borderRadius: 3, p: 3, height: '9.4rem',width:'15rem' }}>
                     <HistoryIcon sx={{ color: '#083927', mb: 1 }} />
                     <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>IVA ÚLTIMO MÊS</Typography>
                     <Typography variant="h6" sx={{ fontWeight: 800, mt: 0.5 }}>{formatKzSemPrefixo(dados.ivaUltimoMes)} Kz</Typography>
@@ -123,7 +136,7 @@ export default function InteligenciaFiscal() {
               </Grid>
 
               {/* Obrigações */}
-              <Card variant="outlined" sx={{ borderRadius: 3, p: 3, mb: 3 }}>
+              <Card variant="outlined" sx={{ borderRadius: 3, p: 4, mb: 3, mr: 20}}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                   <AlertaIcon sx={{ color: '#EAB308' }} />
                   <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>Obrigações fiscais próximas</Typography>
@@ -154,11 +167,11 @@ export default function InteligenciaFiscal() {
                   ))}
                 </Grid>
               </Card>
-
               <Grid container spacing={3}>
+                
                 {/* Histórico */}
                 <Grid item xs={12} md={8}>
-                  <Card variant="outlined" sx={{ borderRadius: 3 }}>
+                  <Card variant="outlined" sx={{ borderRadius: 3,width:'70rem',height:'13rem',mr:20}}>
                     <Box sx={{ p: 2.5, borderBottom: '1px solid #F1F5F9' }}>
                       <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>Histórico de impostos do ano</Typography>
                       <Typography variant="caption" color="textSecondary">IVA liquidado vs IVA dedutível e IVA a entregar por mês</Typography>
@@ -168,7 +181,7 @@ export default function InteligenciaFiscal() {
                         <TableHead>
                           <TableRow>
                             {['Mês', 'Faturação (Kz)', 'IVA liquidado (Kz)', 'IVA dedutível (Kz)', 'IVA a entregar (Kz)'].map((h) => (
-                              <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#f8f9fa', color: '#334155', fontSize: '0.78rem' }}>{h}</TableCell>
+                              <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#f8f9fa', color: '#334155', fontSize: '0.8rem'}}>{h}</TableCell>
                             ))}
                           </TableRow>
                         </TableHead>
@@ -192,26 +205,6 @@ export default function InteligenciaFiscal() {
                         </TableBody>
                       </Table>
                     </TableContainer>
-                  </Card>
-                </Grid>
-
-                {/* IRT */}
-                <Grid item xs={12} md={4}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, p: 3 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A', mb: 2 }}>IRT — Retenção na fonte</Typography>
-                    {dados.irt?.aplicavel ? (
-                      <Typography variant="h5" sx={{ fontWeight: 800, color: '#083927' }}>
-                        {formatKzSemPrefixo(dados.irt.irtAcumulado)} Kz
-                      </Typography>
-                    ) : (
-                      <Alert severity="info" sx={{ borderRadius: 2, fontSize: '0.85rem' }}>
-                        {dados.irt?.observacao}
-                      </Alert>
-                    )}
-                    <Divider sx={{ my: 2 }} />
-                    <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                      O cálculo acumulado de IRT é apresentado quando existirem dados de retenção registados.
-                    </Typography>
                   </Card>
                 </Grid>
               </Grid>

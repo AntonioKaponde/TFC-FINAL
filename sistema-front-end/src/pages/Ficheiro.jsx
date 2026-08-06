@@ -7,13 +7,13 @@ import SideBar from '../components/SideBar'
 import  CardFicheiro from '../components/CardFicheiro'
 
 import TabelaFicheiro from '../components/TabelaFicheiro'
+import { obterRoles } from '../utils/authStorage'
 
 export default function Ficheiro() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const rolesString = localStorage.getItem('userRoles');
-    const userRoles = rolesString ? JSON.parse(rolesString) : [];
+    const userRoles = obterRoles();
     const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
     const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
 

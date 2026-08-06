@@ -20,10 +20,10 @@ import { Radio } from "@mui/material";
 import TabelaClientes from "../components/TabelaClientes";
 import { Link } from "react-router-dom";
 import { exportarPDF } from "../utils/pdfExport";
+import { obterRoles } from "../utils/authStorage";
 
 export default function Clientes() {
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
   const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
   const hideNovoCliente = isContabilista || isGerente;

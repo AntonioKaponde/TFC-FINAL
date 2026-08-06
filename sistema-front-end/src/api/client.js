@@ -1,11 +1,10 @@
+import { obterToken, limparSessao } from '../utils/authStorage';
+
 const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
-/** Limpa todos os dados de autenticação e redireciona para o login */
+/** Limpa os dados de autenticação da aba atual e redireciona para o login */
 function limparSessaoERedirecionar() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userRoles');
-  localStorage.removeItem('userName');
-  sessionStorage.removeItem('session_active');
+  limparSessao();
   window.location.href = '/';
 }
 
@@ -17,7 +16,7 @@ function criarErro(mensagem, status) {
 }
 
 async function request(path, options = {}) {
-  const token = localStorage.getItem('token');
+  const token = obterToken();
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -66,7 +65,7 @@ async function request(path, options = {}) {
 
 /** Faz um pedido POST com FormData (multipart) — o browser define o Content-Type */
 async function requestForm(path, formData) {
-  const token = localStorage.getItem('token');
+  const token = obterToken();
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -93,7 +92,7 @@ async function requestForm(path, formData) {
 
 /** Busca um ficheiro (blob) autenticado, devolvendo { blob, contentType } */
 async function getBlob(path) {
-  const token = localStorage.getItem('token');
+  const token = obterToken();
   const response = await fetch(`${API_BASE}${path}`, {
     headers: token ? { 'Authorization': `Bearer ${token}` } : {},
   });
@@ -119,7 +118,7 @@ export const api = {
   delete: (path) => request(path, { method: 'DELETE' }),
   getBlob,
   download: async (path, filename) => {
-    const token = localStorage.getItem('token');
+    const token = obterToken();
     const response = await fetch(`${API_BASE}${path}`, {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {},
     });

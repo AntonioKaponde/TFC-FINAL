@@ -34,6 +34,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgress from "@mui/material/CircularProgress";
 import { fornecedoresApi } from "../api";
 import { labelEstadoCliente } from "../utils/formatters";
+import { obterRoles } from "../utils/authStorage";
 
 function getStatusColor(status) {
   switch (status) {
@@ -55,8 +56,7 @@ export default function TabelaFornecedor() {
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos Fornecedores");
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

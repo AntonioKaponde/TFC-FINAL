@@ -9,6 +9,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom";
 import { exportarPDF } from "../utils/pdfExport";
+import { obterRoles } from "../utils/authStorage";
 
 export default function Inventário() {
   const [modalMovimentoAberta, setModalMovimentoAberta] = useState(false);
@@ -30,8 +31,7 @@ export default function Inventário() {
     fecharModalMovimento();
   }, [fecharModalMovimento]);
 
-  const rolesString = localStorage.getItem('userRoles');
-  const userRoles = rolesString ? JSON.parse(rolesString) : [];
+  const userRoles = obterRoles();
   const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
   const hideAdd = isOperador || isContabilista;

@@ -6,6 +6,7 @@ import { api } from '../api/client';
 import BusinessIcon from '@mui/icons-material/Business';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import { useNavigate } from 'react-router-dom';
+import { obterRoles } from '../utils/authStorage';
 
 export default function ResumoEmpresa() {
   const [empresa, setEmpresa] = useState(null);
@@ -13,8 +14,7 @@ export default function ResumoEmpresa() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const rolesString = localStorage.getItem('userRoles');
-    const userRoles = rolesString ? JSON.parse(rolesString) : [];
+    const userRoles = obterRoles();
     const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
     const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
 

@@ -20,6 +20,7 @@ import {
   CheckCircleOutline
 } from '@mui/icons-material';
 import { usuariosApi } from '../api';
+import { obterRoles, obterPrimeiroAcesso, removerPrimeiroAcesso } from '../utils/authStorage';
 
 export default function AlterarPassword() {
   const navigate = useNavigate();
@@ -34,16 +35,14 @@ export default function AlterarPassword() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   // true quando o utilizador foi criado pelo Admin e ainda não trocou a palavra-passe
-  const forcarTroca = localStorage.getItem('primeiroAcesso') === 'true';
+  const forcarTroca = obterPrimeiroAcesso();
 
   const irParaPainel = () => {
     let destino = '/dashboard';
-    try {
-      const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
-      if (roles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR')) {
-        destino = '/faturacao';
-      }
-    } catch { /* sem papéis guardados → dashboard */ }
+    const roles = obterRoles();
+    if (roles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR')) {
+      destino = '/faturacao';
+    }
     navigate(destino);
   };
 
@@ -67,7 +66,7 @@ export default function AlterarPassword() {
     setLoading(true);
     try {
       await usuariosApi.alterarPassword({ senhaAtual, novaSenha });
-      localStorage.removeItem('primeiroAcesso');
+      removerPrimeiroAcesso();
       setSnackbar({ open: true, message: 'Palavra-passe alterada com sucesso!', severity: 'success' });
       setTimeout(irParaPainel, 1200);
     } catch (err) {

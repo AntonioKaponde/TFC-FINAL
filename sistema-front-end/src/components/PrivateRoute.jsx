@@ -1,12 +1,6 @@
+import { useState } from "react";
 import { Navigate } from "react-router-dom";
-
-/** Limpa todos os dados de sessão */
-function limparSessao() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userRoles');
-  localStorage.removeItem('userName');
-  sessionStorage.removeItem('session_active');
-}
+import { obterToken, limparSessao, restaurarSessaoLembrada } from "../utils/authStorage";
 
 /** Verifica se o token JWT está expirado */
 function tokenExpirado(token) {
@@ -15,18 +9,22 @@ function tokenExpirado(token) {
     // Se o token não tiver data de expiração, considera inválido
     if (!payload.exp) return true;
     return Date.now() > payload.exp * 1000;
-  } catch (e) {
+  } catch {
     // Token mal formatado — considera expirado
     return true;
   }
 }
 
 export default function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
-  const sessionActive = sessionStorage.getItem("session_active");
+  // Numa aba nova, restaura a sessão lembrada (se "Manter sessão" foi marcado).
+  // Usado no inicializador de estado para ser executado apenas uma vez por
+  // montagem, sem efeitos laterais durante o render.
+  useState(() => restaurarSessaoLembrada());
 
-  // Sem token ou nova aba (sessionStorage é por tab): redireciona
-  if (!token || !sessionActive) {
+  const token = obterToken();
+
+  // Sem sessão ativa nesta aba: limpa e redireciona para o login
+  if (!token) {
     limparSessao();
     return <Navigate to="/" replace />;
   }
