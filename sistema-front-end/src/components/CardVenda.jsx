@@ -6,16 +6,16 @@ import { formatKzSemPrefixo } from '../utils/formatters';
 export default function CardVenda({ subtotal, totalIva, total, dataEntrega }) {
   return (
     <div>
-      <Grid container spacing={2}>
-        <Stack direction={"row"} sx={{ display: "flex", gap: 2 }}>
-          <Grid sx={{ display: "flex", gap: 2, flexDirection: "column", width: "55rem" }}>
+      <Grid container spacing={2} sx={{ width: "100%" }}>
+        <Stack direction={{ xs: "column", lg: "row" }} sx={{ display: "flex", gap: 2, width: "100%" }}>
+          <Grid sx={{ display: "flex", gap: 2, flexDirection: "column", flex: 1, minWidth: 0 }}>
             <Typography>Observações (Vísiveis na Fatura)</Typography>
-            <Card sx={{ p: "10px 20px", height: "5rem", bgcolor: "#F7FAFC" }}>
+            <Card sx={{ p: "10px 20px", minHeight: "5rem", bgcolor: "#F7FAFC" }}>
               <Typography>
                 Os bens/serviços foram entregues ao adquirente em {dataEntrega}.
               </Typography>
             </Card>
-            <Card sx={{ bgcolor: "rgb(158, 248, 170)", p: "10px 20px", height: "5rem", display: "flex" }}>
+            <Card sx={{ bgcolor: "rgb(158, 248, 170)", p: "10px 20px", minHeight: "5rem", display: "flex", gap: 1 }}>
               <CheckBoxOutlinedIcon />
               <Typography color='#fff'>
                 Este documento esta conforme os critérios estabelecidos pela AGT.
@@ -24,7 +24,7 @@ export default function CardVenda({ subtotal, totalIva, total, dataEntrega }) {
             </Card>
           </Grid>
           <Grid>
-            <Card sx={{ mt: 5, mr: 5, width: "23rem", bgcolor: "#F7FAFC" }}>
+            <Card sx={{ mt: { xs: 2, lg: 5 }, width: { xs: "100%", lg: "23rem" }, bgcolor: "#F7FAFC" }}>
               <Stack direction={"row"}>
                 <Box>
                   <List>
@@ -43,9 +43,9 @@ export default function CardVenda({ subtotal, totalIva, total, dataEntrega }) {
               </Stack>
               <Divider />
               <Box>
-                <List sx={{ display: "flex" }}>
+                <List sx={{ display: "flex", justifyContent: "space-between" }}>
                   <ListItem sx={{ fontWeight: "bold" }}>Total a Pagar</ListItem>
-                  <ListItem sx={{ fontWeight: "bold", ml: 9 }}>{formatKzSemPrefixo(total)} (Kz)</ListItem>
+                  <ListItem sx={{ fontWeight: "bold", justifyContent: "flex-end" }}>{formatKzSemPrefixo(total)} (Kz)</ListItem>
                 </List>
               </Box>
             </Card>

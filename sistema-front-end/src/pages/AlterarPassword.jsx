@@ -77,7 +77,7 @@ export default function AlterarPassword() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', p: { xs: 2, sm: 3 }, width: '100%', boxSizing: 'border-box', overflowX: 'hidden' }}>
       <Paper elevation={0} sx={{ maxWidth: 520, width: '100%', borderRadius: 3, border: '1px solid #E2E8F0', p: { xs: 3, md: 5 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
           <Box sx={{ bgcolor: '#083927', p: 1.2, borderRadius: 1.5, display: 'flex' }}>
@@ -210,7 +210,7 @@ export default function AlterarPassword() {
         </Box>
 
         {!forcarTroca && (
-          <Box sx={{ display: 'flex', gap: 1.5, bgcolor: '#EFF6FF', p: 2, borderRadius: 2, mt: 3, border: '1px solid #DBEAFE' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', flexWrap: 'wrap', bgcolor: '#EFF6FF', p: 2, borderRadius: 2, mt: 3, border: '1px solid #DBEAFE' }}>
             <CheckCircleOutline sx={{ color: '#083927', fontSize: 20, mt: 0.2 }} />
             <Typography variant="caption" sx={{ color: '#083927' }}>
               A alteração fica registada no histórico de auditoria para fins de segurança.

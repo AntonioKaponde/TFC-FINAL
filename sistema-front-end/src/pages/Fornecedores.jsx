@@ -21,12 +21,13 @@ export default function Fornecedores() {
       <NavBar />
       <Box sx={{ display: "flex" }}>
         <SideBar />
-        <Box component={"main"} sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box component={"main"} sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
           <Box 
             sx={{ 
               display: "flex", 
               flexDirection: { xs: "column", md: "row" }, 
-             ml: 10,  
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", md: "center" },
               mb: 3,
               gap: 2
             }}
@@ -40,7 +41,7 @@ export default function Fornecedores() {
               </Typography>
             </Box>
             <Box
-              sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" },ml: { xs: 0, sm: "52.5rem" } }}
+              sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" } }}
             >
               {!hideAdd && (
                 <Button

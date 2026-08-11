@@ -27,9 +27,19 @@ export default function Ficheiro() {
       <NavBar />
      <Box sx={{display:"flex"}}>
         <SideBar />
-        <Box component= "main" sx={{ flexGrow: "1", mt:15, ml:13 }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           <Stack>
-            <Box sx={{ ml:1 }}>
+            <Box sx={{ mb: 2 }}>
               <Typography variant="h6" fontWeight={"bold"}>
                 Ficheiro SAF-T (AO)
               </Typography>

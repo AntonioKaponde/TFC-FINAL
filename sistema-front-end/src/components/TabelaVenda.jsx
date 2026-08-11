@@ -22,7 +22,7 @@ export default function TabelaVenda({ linhas, artigos, onChange, onAddLinha, onR
 
   return (
     <Box>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow sx={{ fontWeight: "600", bgcolor: "#f1f5f9", fontSize: "0.75rem" }}>
@@ -54,7 +54,7 @@ export default function TabelaVenda({ linhas, artigos, onChange, onAddLinha, onR
                         value={linha.artigoId || ""}
                         displayEmpty
                         onChange={(e) => atualizarLinha(index, "artigoId", e.target.value)}
-                        sx={{ height: "36px", minWidth: "20rem" }}
+                        sx={{ height: "36px", minWidth: { xs: 0, sm: "20rem" } }}
                       >
                         <MenuItem value="" disabled>Selecione um artigo</MenuItem>
                         {artigos.map((a) => (
@@ -72,7 +72,7 @@ export default function TabelaVenda({ linhas, artigos, onChange, onAddLinha, onR
                       value={linha.quantidade}
                       onChange={(e) => atualizarLinha(index, "quantidade", e.target.value)}
                       onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
-                      style={{ width: "70px", height: "30px", outline: "none", textAlign: "right" }}
+                      style={{ width: "70px", height: "30px", outline: "none", textAlign: "right", boxSizing: "border-box" }}
                     />
                   </TableCell>
                   <TableCell align="right">

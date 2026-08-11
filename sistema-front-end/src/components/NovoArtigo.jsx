@@ -45,14 +45,14 @@ export default function NovoArtigo() {
   const handleFornecedorChange = (e) => {
     const fornecedorId = e.target.value;
     const fornecedor = fornecedores.find(f => f.id === fornecedorId);
-    
+
     let novosProdutos = [];
     if (fornecedor && fornecedor.produtosFornecidos) {
       novosProdutos = fornecedor.produtosFornecidos.split(/[,;]+/).map(p => p.trim()).filter(p => p);
     }
-    
+
     setProdutosDisponiveis(novosProdutos);
-    
+
     setForm(prev => {
        const newState = { ...prev, fornecedorId };
        if (novosProdutos.length > 0) {
@@ -72,7 +72,7 @@ export default function NovoArtigo() {
   const handleNomeChange = (e) => {
     const novoNome = e.target.value;
     const fornecedor = fornecedores.find(f => f.id === form.fornecedorId);
-    
+
     setForm(prev => {
        const newState = { ...prev, nome: novoNome };
        if (fornecedor && novoNome) {
@@ -96,7 +96,7 @@ export default function NovoArtigo() {
 
   const handleSalvar = async () => {
     setErro("");
-    
+
     if (!form.fornecedorId) {
       setErro("O artigo deve estar obrigatoriamente associado a um fornecedor.");
       return;
@@ -130,19 +130,19 @@ export default function NovoArtigo() {
       <NavBar />
       <Box display={"flex"}>
         <SideBar />
-        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
+        <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box', display: 'flex', justifyContent: 'center' }}>
           <Box sx={{ width: '100%', maxWidth: '1120px' }}>
             <Box sx={{ mb: 4, width: '100%' }}>
-                          <Typography
-                           variant="h6" sx={{ fontWeight: 800, color: '#111' }}
-                          >
-                            Adicionar Novo Artigo
-                          </Typography>
-                          <Typography variant="caption" color="textSecondary">
-                            Preencha os dados abaixo para registar um novo artigo no
-                            sistema.
-                          </Typography>
-                        </Box>
+              <Typography
+                variant="h6" sx={{ fontWeight: 800, color: '#111' }}
+              >
+                Adicionar Novo Artigo
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                Preencha os dados abaixo para registar um novo artigo no
+                sistema.
+              </Typography>
+            </Box>
             <Card sx={{ p: { xs: 2, md: 5 }, width: "100%" }}>
               <Grid>
                 <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>
@@ -153,13 +153,13 @@ export default function NovoArtigo() {
                   SAFT-T
                 </Typography>
               </Grid>
-              <Grid sx={{ mt: 3, display: "flex", gap: 2 }}>
-                <FormControl>
+              <Grid sx={{ mt: 3, display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Fornecedor <span style={{ color: "red" }}>*</span></Typography>
                   <Select
                     value={form.fornecedorId}
                     onChange={handleFornecedorChange}
-                    sx={{ width: "500px", height: "2.1em", margin: "2px 0" }}
+                    sx={{ width: "100%", height: "2.1em", margin: "2px 0" }}
                     displayEmpty
                   >
                     <MenuItem value=""><em>Selecione o Fornecedor</em></MenuItem>
@@ -168,7 +168,7 @@ export default function NovoArtigo() {
                     ))}
                   </Select>
                 </FormControl>
-                 <FormControl>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Nome do Artigo <span style={{ color: "red" }}>*</span>
                   </Typography>
@@ -177,10 +177,10 @@ export default function NovoArtigo() {
                     onChange={handleNomeChange}
                     displayEmpty
                     disabled={!form.fornecedorId || produtosDisponiveis.length === 0}
-                    sx={{ width: "500px", height: "2.5em", margin: "2px 0" }}
+                    sx={{ width: "100%", height: "2.5em", margin: "2px 0" }}
                   >
                     <MenuItem value="" disabled>
-                      {form.fornecedorId 
+                      {form.fornecedorId
                         ? (produtosDisponiveis.length > 0 ? "Selecione o artigo" : "Fornecedor sem produtos registados")
                         : "Selecione o fornecedor primeiro"}
                     </MenuItem>
@@ -190,9 +190,9 @@ export default function NovoArtigo() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid sx={{ mt: 3, display: "flex", gap: 2 }}>
-               
-                <FormControl>
+              <Grid sx={{ mt: 3, display: "flex", flexWrap: "wrap", gap: 2 }}>
+
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Código(SKU)<span style={{ color: "red" }}>*</span>
                   </Typography>
@@ -202,21 +202,22 @@ export default function NovoArtigo() {
                     onChange={(e) => setForm({ ...form, sku: e.target.value })}
                     placeholder="Gerado automaticamente"
                     style={{
-                      width: "500px",
+                      width: "100%",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
                       border: ".1px solid #05040444",
                       margin: "2px 0",
+                      boxSizing: "border-box",
                     }}
                   />
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>Categoria</Typography>
                   <Select
                     value={form.categoriaId}
                     onChange={(e) => setForm({ ...form, categoriaId: e.target.value })}
-                    sx={{ width: "500px", height: "2.1em", margin: "2px 0" }}
+                    sx={{ width: "100%", height: "2.1em", margin: "2px 0" }}
                   >
                     {categorias.map(cat => (
                       <MenuItem key={cat.id} value={cat.id}>{cat.nome}</MenuItem>
@@ -233,8 +234,8 @@ export default function NovoArtigo() {
                   Configuração de preços e enquadramento fiscal (IVA).
                 </Typography>
               </Grid>
-              <Grid sx={{ mt: 3, display: "flex", gap: 3 }}>
-                <FormControl>
+              <Grid sx={{ mt: 3, display: "flex", flexWrap: "wrap", gap: 3 }}>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Preço de Venda (S/IVA)
                     <span style={{ color: "red" }}>*</span>
@@ -247,16 +248,17 @@ export default function NovoArtigo() {
                     onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
                     placeholder="Ex: 10000"
                     style={{
-                      width: "330px",
+                      width: "100%",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
                       border: ".1px solid#05040444",
                       margin: "2px 0",
+                      boxSizing: "border-box",
                     }}
                   />
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Preço de Custo (S/IVA)
                   </Typography>
@@ -268,23 +270,24 @@ export default function NovoArtigo() {
                     onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
                     placeholder="Ex: 8000"
                     style={{
-                      width: "330px",
+                      width: "100%",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
                       border: ".1px solid#05040444",
                       margin: "2px 0",
+                      boxSizing: "border-box",
                     }}
                   />
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Taxa de Imposto(IVA)<span style={{ color: "red" }}>*</span>
                   </Typography>
                   <Select
                     value={form.taxaIva}
                     onChange={(e) => setForm({ ...form, taxaIva: e.target.value })}
-                    sx={{ width: "330px", height: "2.1em", margin: "2px 0" }}
+                    sx={{ width: "100%", height: "2.1em", margin: "2px 0" }}
                   >
                     <MenuItem value="IVA Normal(14%)">IVA Normal(14%)</MenuItem>
                     <MenuItem value="IVA Reduzida(7%)">
@@ -297,8 +300,8 @@ export default function NovoArtigo() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid sx={{ mt: 3, display: "flex", gap: 3 }}>
-                <FormControl>
+              <Grid sx={{ mt: 3, display: "flex", flexWrap: "wrap", gap: 3 }}>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Motivo de Isenção
                     {form.taxaIva === "isento(0%)" && <span style={{ color: "red" }}>*</span>}
@@ -307,7 +310,7 @@ export default function NovoArtigo() {
                     value={form.motivoIsencao}
                     onChange={(e) => setForm({ ...form, motivoIsencao: e.target.value })}
                     disabled={form.taxaIva !== "isento(0%)"}
-                    sx={{ width: "1024px", height: "2.1em", margin: "2px 0", bgcolor: form.taxaIva !== "isento(0%)" ? "#f1f5f9" : "inherit" }}
+                    sx={{ width: "100%", height: "2.1em", margin: "2px 0", bgcolor: form.taxaIva !== "isento(0%)" ? "#f1f5f9" : "inherit" }}
                   >
                     <MenuItem value="Selecione um motivo (Apenas se isento)">
                       Selecione um motivo (Apenas se isento)
@@ -328,7 +331,7 @@ export default function NovoArtigo() {
                 </Typography>
               </Grid>
 
-              {/**controlar stock 
+              {/**controlar stock
               <Grid>
                 <Card
                   sx={{
@@ -350,15 +353,15 @@ export default function NovoArtigo() {
                 </Card>
               </Grid>*/}
               <br />
-              <Grid sx={{ display: "flex", gap: 2 }}>
-                <FormControl>
+              <Grid sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Unidade de Medida<span style={{ color: "red" }}>*</span>
                   </Typography>
                   <Select
                     value={form.unidadeMedida}
                     onChange={(e) => setForm({ ...form, unidadeMedida: e.target.value })}
-                    sx={{ width: "330px", height: "2.1em", margin: "2px 0" }}
+                    sx={{ width: "100%", height: "2.1em", margin: "2px 0" }}
                   >
                     <MenuItem value="UN">Unidade (UN)</MenuItem>
                     <MenuItem value="KG">Quilograma (KG)</MenuItem>
@@ -368,7 +371,7 @@ export default function NovoArtigo() {
                     <MenuItem value="SR">Serviço (SR)</MenuItem>
                   </Select>
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Stock Inicial <span style={{ color: "red" }}>*</span>
                   </Typography>
@@ -379,17 +382,18 @@ export default function NovoArtigo() {
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
                     onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
                     style={{
-                      width: "330px",
+                      width: "100%",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
                       border: ".1px solid#05040444",
                       margin: "2px 0",
+                      boxSizing: "border-box",
                     }}
                     placeholder="0"
                   />
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{ flex: "1 1 260px", minWidth: 0 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Stock Minimo(Alerta)<span style={{ color: "red" }}>*</span>
                   </Typography>
@@ -400,12 +404,13 @@ export default function NovoArtigo() {
                     onChange={(e) => setForm({ ...form, stockMinimo: e.target.value })}
                     onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
                     style={{
-                      width: "330px",
+                      width: "100%",
                       height: "2.5em",
                       padding: 10,
                       borderRadius: 5,
                       border: ".1px solid#05040444",
                       margin: "2px 0",
+                      boxSizing: "border-box",
                     }}
                     placeholder="5"
                   />
@@ -417,23 +422,23 @@ export default function NovoArtigo() {
               <br />
               <Grid>
                 <Stack
-                  direction={"row"}
+                  direction={{ xs: "column", sm: "row" }}
                   sx={{
                     display: "flex",
                     gap: 2,
                     justifyContent: "end",
                     pt: 2,
-                    
+                    width: "100%",
                   }}
                 >
-                  <Button variant="outlined" color="black" onClick={() => navigate("/inventario")} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 2.5}}>
+                  <Button variant="outlined" color="black" onClick={() => navigate("/inventario")} sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 2.5 }}>
                     Cancelar
                   </Button>
                   <Button
                     variant="outlined"
                     onClick={handleSalvar}
                     disabled={salvando}
-                    sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#0B6E4F",color:"#fff"}}
+                    sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#0B6E4F",color:"#fff" }}
                   >
                     <SaveOutlinedIcon />
                     Guardar Arquivo

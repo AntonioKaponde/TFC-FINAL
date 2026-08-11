@@ -129,8 +129,18 @@ export default function GestaoDeUsuarios() {
       <NavBar />
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f4f6f9' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1 ,mt:10,ml:10}}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2, mb: 4 }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>
                 Todos os Usuários
@@ -142,7 +152,7 @@ export default function GestaoDeUsuarios() {
             <Button 
               variant="contained" 
               onClick={() => setOpenModal(true)}
-              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#083927" ,mr:19}}
+              sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#083927" }}
               startIcon={<AddIcon />} 
             >
               Adicionar Usuário

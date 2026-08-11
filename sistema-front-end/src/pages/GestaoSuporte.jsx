@@ -142,7 +142,17 @@ export default function GestaoSuporte() {
       <NavBar />
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 6 }, mr: { md: 6 } }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               {/* <SupportIcon sx={{ color: '#083927', fontSize: 32 }} /> */}
@@ -153,35 +163,47 @@ export default function GestaoSuporte() {
                 </Typography>
               </Box>
             </Box>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{mr:7}}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ width: { xs: '100%', sm: 'auto' } }}>
               <Button size="small" startIcon={<RefreshIcon />} onClick={carregar} sx={{ textTransform: 'none' }}>Atualizar</Button>
               <TextField
                 size="small" placeholder="Pesquisar pedidos..." value={pesquisa}
                 onChange={(e) => setPesquisa(e.target.value)}
                 InputProps={{
                   startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                  sx: { borderRadius: 2, bgcolor: '#fff', minWidth: 240 }
+                  sx: { borderRadius: 2, bgcolor: '#fff', minWidth: { xs: 0, sm: 240 } }
                 }}
               />
             </Stack>
           </Box>
 
           {/* Resumo */}
-          <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(1, minmax(0, 1fr))",
+                sm: "repeat(2, minmax(0, 1fr))",
+                lg: "repeat(4, minmax(0, 1fr))"
+              },
+              gap: 2,
+              width: "100%",
+              mb: 3
+            }}
+          >
             {[
               { label: 'Total de pedidos', valor: pedidos.length, cor: '#083927' },
               { label: 'Em aberto (análise/atendimento)', valor: totalAbertos, cor: '#EAB308' },
               { label: 'Prioridade crítica', valor: totalCriticos, cor: '#EF4444' },
               { label: 'Resolvidos', valor: totalResolvidos, cor: '#22C55E' },
             ].map((s) => (
-              <Grid item xs={6} md={3} key={s.label}>
-                <Card variant="outlined" sx={{ borderRadius: 2, p: 2.5,width: '20rem',height:"8rem"}}>
+              <Box key={s.label}>
+                <Card variant="outlined" sx={{ borderRadius: 2, p: 2.5, width: '100%', height: '100%' }}>
                   <Typography variant="h4" sx={{ fontWeight: 800, color: s.cor }}>{s.valor}</Typography>
                   <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600,color: '#64748b'}}>{s.label}</Typography>
                 </Card>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
 
           {/* Filtro por estado */}
           <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -205,9 +227,9 @@ export default function GestaoSuporte() {
           </Box>
 
           {/* Tabela */}
-          <Card variant="outlined" sx={{boxShadow: '0 4px 12px rgba(0,0,0,0.03)',mr:6}}>
-            <TableContainer sx={{ maxHeight: '60vh'}}>
-              <Table stickyHeader size="small">
+          <Card variant="outlined" sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.03)', width: '100%' }}>
+            <TableContainer sx={{ maxHeight: { xs: '70vh', md: '60vh' }, overflowX: 'auto' }}>
+              <Table stickyHeader size="small" sx={{ minWidth: 800 }}>
                 <TableHead >
                   <TableRow >
                     {['Assunto', 'Utilizador', 'Categoria', 'Prioridade', 'Estado', 'Data', 'Acção'].map((h) => (

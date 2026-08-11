@@ -42,8 +42,30 @@ export default function Relatorio() {
          <NavBar />
         <Box  display={"flex"}>
           <SideBar />
-          <Box id="area-impressao" component={"main"} sx={{margin:"90px 0 30px 0",ml:11}}>
-            <Box component={"div"} sx={{ display: "flex",m:"10px 0" }}>
+          <Box
+            id="area-impressao"
+            component={"main"}
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 2, md: 4 },
+              mt: '70px',
+              pb: '30px',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            <Box
+              component="div"
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "stretch", md: "center" },
+                gap: 2,
+                m: "10px 0"
+              }}
+            >
             <Box sx={{ m: "20px 0 20px 0" }}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>
                 Imposto a Pagar vs. Lucros
@@ -55,7 +77,7 @@ export default function Relatorio() {
               </Typography>
             </Box>
             <Box
-              sx={{p:"20px 10px", display: "flex", gap: 2,ml:36}}
+              sx={{ p: { xs: "0 0 10px 0", md: "20px 10px" }, display: "flex", gap: 2 }}
             >
               {/*<Button
                 onClick={handleExportarPDF}
@@ -76,31 +98,27 @@ export default function Relatorio() {
                 onClick={handleExportarPDF}
                 variant="contained"
                 startIcon={<PictureAsPdfIcon />}
-                sx={{ borderRadius: 2, width: "215px",
-                  height: "40px",textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#083927",ml:45}}
+                sx={{ borderRadius: 2, width: { xs: "100%", sm: "215px" },
+                  height: "40px",textTransform: 'none', fontWeight: 600, px: 2.5, boxShadow: 'none', bgcolor: "#083927"}}
               >
                Exportar PDF
               </Button>
             </Box>
           </Box>
-           <Grid container spacing={2} >
-            <Grid>
+           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%", mt: 1 }}>
               <CardRelatorio />
-            </Grid>
-            <Grid sx={{display:"flex",gap:3}}>
-             <Card sx={{p:3,width:"60rem"}}>
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", lg: "row" }, gap: 3, width: "100%" }}>
+             <Card sx={{ p: 3, flex: 1, minWidth: 0 }}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Comparativo: Carga Fiscal vs Lucros Retidos</Typography>
               <Typography variant="caption" color="textSecondary">Evolução dos últimos <span>6</span> meses [Valores em Mihões de Kz]</Typography>
                <GraficoRelatorio />
              </Card>
-             <Box>
+             <Box sx={{ width: { xs: "100%", lg: "24rem" }, flexShrink: 0 }}>
               <FiscalRelatorio />
              </Box>
-            </Grid>
-            <Grid>
+            </Box>
               <TabelaRelatorio />
-            </Grid>
-          </Grid>
+          </Box>
           </Box>
         </Box>
     </div>

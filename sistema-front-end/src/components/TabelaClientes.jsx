@@ -145,8 +145,9 @@ export default function TabelaClientes() {
     <Box
       sx={{
         fontFamily: "Inter, sans-serif",
-        mt:3,
-       ml:9
+        mt: 3,
+        width: "100%",
+        minWidth: 0
       }}
     >
       <Grid container spacing={3}>
@@ -158,8 +159,8 @@ export default function TabelaClientes() {
                 <CardContent
                   sx={{
                     display: "flex",
-                    gap: 5,
-                    height: "50px",
+                    gap: { xs: 1, sm: 2 },
+                    minHeight: "50px",
                     alignItems: "center",
                   }}
                 >
@@ -169,7 +170,7 @@ export default function TabelaClientes() {
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      width: "73rem",
+                      width: "100rem",
                       background: "#F4F7F9",
                       height: "30px"
                     }}

@@ -42,7 +42,7 @@ const TabelaFicheiro = () => {
     <Box sx={{ height: '100vh', fontFamily: 'Inter, sans-serif', margin: "20px 0" }}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Card sx={{ overflow: 'hidden', width: "81rem" }}>
+          <Card sx={{ overflow: 'hidden', width: "90.5rem" }}>
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="subtitle1" fontWeight="700">Histórico de Ficheiros Gerados</Typography>
               <Box>

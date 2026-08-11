@@ -32,12 +32,13 @@ export default function Faturacao() {
       <NavBar />
       <Box sx={{ display: "flex"}}>
         <SideBar />
-        <Box id="area-impressao" component={"main"} sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box id="area-impressao" component={"main"} sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
           <Box 
             sx={{ 
               display: "flex", 
               flexDirection: { xs: "column", md: "row" }, 
-              ml: 10,  
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", md: "center" },
               mb: 3,
               gap: 2
             }}
@@ -49,7 +50,7 @@ export default function Faturacao() {
               </Typography>
             </Box>
             <Box
-              sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" },ml: { xs: 0, sm: "29rem" } }}
+              sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" } }}
             >
               {/*<Button
                 onClick={() => exportarPDF('area-impressao', 'Faturacao')}
@@ -84,8 +85,7 @@ export default function Faturacao() {
                     fontWeight: 600, 
                     px: 2.5, 
                     boxShadow: 'none', 
-                    textDecoration: 'none',
-                    ml:28 
+                    textDecoration: 'none'
                   }}
                 >
                   Nova Fatura

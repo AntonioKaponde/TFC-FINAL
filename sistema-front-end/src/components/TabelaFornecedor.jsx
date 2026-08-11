@@ -135,7 +135,7 @@ export default function TabelaFornecedor() {
   }, [pesquisa, filtroTipo]);
 
   return (
-    <Paper sx={{boxShadow: "none", background: "transparent",width: "83rem",ml:9 }}>
+    <Paper sx={{ boxShadow: "none", background: "transparent", width: "100%", minWidth: 0 }}>
       {/* Quick Filters */}
       <Box sx={{ marginTop: "20px" }}>
         <Card sx={{ maxWidth: 2000 }}>

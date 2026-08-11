@@ -42,7 +42,7 @@ export default function Dashboard() {
          <NavBar />
         <Box  display={"flex"}>
           <SideBar />
-        <Box component={"main"} sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box component={"main"} sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Card sx={{
@@ -51,13 +51,12 @@ export default function Dashboard() {
                   flexDirection: { xs: "column", md: "row" },
                   justifyContent:"space-between",
                   p:3,
-                  width: "150%",
+                  width: "100%",
                   gap: { xs: 2, md: 0 },
                   mb: 3,
-                  ml: 8,
-                  alignItems: "center",
+                  alignItems: { xs: "flex-start", md: "center" },
                 }}>
-                  <Box>
+                  <Box sx={{width:"100rem"}}>
                     <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Obrigações Fiscais em dia</Typography>
                     <Typography sx={{fontSize:"0.9em",color:"#ffffff88"}}>O seu ficheiro SAF-T (AO) referente ao mês passado está pronto para ser submetido.</Typography>
                   </Box>

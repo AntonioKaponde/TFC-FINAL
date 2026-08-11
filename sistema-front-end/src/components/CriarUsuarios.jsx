@@ -100,7 +100,7 @@ export default function CriarUsuarios() {
       <NavBar />
       <Box display={"flex"}>
          <SideBar />
-        <Container maxWidth="md" sx={{ py: 4, minHeight: '100vh',mt:10 }}>
+        <Container maxWidth="md" sx={{ flexGrow: 1, minWidth: 0, py: 4, px: { xs: 2, md: 3 }, mt: '70px', boxSizing: 'border-box' }}>
       {/* Botão Voltar */}
       <Button
         startIcon={<ArrowBackIcon />}
@@ -211,7 +211,7 @@ export default function CriarUsuarios() {
               <Typography variant="body2" sx={{ fontWeight: 600, color: '#374151', mb: 1 }}>
                 Nível de Acesso (Papel) <span style={{ color: '#ef4444' }}>*</span>
               </Typography>
-              <FormControl sx={{width:"45em"}} size="small">
+              <FormControl fullWidth size="small">
                 <Select
                   name="roleId"
                   displayEmpty

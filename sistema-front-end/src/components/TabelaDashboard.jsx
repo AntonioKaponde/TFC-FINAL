@@ -32,9 +32,9 @@ export default function TabelaDashboard() {
 
   return (
     <div>
-      <Grid container spacing={2}>
-        <Card sx={{ p: 3, width: "83.4rem" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", m: "10px 0" }}>
+      <Grid container spacing={2} sx={{ width: "100%" }}>
+        <Card sx={{ p: { xs: 2, md: 3 }, width: "100%" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, m: "10px 0" }}>
             <Grid>
               <Typography sx={{ fontWeight: "bold" }}>Últimas Faturas Emitidas</Typography>
               <Typography sx={{ fontSize: '0.85rem', color: '#64748b' }}>Inventário e faturação em tempo real</Typography>
@@ -49,8 +49,8 @@ export default function TabelaDashboard() {
                 <CircularProgress sx={{ color: '#0B6E4F' }} />
               </Box>
             ) : (
-              <TableContainer component={Paper} elevation={0}>
-                <Table>
+              <TableContainer component={Paper} elevation={0} sx={{ overflowX: "auto" }}>
+                <Table sx={{ minWidth: 700 }}>
                   <TableHead sx={{ bgcolor: '#f1f5f9' }}>
                     <TableRow>
                       {['Fatura', 'Cliente', 'Data de Emissão', 'Total (Kz)', 'IVA(Kz)', 'Estado', 'Ações'].map((head) => (

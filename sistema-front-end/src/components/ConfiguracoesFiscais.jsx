@@ -65,16 +65,16 @@ const ConfiguracoesFiscais = forwardRef((props, ref) => {
 
   return (
     <div>
-      <Grid container spacing={2}>
-        <Card sx={{ p: 4, width: "60em", ml: 10 }}>
+      <Grid container spacing={2} sx={{ width: "100%" }}>
+        <Card sx={{ p: { xs: 2, md: 4 }, width: "100%" }}>
           <Box>
             <Typography variant="subtitle" sx={{ fontWeight: 800, color: '#111' }}>
               Configurações Fiscais
             </Typography>
           </Box>
           <Divider />
-          <Grid sx={{ alignItems: "center" }}>
-           {/** */} <FormControl sx={{ width: "56rem", p: 3 }}>
+          <Grid sx={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", width: "100%" }}>
+           {/** */} <FormControl sx={{ width: "100%", p: { xs: 1.5, md: 3 } }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                 Regime do IVA<span style={{ color: "red" }}>*</span>
               </Typography>

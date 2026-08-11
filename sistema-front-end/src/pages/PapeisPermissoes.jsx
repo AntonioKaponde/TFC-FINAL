@@ -216,8 +216,18 @@ export default function PapeisPermissoes() {
     <NavBar />
     <Box sx={{display:"flex"}}>
       <SideBar />
-       <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: 25 }}>
-         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 3 }}>
+       <Box
+         component="main"
+         sx={{
+           flexGrow: 1,
+           minWidth: 0,
+           p: { xs: 2, md: 4 },
+           mt: '70px',
+           width: '100%',
+           boxSizing: 'border-box'
+         }}
+       >
+         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 2, mb: 3 }}>
            <Box>
              <Typography variant="h6" sx={{ fontWeight: 800, color: "#111" }}>
                Papéis e Permissões
@@ -235,7 +245,7 @@ export default function PapeisPermissoes() {
          ) : (
          <Grid container spacing={3}>
            {/* Left: Role List */}
-           <Grid item xs={12} md={4}>
+           <Grid item xs={12} md={3}>
              <Stack spacing={2}>
                {roles.length === 0 ? (
                  <Paper variant="outlined" sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
@@ -295,9 +305,9 @@ export default function PapeisPermissoes() {
            </Grid>
 
            {/* Right: Permission Matrix */}
-           <Grid item xs={12} md={8}>
-             <Paper variant="outlined" sx={{ borderRadius: 3, bgcolor: "#ffffff", display: "flex", flexDirection: "column", height: "100%",width:"200%" }}>
-               <Box sx={{ p: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+           <Grid item xs={12} md={9}>
+             <Paper variant="outlined" sx={{ borderRadius: 3, bgcolor: "#ffffff", display: "flex", flexDirection: "column", height: "100%", width: "100%" }}>
+               <Box sx={{ p: 3, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 2 }}>
                  <Box>
                    <Typography variant="subtitle1" sx={{ fontWeight: 700, display: "inline", color: "#222" }}>
                      Permissões:{' '}
@@ -320,8 +330,8 @@ export default function PapeisPermissoes() {
                  </Box>
                ) : (
                <>
-               <TableContainer>
-                 <Table size="small">
+               <TableContainer sx={{ overflowX: 'auto' }}>
+                 <Table size="small" sx={{ minWidth: 760 }}>
                    <TableHead sx={{ bgcolor: "#f8f9fa" }}>
                      <TableRow>
                        <TableCell sx={{ fontWeight: 600, color: "#666", py: 1.5, pl: 3, borderBottom: "1px solid #eaeaea" }}>Módulo</TableCell>

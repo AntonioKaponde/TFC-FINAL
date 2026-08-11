@@ -163,10 +163,10 @@ export default function FaturasTable() {
   };
 
   return (
-    <Paper sx={{ boxShadow: "none", background: "transparent", width: "83rem",ml:9 }}>
+    <Paper sx={{ boxShadow: "none", background: "transparent", width: "100%", minWidth: 0 }}>
       {/* Tabela */}
       <Box sx={{ marginTop: "20px" }}>
-        <Card sx={{p: 1, width: "83rem" }}>
+        <Card sx={{ p: 1, width: "100%" }}>
           <CardContent
             sx={{
               display: "flex",

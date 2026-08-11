@@ -120,7 +120,7 @@ export default function Vendas() {
       <NavBar />
       <Box sx={{ display: "flex" }}>
         <SideBar />
-        <Box component={"main"} sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box component={"main"} sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
           <Grid container spacing={2}>
             <Box sx={{ mb: 4, width: '100%' }}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>
@@ -131,20 +131,20 @@ export default function Vendas() {
               </Typography>
             </Box>
             <Card sx={{ width: "100%", p: "20px" }}>
-              <Typography sx={{ fontWeight: "bold", ml: 4, textTransform: "none" }}>
+              <Typography sx={{ fontWeight: "bold", textTransform: "none" }}>
                 Dados do Cliente
               </Typography>
-              <Grid container spacing={2} sx={{ ml: 3, mt: 1 }}>
-                <Grid>
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Cliente <span style={{ color: "red" }}>*</span>
                   </Typography>
-                  <FormControl size="small">
+                  <FormControl size="small" fullWidth>
                     <Select
                       value={clienteId}
                       displayEmpty
                       onChange={(e) => setClienteId(e.target.value)}
-                      sx={{ width: "18rem", height: "40px" }}
+                      sx={{ width: "100%", height: "40px" }}
                     >
                       <MenuItem value="" disabled>Selecione o cliente</MenuItem>
                       {clientes.map((c) => (
@@ -153,19 +153,19 @@ export default function Vendas() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }} variant="caption">NIF</Typography>
-                  <TextField size="small" value={cliente?.nif || ""} disabled sx={{ width: "18rem" }} />
+                  <TextField size="small" value={cliente?.nif || ""} disabled sx={{ width: "100%" }} />
                 </Grid>
-                <Grid>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }} variant="caption">Telefone</Typography>
-                  <TextField size="small" value={cliente?.telefone || ""} disabled sx={{ width: "18rem" }} />
+                  <TextField size="small" value={cliente?.telefone || ""} disabled sx={{ width: "100%" }} />
                 </Grid>
-                <Grid>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Email
                   </Typography>
-                  <TextField size="small" value={cliente?.email || ""} disabled sx={{ width: "18rem" }} />
+                  <TextField size="small" value={cliente?.email || ""} disabled sx={{ width: "100%" }} />
                 </Grid>
               </Grid>
             </Card>
@@ -173,15 +173,15 @@ export default function Vendas() {
           <br />
           <Grid container spacing={2}>
             <Card sx={{ width: "100%", p: "20px" }}>
-              <Typography variant="caption" sx={{ ml: 5, fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                 Detalhes do Documento
               </Typography>
-              <Grid container spacing={2} ml={5} mt={1}>
-                <Grid>
+              <Grid container spacing={2} mt={1}>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Tipo de Documento <span style={{ color: 'red' }}>*</span>
                   </Typography>
-                  <FormControl size="small">
+                  <FormControl size="small" fullWidth>
                     <Select
                       value={tipoDocumento}
                       onChange={(e) => {
@@ -196,7 +196,7 @@ export default function Vendas() {
                           setMetodoPagamento('DINHEIRO');
                         }
                       }}
-                      sx={{ width: '410px' }}
+                      sx={{ width: '100%' }}
                     >
                       <MenuItem value="FATURA_RECIBO">
                         <Box>
@@ -219,7 +219,7 @@ export default function Vendas() {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Data de Emissão
                   </Typography>
@@ -228,10 +228,10 @@ export default function Vendas() {
                     size="small"
                     value={dataEmissao}
                     onChange={(e) => setDataEmissao(e.target.value)}
-                    sx={{ width: "410px" }}
+                    sx={{ width: "100%" }}
                   />
                 </Grid>
-                <Grid>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Data de Vencimento
                   </Typography>
@@ -240,10 +240,10 @@ export default function Vendas() {
                     size="small"
                     value={dataVencimento}
                     onChange={(e) => setDataVencimento(e.target.value)}
-                    sx={{ width: "410px" }}
+                    sx={{ width: "100%" }}
                   />
                 </Grid>
-                <Grid>
+                <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Pagamento a Pronto
                   </Typography>
@@ -266,15 +266,15 @@ export default function Vendas() {
                   </FormControl>
                 </Grid>
                 {pagoPronto && (
-                  <Grid>
+                  <Grid item xs={12} sm={6} md={3}>
                     <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                       Método de Pagamento
                     </Typography>
-                    <FormControl size="small">
+                    <FormControl size="small" fullWidth>
                       <Select
                         value={metodoPagamento}
                         onChange={(e) => setMetodoPagamento(e.target.value)}
-                        sx={{ width: "410px" }}
+                        sx={{ width: "100%" }}
                       >
                         <MenuItem value="DINHEIRO">Dinheiro</MenuItem>
                         <MenuItem value="TRANSFERENCIA">Transferência</MenuItem>
@@ -308,7 +308,7 @@ export default function Vendas() {
                 dataEntrega={formatData(dataEmissao)}
               />
               {erro && <Alert severity="error" sx={{ mt: 2 }}>{erro}</Alert>}
-              <Stack direction={"row"} sx={{ display: "flex", gap: 2, justifyContent: "end", pt: 2 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} sx={{ display: "flex", gap: 2, justifyContent: "end", pt: 2 }}>
                 <Button variant="outlined" color="black" onClick={() => navigate("/faturacao")}>Cancelar</Button>
                 <Button
                   variant="outlined"

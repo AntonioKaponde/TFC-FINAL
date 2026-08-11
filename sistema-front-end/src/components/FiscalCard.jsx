@@ -65,7 +65,7 @@ export default function FiscalCard() {
 
   if (loading) {
     return (
-      <Card sx={{ width: '22.3rem', p: 4, height: '42rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+      <Card sx={{ width: '100%', p: 4, minHeight: '20rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <CircularProgress sx={{ color: '#0B6E4F' }} />
       </Card>
     );
@@ -83,7 +83,7 @@ export default function FiscalCard() {
   const pct = (valor) => Math.round((Math.abs(valor) / total) * 100);
 
   return (
-    <Card sx={{ width: '22.3rem', boxShadow: '0px 4px 20px rgba(0,0,0,0.05)', p: 2, height: '42rem', margin: '0 auto' }}>
+    <Card sx={{ width: '100%', boxShadow: '0px 4px 20px rgba(0,0,0,0.05)', p: 2, height: '100%' }}>
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Box>

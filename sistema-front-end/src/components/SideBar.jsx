@@ -70,16 +70,16 @@ function SideBar() {
       }}
     >
       <Box
-        sx={{ margin: "30px 30px", display: "flex", alignItems: "center" }}
+        sx={{ margin: { xs: "24px 16px", md: "30px 30px" }, display: "flex", alignItems: "center" }}
       >
         <Typography
-          sx={{ margin: "0px 13px", fontSize: "1.5em", fontWeight: "bold" }}
+          sx={{ margin: "0px 13px", fontSize: { xs: "1.25em", md: "1.5em" }, fontWeight: "bold" }}
         >
           Kamba Gestão
         </Typography>
       </Box>
       <List sx={{ m: 1 }}>
-        <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>
+        <Typography sx={{ margin: { xs: "0px 24px", md: "0px 35px" }, fontWeight: "bold" }}>
           VISÃO GERAL
         </Typography>
         {!isOperador && !isGerente && (
@@ -223,7 +223,7 @@ function SideBar() {
       {isAdmin && (
         <>
           <Divider sx={{ color: "#fff" }} />
-          <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>
+          <Typography sx={{ margin: { xs: "0px 24px", md: "0px 35px" }, fontWeight: "bold" }}>
             ADMINISTRAÇÃO
           </Typography>
           <List sx={{ m: 1 }}>
@@ -282,7 +282,7 @@ function SideBar() {
       {!isOperador && !isGerente && (
         <>
           <Divider sx={{ color: "#fff" }} />
-          <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>
+          <Typography sx={{ margin: { xs: "0px 24px", md: "0px 35px" }, fontWeight: "bold" }}>
             CONFORMIDADE COM AGT
           </Typography>
           <List sx={{ m: 1 }}>
@@ -360,7 +360,7 @@ function SideBar() {
 
       {/* SUPORTE */}
       <Divider sx={{ color: "#fff" }} />
-      <Typography sx={{ margin: "0px 35px", fontWeight: "bold" }}>
+      <Typography sx={{ margin: { xs: "0px 24px", md: "0px 35px" }, fontWeight: "bold" }}>
         SUPORTE
       </Typography>
       <List sx={{ m: 1 }}>
@@ -449,7 +449,7 @@ function SideBar() {
         sx={{
           display: { xs: 'block', md: 'none' },
           [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
+            width: { xs: 280, sm: drawerWidth },
             boxSizing: "border-box",
             background: "#0B1220",
           },

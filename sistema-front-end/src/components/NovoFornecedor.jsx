@@ -83,7 +83,7 @@ const NovoFornecedor = () => {
       <NavBar />
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
           <Container maxWidth="lg">
 
             {/* 1. Breadcrumbs */}
@@ -124,7 +124,6 @@ const NovoFornecedor = () => {
                     onChange={(e) => setForm({ ...form, nome: e.target.value })}
                     placeholder="Ex: João Manuel António"
                     size="small"
-                    sx={{ width: '20rem' }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -139,7 +138,6 @@ const NovoFornecedor = () => {
                     size="small"
                     type="number"
                     maxLength={10}
-                    sx={{ width: '20rem' }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -151,7 +149,6 @@ const NovoFornecedor = () => {
                     value={codigoInterno}
                     size="small"
                     disabled
-                    sx={{ width: '20rem' }}
                   />
                 </Grid>
               </Grid>
@@ -192,7 +189,6 @@ const NovoFornecedor = () => {
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="Ex: contacto@fornecedor.com"
                     size="small"
-                    sx={{ width: '20rem' }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -206,7 +202,6 @@ const NovoFornecedor = () => {
                     onChange={handleTelefone}
                     placeholder="9XXXXXXXX (9 dígitos)"
                     size="small"
-                    sx={{ width: '20rem' }}
                     error={!!telefoneErro}
                     helperText={telefoneErro || `${form.telefone.length}/9 dígitos`}
                   />
@@ -221,14 +216,13 @@ const NovoFornecedor = () => {
                     onChange={(e) => setForm({ ...form, endereco: e.target.value })}
                     placeholder="Rua, Bairro, Edifício..."
                     size="small"
-                    sx={{ width: '20rem' }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Cidade / Província<span style={{ color: 'red' }}>*</span>
                   </Typography>
-                  <TextField select fullWidth defaultValue="Luanda" size="small" sx={{ width: '14rem' }}>
+                  <TextField select fullWidth defaultValue="Luanda" size="small">
                     <MenuItem value="Luanda">Luanda</MenuItem>
                     <MenuItem value="cuanza norte">C. Norte</MenuItem>
                     <MenuItem value="bengo">Bengo</MenuItem>
@@ -249,7 +243,7 @@ const NovoFornecedor = () => {
                   <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     País<span style={{ color: 'red' }}>*</span>
                   </Typography>
-                  <TextField select fullWidth defaultValue="Angola" size="small" sx={{ width: '10rem' }}>
+                  <TextField select fullWidth defaultValue="Angola" size="small">
                     <MenuItem value="Angola">Angola</MenuItem>
                     <MenuItem value="portugal">Portugal</MenuItem>
                     <MenuItem value="africa do sul">África do Sul</MenuItem>

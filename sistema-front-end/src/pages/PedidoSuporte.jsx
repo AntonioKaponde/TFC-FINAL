@@ -123,7 +123,17 @@ export default function PedidoSuporte() {
       <NavBar />
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 15 }, mr: { md: 6 } }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
             {/*<SupportIcon sx={{ color: '#083927', fontSize: 32 }} />*/}
             <Box>
@@ -137,7 +147,7 @@ export default function PedidoSuporte() {
           <Grid container spacing={3}>
             {/* Formulário */}
             <Grid item xs={12} md={5}>
-              <Card variant="outlined" sx={{ borderRadius: 3, p: 4, bgcolor: '#fff',width:"40rem" , height:"35rem"}}>
+              <Card variant="outlined" sx={{ borderRadius: 3, p: { xs: 2.5, md: 4 }, bgcolor: '#fff', width: '100%' }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A', mb: 2 }}>
                   Novo pedido
                 </Typography>
@@ -152,34 +162,34 @@ export default function PedidoSuporte() {
                   sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                 />
 
-                <Grid container spacing={2} sx={{ mb: 2 }}>
-                  <Grid item xs={6}>
-                    <FormControl fullWidth size="small" sx={{width:"15rem"}}>
-                      <InputLabel>Categoria</InputLabel>
-                      <Select
-                        label="Categoria"
-                        value={form.categoria}
-                        onChange={(e) => setForm({ ...form, categoria: e.target.value })}
-                        sx={{ borderRadius: 2 }}
-                      >
-                        {CATEGORIAS.map((c) => <MenuItem key={c.valor} value={c.valor}>{c.label}</MenuItem>)}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControl fullWidth size="small" sx={{width:"10rem"}}>
-                      <InputLabel>Prioridade</InputLabel>
-                      <Select
-                        label="Prioridade"
-                        value={form.prioridade}
-                        onChange={(e) => setForm({ ...form, prioridade: e.target.value })}
-                        sx={{ borderRadius: 2 }}
-                      >
-                        {PRIORIDADES.map((p) => <MenuItem key={p.valor} value={p.valor}>{p.label}</MenuItem>)}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
+                  <FormControl fullWidth>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 0.5, display: 'block' }}>
+                      Categoria
+                    </Typography>
+                    <Select
+                      label="Categoria"
+                      value={form.categoria}
+                      onChange={(e) => setForm({ ...form, categoria: e.target.value })}
+                      sx={{ borderRadius: 2 }}
+                    >
+                      {CATEGORIAS.map((c) => <MenuItem key={c.valor} value={c.valor}>{c.label}</MenuItem>)}
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 0.5, display: 'block' }}>
+                      Prioridade
+                    </Typography>
+                    <Select
+                      label="Prioridade"
+                      value={form.prioridade}
+                      onChange={(e) => setForm({ ...form, prioridade: e.target.value })}
+                      sx={{ borderRadius: 2 }}
+                    >
+                      {PRIORIDADES.map((p) => <MenuItem key={p.valor} value={p.valor}>{p.label}</MenuItem>)}
+                    </Select>
+                  </FormControl>
+                </Box>
 
                 <Typography variant="caption" sx={{ fontWeight: 700, color: '#0F172A', mb: 0.5, display: 'block' }}>
                   Descrição da dificuldade
@@ -236,7 +246,7 @@ export default function PedidoSuporte() {
 
             {/* Lista dos meus pedidos */}
             <Grid item xs={12} md={7}>
-              <Card variant="outlined" sx={{ borderRadius: 3, bgcolor: '#fff' ,width:"35rem"}}>
+              <Card variant="outlined" sx={{ borderRadius: 3, bgcolor: '#fff', width: '100%' }}>
                 <Box sx={{ p: 2.5, borderBottom: '1px solid #F1F5F9' }}>
                   <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>
                     Os meus pedidos

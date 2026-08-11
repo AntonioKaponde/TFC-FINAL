@@ -56,11 +56,11 @@ const CardFicheiro = () => {
 
   return (
     <Box sx={{ bgcolor: "#f5f7fa" }}>
-      <Grid container spacing={1} sx={{ maxWidth: 1100 }}>
-        <Box sx={{ display: "flex" }}>
-          <Grid item xs={12} md={6}>
+      <Grid container spacing={3} sx={{ width: "100%" }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", lg: "row" }, gap: 3, width: "100%" }}>
+          <Grid item xs={12} lg={6} sx={{ flex: 1, minWidth: 0 }}>
             {/*Card responsável pela geração de  ficheiro saf-t */}
-            <Card sx={{ p: 5, borderRadius: 2, boxShadow: "0 2px 10px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", height: "435px", width: "40rem",borderRadius:3 }}>
+            <Card sx={{ p: { xs: 2.5, md: 5 }, boxShadow: "0 2px 10px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", width: "100%", borderRadius: 3 }}>
               <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                 <FileIcon sx={{ color: "#083927", mr: 1 }} />
                 <Typography variant="h6" fontWeight="bold">Gerar Ficheiro SAF-T</Typography>
@@ -92,7 +92,7 @@ const CardFicheiro = () => {
                 </Grid>
                 <Grid item xs={12} sx={{ mt: 1 }}>
                   <Typography variant="caption" fontWeight="bold">Versão do Esquema XML</Typography>
-                  <FormControl size="small" sx={{ mt: 1, width: "596px" }}>
+                  <FormControl size="small" fullWidth sx={{ mt: 1 }}>
                     <Select defaultValue="1.01" disabled sx={{ bgcolor: "#f0f2f5" }}>
                       <MenuItem value="1.01">1.01_01 (Última versão AGT)</MenuItem>
                     </Select>
@@ -105,31 +105,31 @@ const CardFicheiro = () => {
                 startIcon={exportLoading ? <CircularProgress size={20} color="inherit" /> : <FileDownloadIcon />}
                 onClick={exportar}
                 disabled={exportLoading}
-                sx={{ mt: 2, py: 1.5, textTransform: "none", fontWeight: "bold", borderRadius: 2, background: exportLoading ? "#083927aa" : "#083927", width: "596px" }}
+                sx={{ mt: 2, py: 1.5, textTransform: "none", fontWeight: "bold", borderRadius: 2, background: exportLoading ? "#083927aa" : "#083927", width: "100%" }}
               >
                 {exportLoading ? "A Exportar..." : "Exportar Ficheiro XML"}
               </Button>
             </Card>
           </Grid>
               {/*Cards para implmentação da quantidade de ficheiros gerados dia mes e ano, quantidade de documentos*/}
-          <Grid item xs={12} md={6} sx={{ ml: 38 }}>
+          <Grid item xs={12} lg={6} sx={{ flex: 1, minWidth: 0 }}>
             <Alert severity="warning" icon={<ErrorIcon sx={{ color: "#d32f2f" }} />} sx={{ bgcolor: "#ff9800", color: "#fff", mb: 3, borderRadius: 2, "& .MuiAlert-icon": { color: "#fff" } }}>
               <Typography variant="subtitle2" fontWeight="bold">Aviso de Submissão</Typography>
               O ficheiro SAF-T referente ao mês selecionado deve ser submetido no Portal do Contribuinte dentro do prazo legal.
             </Alert>
 
             <Grid container spacing={2} sx={{ mb: 3 }}>
-              <Stack direction={"row"} sx={{ display: "flex", gap: 2 }}>
-                <Grid item xs={6}>
-                  <Card sx={{ p: "20px", paddingRight: "92px", borderRadius: 2 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} sx={{ display: "flex", gap: 2, width: "100%" }}>
+                <Grid item xs={12} sm={6} sx={{ flex: 1 }}>
+                  <Card sx={{ p: "20px", borderRadius: 2, height: "100%" }}>
                     <Typography variant="caption" color="textSecondary">Ficheiros Gerados ({ano})</Typography>
                     <Typography variant="h4" fontWeight="bold" sx={{ mt: 1 }}>
                       {loading ? '...' : ficheirosAno.length}
                     </Typography>
                   </Card>
                 </Grid>
-                <Grid item xs={6}>
-                  <Card sx={{ p: "15px", paddingRight: "100px", borderRadius: 2,}}>
+                <Grid item xs={12} sm={6} sx={{ flex: 1 }}>
+                  <Card sx={{ p: "15px", borderRadius: 2, height: "100%" }}>
                     <Typography variant="caption" color="textSecondary">Última Emissão</Typography>
                     <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 1 }}>
                       {ultimoGrupo ? formatData(ultimoGrupo.ultimaEmissao) : '-'}
@@ -142,7 +142,7 @@ const CardFicheiro = () => {
               </Stack>
             </Grid>
 
-            <Card sx={{ borderRadius: 2, p: 1, height: "10rem" }}>
+            <Card sx={{ borderRadius: 2, p: 1 }}>
               <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2, margin: "0 20px" }}>
                 Checklist de Conformidade
               </Typography>

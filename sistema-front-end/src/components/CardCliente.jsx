@@ -47,10 +47,21 @@ export default function CardCliente() {
   ];
 
   return (
-    <div style={{ display: "flex", gap: 23, justifyContent: "center" }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "repeat(1, minmax(0, 1fr))",
+          sm: "repeat(2, minmax(0, 1fr))",
+          lg: "repeat(4, minmax(0, 1fr))"
+        },
+        gap: 2,
+        width: "100%"
+      }}
+    >
       {cards.map((card) => (
         <Box key={card.titulo}>
-          <Card sx={{ minWidth: 335, p: 2,height:"10rem",borderRadius:3 }}>
+          <Card sx={{ width: "100%", p: 2, minHeight: "10rem", borderRadius: 3 }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ fontSize: '1rem', color: '#64748b' }}>{card.titulo}</Typography>
@@ -63,6 +74,6 @@ export default function CardCliente() {
           </Card>
         </Box>
       ))}
-    </div>
+    </Box>
   );
 }

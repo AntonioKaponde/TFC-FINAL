@@ -41,7 +41,21 @@ export default function ResumoEmpresa() {
         <NavBar />
         <Box display={"flex"}>
           <SideBar />
-          <Box component={"main"} sx={{ margin: "90px 90px", display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 2, md: 4 },
+              mt: '70px',
+              width: '100%',
+              boxSizing: 'border-box',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '60vh'
+            }}
+          >
             <CircularProgress />
           </Box>
         </Box>
@@ -55,7 +69,17 @@ export default function ResumoEmpresa() {
         <NavBar />
         <Box display={"flex"}>
           <SideBar />
-          <Box component={"main"} sx={{ margin: "90px 90px", display: "flex" }}>
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 2, md: 4 },
+              mt: '70px',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
             <Typography>Nenhuma empresa encontrada ou erro ao carregar.</Typography>
           </Box>
         </Box>
@@ -68,20 +92,30 @@ export default function ResumoEmpresa() {
       <NavBar />
       <Box display={"flex"}>
         <SideBar />
-        <Box component={"main"} sx={{ margin: "90px 90px", display: "flex", width: "100%",ml:20 }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           <Grid container spacing={2} sx={{ display: "flex", flexDirection: "column" }}>
-            <Grid sx={{ ml: 10, mb: 3 }}>
+            <Grid sx={{ mb: 3 }}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <BusinessIcon /> Resumo da Empresa
+               Resumo da Empresa
               </Typography>
               <Typography variant="caption" color="textSecondary">
                 Visão geral de todas as informações cadastrais e atualizadas da sua empresa.
               </Typography>
             </Grid>
 
-            <Grid item sx={{ ml: 10 }}>
-              <Card sx={{ p: 4, width: "70em", borderRadius: 2, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+            <Grid item>
+              <Card sx={{ p: { xs: 2, md: 4 }, width: "100%", borderRadius: 2, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, mb: 3 }}>
                   <Box>
                     <Typography variant="h5" sx={{ fontWeight: 700, color: '#083927' }}>
                       {empresa.nome}

@@ -140,8 +140,8 @@ export default function CriarPapel() {
             PERMISSÕES DE ACESSO
           </Typography>
 
-          <TableContainer sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-            <Table size="small">
+          <TableContainer sx={{ borderRadius: '12px', border: '1px solid #e2e8f0', overflowX: 'auto' }}>
+            <Table size="small" sx={{ minWidth: 460 }}>
               <TableHead sx={{ backgroundColor: '#f8fafc' }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600, color: '#64748b', py: 1.5 }}>Módulo</TableCell>

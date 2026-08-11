@@ -75,7 +75,17 @@ export default function Auditoria() {
       <NavBar />
       <Box display={"flex"}>
         <SideBar />
-        <Box component={"main"} sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10 }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           {/* Cabeçalho */}
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, flexWrap: "wrap", gap: 2 }}>
             <Box display="flex" alignItems="center" gap={1.5}>
@@ -89,7 +99,7 @@ export default function Auditoria() {
                 </Typography>
               </Box>
             </Box>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ width: { xs: '100%', sm: 'auto' } }}>
               <Button 
                 size="small" 
                 startIcon={<RefreshIcon />} 
@@ -105,16 +115,16 @@ export default function Auditoria() {
                 onChange={(e) => setPesquisa(e.target.value)}
                 InputProps={{
                   startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                  sx: { borderRadius: 2, bgcolor: "#fff", minWidth: 250 }
+                  sx: { borderRadius: 2, bgcolor: "#fff", minWidth: { xs: 0, sm: 250 } }
                 }}
               />
             </Stack>
           </Box>
 
           {/* Filtros */}
-          <Box sx={{ mb: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Box sx={{ mb: 2, display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
             <FilterIcon sx={{ color: '#64748b' }} />
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+            <FormControl size="small" sx={{ minWidth: { xs: 140, sm: 180 } }}>
               <Select
                 value={filtroOperacao}
                 onChange={(e) => setFiltroOperacao(e.target.value)}
@@ -167,8 +177,8 @@ export default function Auditoria() {
 
           {/* Tabela de Auditoria */}
           <Card variant="outlined" sx={{ borderRadius: 3, boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-            <TableContainer sx={{ maxHeight: '65vh' }}>
-              <Table stickyHeader size="small">
+            <TableContainer sx={{ maxHeight: { xs: '70vh', md: '65vh' }, overflowX: 'auto' }}>
+              <Table stickyHeader size="small" sx={{ minWidth: 760 }}>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 600, bgcolor: "#f8f9fa", py: 2, width: 160 }}>Data e Hora</TableCell>

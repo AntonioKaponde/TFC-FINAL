@@ -33,12 +33,13 @@ export default function Clientes() {
       <NavBar />
       <Box sx={{ display: "flex"}}>
         <SideBar />
-        <Box id="area-impressao" component={"main"} sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
+        <Box id="area-impressao" component={"main"} sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: '70px', width: '100%', boxSizing: 'border-box' }}>
           <Box 
             sx={{ 
               display: "flex", 
               flexDirection: { xs: "column", md: "row" }, 
-               ml: 10,  
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", md: "center" },
               mb: 3,
               gap: 2
             }}
@@ -52,7 +53,7 @@ export default function Clientes() {
               </Typography>
             </Box>
             <Box
-              sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" },ml: { xs: 0, sm: "34rem" } }}
+              sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2, width: { xs: "100%", sm: "auto" } }}
             >
               {/*<Button
                 onClick={() => exportarPDF('area-impressao', 'Clientes')}
@@ -82,8 +83,7 @@ export default function Clientes() {
                     boxShadow: 'none',
                     fontWeight: 600,
                     borderRadius: 2,
-                    textTransform: 'none',
-                    ml:29
+                    textTransform: 'none'
                   }}
                 >
                   <Link style={{textDecoration:"none", color: "inherit", width: "100%", textAlign: "center"}} to="/novoCliente">

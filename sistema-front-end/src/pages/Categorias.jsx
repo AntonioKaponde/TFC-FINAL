@@ -111,12 +111,23 @@ export default function Categorias() {
   };
 
   return (
-    <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh",display: "flex"}}>
+    <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
       <NavBar />
-      <SideBar />
-      <Box component="main" sx={{ flexGrow: 10, p: 3, mt: 10,mr:10 }}>
-        <Card sx={{ p: 4 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+      <Box sx={{ display: "flex" }}>
+        <SideBar />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
+          <Card sx={{ p: { xs: 2, md: 4 } }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 3 }}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Gestão de Categorias
             </Typography>
@@ -161,6 +172,7 @@ export default function Categorias() {
             </Table>
           </TableContainer>
         </Card>
+        </Box>
       </Box>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>

@@ -82,7 +82,7 @@ const NovoCliente = () => {
       <NavBar />
       <Box sx={{ display: "flex" }}>
         <SideBar />
-        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, mt: "70px", width: "100%", boxSizing: "border-box" }}>
+        <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: { xs: 2, md: 4 }, mt: "70px", width: "100%", boxSizing: "border-box" }}>
           <Container maxWidth="lg">
             {/* Breadcrumbs */}
             <Breadcrumbs
@@ -159,7 +159,6 @@ const NovoCliente = () => {
                     onChange={(e) => setForm({ ...form, nome: e.target.value })}
                     placeholder={isB2B ? "Ex: Empresa XYZ Lda." : "Ex: João Manuel António"}
                     size="small"
-                    sx={{ width: "20rem" }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -176,7 +175,6 @@ const NovoCliente = () => {
                     }}
                     placeholder={isB2B ? "Ex: 5000000000" : "Ex: 000000000LA000"}
                     size="small"
-                    sx={{ width: "20rem" }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -188,7 +186,6 @@ const NovoCliente = () => {
                     value={codigoGerado}
                     size="small"
                     disabled
-                    sx={{ width: "19rem" }}
                   />
                 </Grid>
               </Grid>
@@ -209,7 +206,6 @@ const NovoCliente = () => {
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="Ex: contacto@gmail.com"
                     size="small"
-                    sx={{ width: "17rem" }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -241,7 +237,6 @@ const NovoCliente = () => {
                         fullWidth
                         placeholder="Rua, Bairro, Edifício..."
                         size="small"
-                        sx={{ width: "25rem" }}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>

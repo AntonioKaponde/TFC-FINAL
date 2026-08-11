@@ -21,11 +21,8 @@ export default function FiscalRelatorio() {
   }, []);
 
   return (
-    <div>
-      <Grid container spacing={2}>
-        <Grid>
-          <Card sx={{ height: "40rem" }}>
-            <Box sx={{ p: 3 }}>
+    <Card sx={{ width: "100%", height: "100%" }}>
+            <Box sx={{ p: { xs: 2, md: 5 } }}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }}>Distribuição Fiscal</Typography>
               <Typography variant="caption" color="textSecondary">Composição do total a pagar ({ANO_REFERENCIA})</Typography>
             </Box>
@@ -56,9 +53,6 @@ export default function FiscalRelatorio() {
                 </Box>
               </Box>
             )}
-          </Card>
-        </Grid>
-      </Grid>
-    </div>
+    </Card>
   )
 }

@@ -123,7 +123,7 @@ export function NavBar() {
             borderBottom: "1px solid #e0e0e0"
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', color: "black" }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', color: "black", minWidth: 0 }}>
             <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -135,17 +135,19 @@ export function NavBar() {
             </IconButton>
             <Typography
               variant="subtitle1"
+              noWrap
               sx={{
                 fontWeight: 700,
                 color: "#083927",
-                display: { xs: "none", sm: "block" },
+                fontSize: { xs: "0.95rem", sm: "1rem" },
+                minWidth: 0,
               }}
             >
               {pageTitle}
             </Typography>
           </Box>
           <Box>
-            <List sx={{ display: "flex", alignItems: "center", p: 0 }}>
+            <List sx={{ display: "flex", alignItems: "center", p: 0, flexShrink: 0 }}>
               <ListItem sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Paper
                   component="form"
@@ -250,7 +252,8 @@ export function NavBar() {
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
             mt: 1.5,
-            width: 340,
+            width: { xs: 'calc(100vw - 32px)', sm: 340 },
+            maxWidth: 340,
             borderRadius: 2
           },
         }}

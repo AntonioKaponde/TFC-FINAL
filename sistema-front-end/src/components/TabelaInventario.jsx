@@ -137,10 +137,10 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
   }, [pesquisa, filtroTipo]);
 
   return (
-    <Paper sx={{ width:"83rem",ml:9, boxShadow: "none", background: "transparent", }}>
+    <Paper sx={{ width: "100%", minWidth: 0, boxShadow: "none", background: "transparent" }}>
       {/* Tabela */}
       <Box sx={{ marginTop: "20px" }}>
-        <Card sx={{p: 1, width: "83rem" }}>
+        <Card sx={{ p: 1, width: "100%" }}>
           <CardContent
             sx={{
               display: "flex",

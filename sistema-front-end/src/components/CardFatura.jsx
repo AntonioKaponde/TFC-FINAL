@@ -27,7 +27,7 @@ export default function CardFatura() {
         const vencido = faturas
           .filter((f) => f.estado === 'VENCIDO')
           .reduce((s, f) => s + Number(f.total), 0);
-        
+
         const notasCredito = notas.reduce((s, nc) => s + Number(nc.valor), 0);
 
         setStats({ faturado, porReceber, vencido, notasCredito });
@@ -51,10 +51,21 @@ export default function CardFatura() {
   ];
 
   return (
-    <div style={{ display: "flex", gap: 30, justifyContent: "center" }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "repeat(1, minmax(0, 1fr))",
+          sm: "repeat(2, minmax(0, 1fr))",
+          lg: "repeat(4, minmax(0, 1fr))"
+        },
+        gap: 2,
+        width: "100%"
+      }}
+    >
       {cards.map((card) => (
         <Box key={card.titulo}>
-          <Card sx={{ minWidth: 329, p: 2,height:"10rem",borderRadius:3 }}>
+          <Card sx={{ width: "100%", p: 2, minHeight: "10rem", borderRadius: 3 }}>
             <CardContent>
               <Box display="flex" justifyContent="space-between">
                 <Typography sx={{ fontSize: '1rem', color: '#64748b' }}>{card.titulo}</Typography>
@@ -67,6 +78,6 @@ export default function CardFatura() {
           </Card>
         </Box>
       ))}
-    </div>
+    </Box>
   );
 }

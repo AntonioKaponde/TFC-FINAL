@@ -74,9 +74,20 @@ export default function Configuracoes() {
         <NavBar />
         <Box  display={"flex"}>
           <SideBar />
-          <Box component={"main"} sx={{margin:"90px 100px 0px 200px",display:"flex", width: "100%", paddingBottom: "50px"}}>
+          <Box
+            component={"main"}
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 2, md: 4 },
+              mt: '70px',
+              pb: '50px',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
            <Grid container spacing={2} sx={{display:"flex", flexDirection:"column",borderRadius:3}}>
-            <Grid sx={{ml:10}}>
+            <Grid>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#111' }} >Definições Gerais</Typography>
               <Typography variant="caption" color="textSecondary">Faça a gestão dos dados da sua empresa, configurações fiscais e parametrização fiscal</Typography>
             </Grid>
@@ -89,7 +100,7 @@ export default function Configuracoes() {
             </Grid>
             <Grid>
               <SerieDocumentos ref={serieRef} />
-              <Grid sx={{ display: "flex", justifyContent: "flex-end", mt: 4, ml: 10, width: "60em" }}>
+              <Grid sx={{ display: "flex", justifyContent: "flex-end", mt: 4, width: "100%" }}>
                <Button 
                  variant="contained" 
                  onClick={handleSaveAll}
@@ -101,7 +112,7 @@ export default function Configuracoes() {
             </Grid>
             </Grid>
             {isAdmin && (
-              <Grid sx={{ ml: 10, mt: 4 }}>
+              <Grid sx={{ mt: 4 }}>
                 {/*<Card sx={{ p: 3, maxWidth: '800px', bgcolor: '#fffbeb', border: '1px solid #fde68a' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                     <BuildCircleOutlinedIcon sx={{ color: '#d97706' }} />

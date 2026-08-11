@@ -67,9 +67,29 @@ export default function PrevisaoStock() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', bgcolor: '#F4F7F9' }}>
-        <CircularProgress size={40} sx={{ color: '#083927' }} />
-      </Box>
+      <div>
+        <NavBar />
+        <Box sx={{ display: 'flex' }}>
+          <SideBar />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 2, md: 4 },
+              mt: '70px',
+              width: '100%',
+              boxSizing: 'border-box',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60vh'
+            }}
+          >
+            <CircularProgress size={40} sx={{ color: '#083927' }} />
+          </Box>
+        </Box>
+      </div>
     );
   }
 
@@ -88,7 +108,17 @@ export default function PrevisaoStock() {
       <NavBar />
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ p: { xs: 2, md: 4 }, flexGrow: 1, mt: 10, ml: { md: 6 }, mr: { md: 6 } }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 2, md: 4 },
+            mt: '70px',
+            width: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
             {/*<InsightsIcon sx={{ color: '#083927', fontSize: 32 }} />*/}
             <Box>
@@ -127,8 +157,8 @@ export default function PrevisaoStock() {
 
               {/* Tabela */}
               <Card variant="outlined" sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                <TableContainer sx={{ maxHeight: '62vh' }}>
-                  <Table stickyHeader size="small">
+                <TableContainer sx={{ maxHeight: { xs: '70vh', md: '62vh' }, overflowX: 'auto' }}>
+                  <Table stickyHeader size="small" sx={{ minWidth: 900 }}>
                     <TableHead>
                       <TableRow>
                         {['Produto', 'Categoria', 'Stock atual', 'Consumo/mês', 'Dias restantes', 'Última venda', 'Velocidade', 'Estado', 'Repor (sugestão)'].map((h) => (

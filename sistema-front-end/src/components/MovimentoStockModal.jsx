@@ -96,8 +96,8 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ fontWeight: 'bold' }}>Movimentar Stock</DialogTitle>
-      <DialogContent>
+      <DialogTitle sx={{ fontWeight: 'bold', pr: 6 }}>Movimentar Stock</DialogTitle>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
         {erro && <Typography color="error" sx={{ mb: 2 }}>{erro}</Typography>}
         {sucesso && <Typography color="success.main" sx={{ mb: 2, fontWeight: 600, p: 1.5, bgcolor: '#f0fdf4', borderRadius: 1, border: '1px solid #bbf7d0' }}>{sucesso}</Typography>}
         <FormControl fullWidth sx={{ mt: 2 }}>
@@ -174,7 +174,7 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
           onChange={(e) => setForm({ ...form, observacao: e.target.value })}
         />
       </DialogContent>
-      <DialogActions sx={{ p: 2 }}>
+      <DialogActions sx={{ p: 2, flexWrap: 'wrap', gap: 1 }}>
         <Button onClick={onClose} color="inherit" sx={{ textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
         <Button onClick={handleSave} variant="contained" disabled={salvando} sx={{ bgcolor: "#0B6E4F", textTransform: 'none', fontWeight: 600 }}>
           Confirmar
