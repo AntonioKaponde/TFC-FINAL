@@ -143,10 +143,15 @@ export default function PrevisaoStock() {
                 }}
               >
                 {cards.map((c) => (
-                  <Card variant="outlined" key={c.label} sx={{ borderRadius: 3, p: 2.5 }}>
-                    <Box sx={{ color: c.cor, mb: 1 }}>{c.icon}</Box>
-                    <Typography variant="h4" sx={{ fontWeight: 800, color: c.cor }}>{c.valor}</Typography>
-                    <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600 }}>{c.label}</Typography>
+                  <Card variant="outlined" key={c.label} sx={{ width: "100%", p: 2, minHeight: "10rem", borderRadius: 3}}>
+                    <Box sx={{display:"flex",justifyContent:"space-between"}}>
+                      <Typography variant="caption" color="textSecondary" sx={{fontSize: '1rem', color: '#64748b'}}>{c.label}</Typography>
+                      <Box sx={{ color: c.cor, mb: 1 }}>{c.icon}</Box>
+                    </Box>
+                    <Box>
+                      
+                    </Box>
+                    <h2>{c.valor}</h2>
                   </Card>
                 ))}
               </Box>
