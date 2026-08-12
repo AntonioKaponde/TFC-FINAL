@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Box, Typography, Card, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, CircularProgress, Chip, TextField, InputAdornment, Grid,
-  FormControl, InputLabel, Select, MenuItem, Stack, Button, IconButton, Dialog,
-  DialogTitle, DialogContent, DialogActions, Tooltip, Paper, Divider, Snackbar, Alert
+  Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead,
+  TableRow, CircularProgress, Chip, TextField, FormControl, Select, MenuItem, Stack, Button,
+  IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, Paper, Divider,
+  Snackbar, Alert, InputBase
 } from '@mui/material';
 import {
   SupportAgent as SupportIcon,
@@ -13,8 +13,7 @@ import {
   Download as DownloadIcon,
   Image as ImageIcon,
   Description as DocIcon,
-  Close as CloseIcon,
-  FilterList as FilterIcon
+  Close as CloseIcon
 } from '@mui/icons-material';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
@@ -44,11 +43,14 @@ const ESTADOS = {
   CANCELADO: { label: 'Cancelado', cor: 'error' },
 };
 
+const itensPorPagina = 5;
+
 export default function GestaoSuporte() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [pesquisa, setPesquisa] = useState('');
+  const [paginaAtual, setPaginaAtual] = useState(0);
   const [detalhe, setDetalhe] = useState(null);
   const [observacao, setObservacao] = useState('');
   const [preview, setPreview] = useState(null);
@@ -86,6 +88,16 @@ export default function GestaoSuporte() {
       (p.codigo || '').toLowerCase().includes(q)
     );
   });
+
+  // Paginação (padrão dos módulos de faturação/clientes/fornecedores)
+  const totalPaginas = Math.ceil(filtrados.length / itensPorPagina);
+  // Garante que a página nunca ultrapasse os dados disponíveis após alterações
+  const startIndex = Math.min(paginaAtual * itensPorPagina, Math.max(0, filtrados.length - itensPorPagina));
+  const pedidosPaginados = filtrados.slice(startIndex, startIndex + itensPorPagina);
+
+  useEffect(() => {
+    setPaginaAtual(0);
+  }, [pesquisa, filtroEstado]);
 
   const abrirDetalhe = (pedido) => {
     setDetalhe(pedido);
@@ -165,14 +177,27 @@ export default function GestaoSuporte() {
             </Box>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }} sx={{ width: { xs: '100%', sm: 'auto' } }}>
               <Button size="small" startIcon={<RefreshIcon />} onClick={carregar} sx={{ textTransform: 'none' }}>Atualizar</Button>
-              <TextField
-                size="small" placeholder="Pesquisar pedidos..." value={pesquisa}
-                onChange={(e) => setPesquisa(e.target.value)}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
-                  sx: { borderRadius: 2, bgcolor: '#fff', minWidth: { xs: 0, sm: 240 } }
+              <Paper
+                component="form"
+                onSubmit={(e) => e.preventDefault()}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: { xs: "100%", sm: 280 },
+                  background: "#F4F7F9",
+                  height: "30px",
                 }}
-              />
+              >
+                <IconButton sx={{ p: "10px" }} aria-label="menu">
+                  <SearchIcon />
+                </IconButton>
+                <InputBase
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder="Pesquisar pedidos..."
+                  value={pesquisa}
+                  onChange={(e) => setPesquisa(e.target.value)}
+                />
+              </Paper>
             </Stack>
           </Box>
 
@@ -197,45 +222,55 @@ export default function GestaoSuporte() {
               { label: 'Resolvidos', valor: totalResolvidos, cor: '#22C55E' },
             ].map((s) => (
               <Box key={s.label}>
-                <Card variant="outlined" sx={{ borderRadius: 2, p: 2.5, width: '100%', height: '100%' }}>
-                  <Typography variant="h4" sx={{ fontWeight: 800, color: s.cor }}>{s.valor}</Typography>
-                  <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 600,color: '#64748b'}}>{s.label}</Typography>
+                <Card variant="outlined" sx={{ borderRadius: 3, p: 3, width: '100%', minHeight: "10rem" }}>
+                  <Typography variant="caption" color="textSecondary" sx={{fontSize: '1rem', color: '#64748b'}}>{s.label}</Typography>
+                  <h2>{s.valor}</h2>
                 </Card>
               </Box>
             ))}
           </Box>
 
-          {/* Filtro por estado */}
-          <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-            {/*<FilterIcon sx={{ color: '#64748b' }} />*/}
-            {['TODOS', ...Object.keys(ESTADOS)].map((estado) => (
-              <Button
-                key={estado} size="small"
-                variant={filtroEstado === (estado === 'TODOS' ? '' : estado) ? 'contained' : 'outlined'}
-                onClick={() => filtrar(estado)}
-                sx={{
-                  textTransform: 'none', borderRadius: 2,
-                  bgcolor: filtroEstado === (estado === 'TODOS' ? '' : estado) ? '#083927' : 'transparent',
-                  color: filtroEstado === (estado === 'TODOS' ? '' : estado) ? '#fff' : '#475569',
-                  borderColor: '#CBD5E1',
-                  '&:hover': { bgcolor: filtroEstado === (estado === 'TODOS' ? '' : estado) ? '#0B6E4F' : '#F1F5F9' }
-                }}
-              >
-                {estado === 'TODOS' ? 'Todos' : ESTADOS[estado].label}
-              </Button>
-            ))}
-          </Box>
+         
+          
 
           {/* Tabela */}
-          <Card variant="outlined" sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.03)', width: '100%' }}>
+          <Card sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.03)', width: '100%' }}>
+              {/* Filtro por estado */}
+             <CardContent
+              sx={{
+                display: "flex",
+                gap: { xs: 1, sm: 5 },
+                height: { xs: "auto", sm: "40px" },
+                alignItems: "center",
+                justifyContent: "space-between",
+                overflowX: "auto",
+                whiteSpace: "nowrap",
+                py: { xs: 1, sm: 2 }
+              }}
+            >
+              {['TODOS', ...Object.keys(ESTADOS)].map((estado) => (
+                <Button
+                  key={estado}
+                  variant="text"
+                  onClick={() => filtrar(estado)}
+                  sx={{
+                    color: filtroEstado === (estado === 'TODOS' ? '' : estado) ? '#0B6E4F' : 'black',
+                    fontSize: "0.85rem",
+                    fontWeight: filtroEstado === (estado === 'TODOS' ? '' : estado) ? 'bold' : '500',
+                    textTransform: 'none',
+                    minWidth: 'auto',
+                  }}
+                >
+                  {estado === 'TODOS' ? 'Todos' : ESTADOS[estado].label}
+                </Button>
+              ))}
+            </CardContent>
             <TableContainer sx={{ maxHeight: { xs: '70vh', md: '60vh' }, overflowX: 'auto' }}>
               <Table stickyHeader size="small" sx={{ minWidth: 800 }}>
-                <TableHead >
-                  <TableRow >
+                <TableHead sx={{ bgcolor: "#f1f5f9" }}>
+                  <TableRow>
                     {['Assunto', 'Utilizador', 'Categoria', 'Prioridade', 'Estado', 'Data', 'Acção'].map((h) => (
-                      <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#F1F5F9',height:"60px",
-                        color: "#64748b",
-                        fontSize: "0.75rem"}}>{h}</TableCell>
+                      <TableCell key={h} sx={{ fontWeight: "600", color: "#64748b", fontSize: "0.75rem" }}>{h}</TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -247,8 +282,8 @@ export default function GestaoSuporte() {
                       <Typography color="textSecondary">Nenhum pedido encontrado.</Typography>
                     </TableCell></TableRow>
                   ) : (
-                    filtrados.map((pedido) => (
-                      <TableRow  hover sx={{height:"80px"}}>
+                    pedidosPaginados.map((pedido) => (
+                      <TableRow key={pedido.id} hover>
                         {/*<TableCell sx={{ fontWeight: 700, color: '#083927' }}>{pedido.codigo}</TableCell>*/}
                         <TableCell sx={{ maxWidth: 220 }}>
                           <Typography variant="body2" sx={{ fontWeight: 600, color: '#334155', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -299,6 +334,43 @@ export default function GestaoSuporte() {
                 </TableBody>
               </Table>
             </TableContainer>
+
+            {/* Paginação */}
+            <Box
+              sx={{
+                p: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                borderTop: "1px solid #f1f5f9",
+                flexWrap: "wrap",
+                gap: 1
+              }}
+            >
+              <Typography variant="caption" color="textSecondary">
+                A mostrar {filtrados.length > 0 ? startIndex + 1 : 0} a{" "}
+                {Math.min(startIndex + itensPorPagina, filtrados.length)} de{" "}
+                {filtrados.length} pedido(s)
+              </Typography>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  size="small"
+                  onClick={() => setPaginaAtual((p) => Math.max(0, p - 1))}
+                  disabled={paginaAtual === 0}
+                  sx={{ textTransform: "none" }}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  size="small"
+                  onClick={() => setPaginaAtual((p) => Math.min(totalPaginas - 1, p + 1))}
+                  disabled={paginaAtual >= totalPaginas - 1 || totalPaginas === 0}
+                  sx={{ textTransform: "none" }}
+                >
+                  Próximo
+                </Button>
+              </Stack>
+            </Box>
           </Card>
         </Box>
       </Box>
@@ -376,7 +448,7 @@ export default function GestaoSuporte() {
       </Dialog>
 
       {/* Pré-visualização de imagem */}
-      <Dialog open={!!preview} onClose={fecharPreview} maxWidth="md">sx={{backgroundColor:"#F1F5F9", borderradius: "2px"}}
+      <Dialog open={!!preview} onClose={fecharPreview} maxWidth="md">
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pr: 2 }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{preview?.nome}</Typography>
           <IconButton onClick={fecharPreview}><CloseIcon /></IconButton>

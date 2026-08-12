@@ -54,7 +54,7 @@ export default function TabelaClientes() {
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
-  const itensPorPagina = 5;
+  const itensPorPagina = 4;
 
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos Clientes");
@@ -154,121 +154,103 @@ export default function TabelaClientes() {
         {/* TABELA DE HISTÓRICO */}
         <Grid item xs={12}>
           <Card sx={{ overflow: "hidden", width: "100%" }}>
-            <Box>
-              <Card>
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    gap: { xs: 1, sm: 2 },
-                    minHeight: "50px",
-                    alignItems: "center",
-                  }}
-                >
-                  <Paper
-                    component="form"
-                    onSubmit={(e) => e.preventDefault()}
+            <Card>
+              <Box>
+                <Card>
+                  <CardContent
                     sx={{
                       display: "flex",
+                      gap: { xs: 1, sm: 2 },
+                      minHeight: "50px",
                       alignItems: "center",
-                      width: "100rem",
-                      background: "#F4F7F9",
-                      height: "30px"
                     }}
                   >
-                    <IconButton sx={{ p: "10px" }} aria-label="menu">
-                      <SearchIcon />
-                    </IconButton>
-                    <InputBase
-                      sx={{ ml: 1, flex: 1 }}
-                      placeholder="Pesquisar por Nome, NIF, Email..."
-                      value={pesquisa}
-                      onChange={(e) => setPesquisa(e.target.value)}
-                    />
-                  </Paper>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      background: "#F4F7F9",
-                      color: "black",
-                      border: " 1px solid #262a2c1e",
-                      height: "30px",
-                      textTransform: "none",
-                      display: { xs: "none", sm: "flex" } // Hide filters on very small screens for now or just let it wrap
-                    }}
-                  >
-                    {" "}
-                    <FilterAltOutlinedIcon /> Filtros
-                  </Button>
-                </CardContent>
-              </Card>
-            </Box>
-            <Box>
-              <Card>
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    gap: { xs: 1, sm: 5 },
-                    height: { xs: "auto", sm: "40px" },
-                    alignItems: "center",
-                    justifyContent: { xs: "flex-start", sm: "space-between" },
-                    overflowX: "auto",
-                    whiteSpace: "nowrap",
-                    py: { xs: 1, sm: 2 }
-                  }}
-                >
-                  {["Todos Clientes", "Empresas (B2B)", "Particulares(B2C)", "Com Dívida"].map((tipo) => (
-                    <Button
-                      key={tipo}
-                      variant="text"
-                      onClick={() => setFiltroTipo(tipo)}
+                    <Paper
+                      component="form"
+                      onSubmit={(e) => e.preventDefault()}
                       sx={{
-                        color: filtroTipo === tipo ? "#0B6E4F" : "black",
-                        textTransform: "none",
-                        fontWeight: filtroTipo === tipo ? "bold" : "500",
-                        minWidth: "auto",
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100rem",
+                        background: "#F4F7F9",
+                        height: "30px"
                       }}
                     >
-                      {tipo}
-                    </Button>
-                  ))}
-                </CardContent>
-              </Card>
-            </Box>
-
-            <TableContainer component={Paper} elevation={0} sx={{ overflowX: 'auto', width: '100%' }}>
-              <Table sx={{ minWidth: 750 }}>
-                <TableHead sx={{ bgcolor: "#f1f5f9" }}>
-                  <TableRow>
-                    {[
-                      "Cliente",
-                      "NIF",
-                      "Telefone",
-                      "Email",
-                      "Saldo/Dívida",
-                      "Estado",
-                      "Ações",
-                    ].map((head) => (
-                      <TableCell
-                        key={head}
-                        sx={{
-                          fontWeight: "600",
-                          color: "#64748b",
-                          fontSize: "0.75rem",
-                        }}
-                      >
-                        {head}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {loading ? (
+                      <IconButton sx={{ p: "10px" }} aria-label="menu">
+                        <SearchIcon />
+                      </IconButton>
+                      <InputBase
+                        sx={{ ml: 1, flex: 1 }}
+                        placeholder="Pesquisar por Nome, NIF, Email..."
+                        value={pesquisa}
+                        onChange={(e) => setPesquisa(e.target.value)}
+                      />
+                    </Paper>
+                  </CardContent>
+                </Card>
+              </Box>
+              <CardContent
+                sx={{
+                  display: "flex",
+                  gap: { xs: 1, sm: 5 },
+                  height: { xs: "auto", sm: "40px" },
+                  alignItems: "center",
+                  justifyContent: { xs: "flex-start", sm: "space-between" },
+                  overflowX: "auto",
+                  whiteSpace: "nowrap",
+                  py: { xs: 1, sm: 2 }
+                }}
+              >
+                {["Todos Clientes", "Empresas (B2B)", "Particulares(B2C)", "Com Dívida"].map((tipo) => (
+                  <Button
+                    key={tipo}
+                    variant="text"
+                    onClick={() => setFiltroTipo(tipo)}
+                    sx={{
+                      color: filtroTipo === tipo ? "#0B6E4F" : "black",
+                      textTransform: "none",
+                      fontWeight: filtroTipo === tipo ? "bold" : "500",
+                      minWidth: "auto",
+                    }}
+                  >
+                    {tipo}
+                  </Button>
+                ))}
+              </CardContent>
+              <TableContainer component={Paper} elevation={0} sx={{ overflowX: 'auto', width: '100%' }}>
+                <Table sx={{ minWidth: 750 }}>
+                  <TableHead sx={{ bgcolor: "#f1f5f9" }}>
                     <TableRow>
-                      <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
-                        <CircularProgress size={28} sx={{ color: "#0B6E4F" }} />
-                      </TableCell>
+                      {[
+                        "Cliente",
+                        "NIF",
+                        "Telefone",
+                        "Email",
+                        "Saldo/Dívida",
+                        "Estado",
+                        "Ações",
+                      ].map((head) => (
+                        <TableCell
+                          key={head}
+                          sx={{
+                            fontWeight: "600",
+                            color: "#64748b",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          {head}
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  ) : clientesPaginados.map((row) => {
+                  </TableHead>
+                  <TableBody>
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                          <CircularProgress size={28} sx={{ color: "#0B6E4F" }} />
+                        </TableCell>
+                      </TableRow>
+                    ) : clientesPaginados.map((row) => {
                       const estado = labelEstadoCliente(row.ativo);
                       return (
                         <TableRow key={row.id} hover>
@@ -278,7 +260,7 @@ export default function TabelaClientes() {
                             <strong>{row.nome}</strong>
                             <br />
                             <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>
-                              {row.codigoCliente || 'C-000000'}
+                              {row.codigoCliente || 'C-000'}
                             </Typography>
                             {row.empresa && (
                               <>
@@ -342,46 +324,47 @@ export default function TabelaClientes() {
                         </TableRow>
                       );
                     })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <Box
-              sx={{
-                p: 2,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderTop: "1px solid #f1f5f9",
-              }}
-            >
-              <Typography variant="caption" color="textSecondary">
-                A mostrar {clientesFiltrados.length > 0 ? startIndex + 1 : 0} a{" "}
-                {Math.min(endIndex, clientesFiltrados.length)} de{" "}
-                {clientesFiltrados.length} cliente(s)
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                <Button
-                  size="small"
-                  onClick={handleAnterior}
-                  disabled={paginaAtual === 0}
-                  sx={{ textTransform: "none" }}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  size="small"
-                  onClick={handleProximo}
-                  disabled={paginaAtual >= totalPaginas - 1 || totalPaginas === 0}
-                  sx={{ textTransform: "none" }}
-                >
-                  Próximo
-                </Button>
-              </Stack>
-            </Box>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Box
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  borderTop: "1px solid #f1f5f9",
+                }}
+              >
+                <Typography variant="caption" color="textSecondary">
+                  A mostrar {clientesFiltrados.length > 0 ? startIndex + 1 : 0} a{" "}
+                  {Math.min(endIndex, clientesFiltrados.length)} de{" "}
+                  {clientesFiltrados.length} cliente(s)
+                </Typography>
+                <Stack direction="row" spacing={1}>
+                  <Button
+                    size="small"
+                    onClick={handleAnterior}
+                    disabled={paginaAtual === 0}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={handleProximo}
+                    disabled={paginaAtual >= totalPaginas - 1 || totalPaginas === 0}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Próximo
+                  </Button>
+                </Stack>
+              </Box>
+            </Card>
           </Card>
         </Grid>
       </Grid>
+
 
       <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
         <DialogTitle sx={{ fontWeight: 'bold' }}>Confirmar Eliminação</DialogTitle>
@@ -396,8 +379,8 @@ export default function TabelaClientes() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar open={notification.open} autoHideDuration={4000} onClose={() => setNotification({...notification, open: false})} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-          <Alert severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
+      <Snackbar open={notification.open} autoHideDuration={4000} onClose={() => setNotification({ ...notification, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
       </Snackbar>
     </Box>
   );

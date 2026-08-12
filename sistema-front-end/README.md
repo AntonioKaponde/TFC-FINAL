@@ -125,4 +125,21 @@ A interface gráfica de utilizador ficará acessível, tipicamente, no endereço
 
 ---
 
+## 🧩 SPA e sessões por aba
+
+- **Single Page Application (SPA):** toda a navegação acontece sem recarregar a
+  página (React Router). Ao copiar a URL de qualquer tela (ex.: uma fatura em
+  `/faturacao`) e abri-la noutra aba, a nova aba **não tem sessão** e é
+  redirecionada automaticamente para o login, onde pode iniciar sessão de novo.
+- **Sessão por aba:** o token fica apenas no `sessionStorage` da aba onde foi
+  feito o login. O `F5` na mesma aba mantém a sessão; abrir uma nova aba exige
+  novo login.
+- **Deep links em produção:** para colar/abrir URLs diretas de telas no browser
+  (ex.: `/faturacao`), o servidor que hospeda os ficheiros de `dist/` tem de
+  devolver o `index.html` para todas as rotas (history fallback). O servidor de
+  desenvolvimento do Vite já faz isto automaticamente; num servidor estático
+  (nginx, Apache, Netlify, etc.) configure um rewrite para o `index.html`.
+
+---
+
 *Desenvolvido como Trabalho de Fim de Curso (TFC).*

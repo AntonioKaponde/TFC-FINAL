@@ -8,8 +8,6 @@ import {
   Typography,
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   Tabs,
   Tab,
   IconButton,
@@ -32,7 +30,6 @@ import {
 import { useNotificacoes } from "../context/NotificacoesContext";
 export default function Login() {
   const { atualizar: atualizarNotificacoes } = useNotificacoes();
-  const [lembrar, setLembrar] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -59,13 +56,12 @@ export default function Login() {
       setError(null);
       const response = await api.post('/api/auth/login', { email, password });
       if (response.accessToken) {
-        // Sessão guardada por aba (sessionStorage); localStorage apenas se "Manter sessão"
+        // Sessão guardada por aba (sessionStorage) — nunca partilhada entre abas
         guardarSessao({
           token: response.accessToken,
           nome: response.nome,
           roles: response.roles,
           primeiroAcesso: response.primeiroAcesso,
-          lembrar,
         });
         // Utilizador criado pelo Admin ainda não trocou a palavra-passe → acesso condicionado
         if (response.primeiroAcesso) {
@@ -270,21 +266,11 @@ export default function Login() {
             }}
           />
 
-          {/* Opções extras */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap' }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={lembrar}
-                  onChange={(e) => setLembrar(e.target.checked)}
-                  sx={{ color: '#CBD5E1', '&.Mui-checked': { color: '#083927' } }}
-                />
-              }
-              label={<Typography variant="body2" sx={{ color: '#334155', fontWeight: 500 }}>Manter sessão neste dispositivo</Typography>}
-            />
-            <Button variant="text" sx={{ color: '#083927', fontWeight: 600, fontSize: '0.85rem', textTransform: 'none' }}>
-              Recuperar acesso
-            </Button>
+          {/* Nota sobre a sessão por aba */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 4, flexWrap: 'wrap' }}>
+            <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+              A sessão é válida apenas nesta aba. Ao abrir o sistema noutra aba, terá de iniciar sessão novamente.
+            </Typography>
           </Box>
 
           {/* Seção 2FA */}

@@ -34,9 +34,14 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
         .then(([arts, forns]) => {
           setArtigos(arts);
           setFornecedores(forns);
-          // Se um artigoId foi passado, pré-selecionar
+          // Se um artigoId foi passado, pré-selecionar e preencher o fornecedor responsável
           if (artigoIdProp && arts.some(a => a.id === Number(artigoIdProp))) {
-            setForm(prev => ({ ...prev, artigoId: String(artigoIdProp) }));
+            const artigoSel = arts.find(a => a.id === Number(artigoIdProp));
+            setForm(prev => ({
+              ...prev,
+              artigoId: String(artigoIdProp),
+              fornecedorId: artigoSel?.fornecedorId ? String(artigoSel.fornecedorId) : ""
+            }));
           }
         })
         .catch(e => console.error(e));
@@ -56,6 +61,10 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
     const num = typeof valor === 'number' ? valor : Number(valor);
     return `Kz ${num.toLocaleString('pt-AO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   });
+
+  // Fornecedor preenchido automaticamente a partir do artigo selecionado
+  const artigoSelecionado = artigos.find(a => a.id === Number(form.artigoId));
+  const fornecedorAuto = !!artigoSelecionado?.fornecedorId && String(artigoSelecionado.fornecedorId) === form.fornecedorId;
 
   const handleSave = async () => {
     setErro("");
@@ -104,11 +113,19 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
           <Typography variant="caption" fontWeight="bold">Artigo</Typography>
           <Select
             value={form.artigoId}
-            onChange={(e) => setForm({ ...form, artigoId: e.target.value })}
+            onChange={(e) => {
+              const id = e.target.value;
+              const artigoSel = artigos.find(a => a.id === Number(id));
+              setForm({
+                ...form,
+                artigoId: id,
+                fornecedorId: artigoSel?.fornecedorId ? String(artigoSel.fornecedorId) : ""
+              });
+            }}
             displayEmpty
           >
             <MenuItem value="" disabled>Selecione um artigo</MenuItem>
-            {artigos.map(a => <MenuItem key={a.id} value={a.id}>{a.nome} (Stock: {a.stock})</MenuItem>)}
+            {artigos.map(a => <MenuItem key={a.id} value={String(a.id)}>{a.nome} (Stock: {a.stock})</MenuItem>)}
           </Select>
         </FormControl>
 
@@ -116,7 +133,12 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
           <Typography variant="caption" fontWeight="bold">Tipo de Movimento</Typography>
           <Select
             value={form.tipoMovimento}
-            onChange={(e) => setForm({ ...form, tipoMovimento: e.target.value })}
+            onChange={(e) => setForm({
+              ...form,
+              tipoMovimento: e.target.value,
+              // O fornecedor só faz sentido em movimentos de entrada (compra)
+              fornecedorId: e.target.value === "ENTRADA" ? form.fornecedorId : ""
+            })}
           >
             <MenuItem value="ENTRADA">Entrada (+)</MenuItem>
             <MenuItem value="SAIDA">Saída (-)</MenuItem>
@@ -135,8 +157,13 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
                 displayEmpty
               >
                 <MenuItem value="">Nenhum</MenuItem>
-                {fornecedores.map(f => <MenuItem key={f.id} value={f.id}>{f.nome}</MenuItem>)}
+                {fornecedores.map(f => <MenuItem key={f.id} value={String(f.id)}>{f.nome}</MenuItem>)}
               </Select>
+              {fornecedorAuto && (
+                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mt: 0.5 }}>
+                  Fornecedor associado ao artigo selecionado — pode alterar se necessário.
+                </Typography>
+              )}
             </FormControl>
             {form.fornecedorId && (
               <TextField

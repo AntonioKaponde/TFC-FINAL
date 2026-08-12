@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Box,
   Table,
@@ -20,7 +20,8 @@ import {
   DialogContent,
   DialogActions,
   Snackbar,
-  Alert
+  Alert,
+  Divider
 } from "@mui/material";
 
 import Card from "@mui/material/Card";
@@ -52,7 +53,7 @@ export default function FaturasTable() {
   const [faturas, setFaturas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
-  const itensPorPagina = 5;
+  const itensPorPagina = 4;
 
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos");
@@ -117,12 +118,16 @@ export default function FaturasTable() {
     setSnackbar({ open: true, message, severity });
   };
 
-  useEffect(() => {
+  const carregar = useCallback(() => {
     faturasApi
       .listar()
       .then(setFaturas)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
 
   const handleMenuClick = (event, fatura) => {
     setAnchorEl(event.currentTarget);
@@ -154,7 +159,7 @@ export default function FaturasTable() {
     }).then(() => {
       showMessage("Nota de Crédito emitida com sucesso!", "success");
       handleCloseDialog();
-      setTimeout(() => window.location.reload(), 1500);
+      carregar();
     }).catch(err => {
       showMessage("Erro ao emitir: " + (err.response?.data?.message || err.response?.data || err.message), "error");
     }).finally(() => {
@@ -164,9 +169,47 @@ export default function FaturasTable() {
 
   return (
     <Paper sx={{ boxShadow: "none", background: "transparent", width: "100%", minWidth: 0 }}>
-      {/* Tabela */}
-      <Box sx={{ marginTop: "20px" }}>
+      
+      <Box sx={{ overflowX: 'auto', width: '100%' }}>
+        {/* Tabela */}
+      <Box sx={{ marginTop: "2px" }}>
+        <Card sx={{ maxWidth: 2000 }}>
+          
+        </Card>
+        <Box sx={{ marginTop: "20px" }}>
         <Card sx={{ p: 1, width: "100%" }}>
+          <CardContent
+            sx={{
+              display: "flex",
+              gap: { xs: 1, sm: 5 },
+              height: "50px",
+              alignItems: "center",
+              width:"40rem"
+            }}
+          >
+            <Paper
+              component="form"
+              onSubmit={(e) => e.preventDefault()}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                width: { xs: "100%", sm: 350 },
+                background: "#F4F7F9",
+                height: "30px",
+              }}
+            >
+              <IconButton sx={{ p: "10px" }} aria-label="menu">
+                <SearchIcon />
+              </IconButton>
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Pesquisar por Nº, Cliente, NIF..."
+                value={pesquisa}
+                onChange={(e) => setPesquisa(e.target.value)}
+              />
+            </Paper>
+          </CardContent>
+          <Divider />
           <CardContent
             sx={{
               display: "flex",
@@ -198,56 +241,7 @@ export default function FaturasTable() {
           </CardContent>
         </Card>
       </Box>
-      <Box sx={{ marginTop: "2px" }}>
-        <Card sx={{ maxWidth: 2000 }}>
-          <CardContent
-            sx={{
-              display: "flex",
-              gap: { xs: 1, sm: 5 },
-              height: "50px",
-              alignItems: "center",
-            }}
-          >
-            <Paper
-              component="form"
-              onSubmit={(e) => e.preventDefault()}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                width: { xs: "100%", sm: 350 },
-                background: "#F4F7F9",
-                height: "30px",
-              }}
-            >
-              <IconButton sx={{ p: "10px" }} aria-label="menu">
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="Pesquisar por Nº, Cliente, NIF..."
-                value={pesquisa}
-                onChange={(e) => setPesquisa(e.target.value)}
-              />
-            </Paper>
-            <Button
-              variant="outlined"
-              sx={{
-                background: "#F4F7F9",
-                color: "black",
-                border: " 1px solid #262a2c1e",
-                height: "30px",
-                fontSize: "0.85rem",
-                fontWeight: "500",
-                textTransform: "none",
-                display: { xs: 'none', sm: 'flex' }
-              }}
-            >
-              <FilterAltOutlinedIcon /> Filtros
-            </Button>
-          </CardContent>
-        </Card>
       </Box>
-      <Box sx={{ overflowX: 'auto', width: '100%' }}>
       <Table sx={{ minWidth: 750, bgcolor: 'white' }}>
         <TableHead sx={{ bgcolor: "#f1f5f9" }}>
           <TableRow>

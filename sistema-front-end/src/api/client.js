@@ -2,10 +2,13 @@ import { obterToken, limparSessao } from '../utils/authStorage';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
-/** Limpa os dados de autenticação da aba atual e redireciona para o login */
+/**
+ * Limpa a sessão da aba atual e avisa a aplicação (SPA) para redirecionar
+ * para o login sem recarregar a página.
+ */
 function limparSessaoERedirecionar() {
   limparSessao();
-  window.location.href = '/';
+  window.dispatchEvent(new Event('auth:sessao-expirada'));
 }
 
 /** Cria um erro estruturado com código HTTP */

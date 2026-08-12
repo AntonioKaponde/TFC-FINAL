@@ -53,7 +53,7 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
   const [artigos, setArtigos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
-  const itensPorPagina = 5;
+  const itensPorPagina = 3;
 
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos os Artigos");
@@ -140,37 +140,6 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
     <Paper sx={{ width: "100%", minWidth: 0, boxShadow: "none", background: "transparent" }}>
       {/* Tabela */}
       <Box sx={{ marginTop: "20px" }}>
-        <Card sx={{ p: 1, width: "100%" }}>
-          <CardContent
-            sx={{
-              display: "flex",
-              gap: { xs: 1, sm: 5 },
-              height: { xs: "auto", sm: "40px" },
-              alignItems: "center",
-              justifyContent: "space-between",
-              overflowX: "auto",
-              whiteSpace: "nowrap",
-              py: { xs: 1, sm: 2 }
-            }}
-          >
-            {["Todos os Artigos", "Produtos Físicos", "Serviços", "Categorias"].map((tipo) => (
-              <Button
-                key={tipo}
-                variant="text"
-                onClick={() => setFiltroTipo(tipo)}
-                sx={{
-                  color: filtroTipo === tipo ? "#0B6E4F" : "black",
-                  borderRadius: "10px",
-                  textTransform: "none",
-                  fontWeight: filtroTipo === tipo ? "bold" : "500",
-                  minWidth: "auto",
-                }}
-              >
-                {tipo}
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
       </Box>
       <Box sx={{ marginTop: "2px" }}>
         <Card sx={{ maxWidth: 2000 }}>
@@ -203,24 +172,41 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
                 onChange={(e) => setPesquisa(e.target.value)}
               />
             </Paper>
-            <Button
-              variant="outlined"
-              sx={{
-                background: "#F4F7F9",
-                color: "black",
-                border: " 1px solid #262a2c1e",
-                height: "30px",
-                textTransform: "none",
-                display: { xs: 'none', sm: 'flex' }
-              }}
-            >
-              {" "}
-              <FilterAltOutlinedIcon /> Filtrar por Categoria
-            </Button>
           </CardContent>
         </Card>
       </Box>
       <Box sx={{ overflowX: 'auto', width: '100%' }}>
+        <Card sx={{ p: 1, width: "100%" }}>
+          <CardContent
+            sx={{
+              display: "flex",
+              gap: { xs: 1, sm: 5 },
+              height: { xs: "auto", sm: "40px" },
+              alignItems: "center",
+              justifyContent: "space-between",
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              py: { xs: 1, sm: 2 }
+            }}
+          >
+            {["Todos os Artigos", "Produtos Físicos", "Serviços", "Categorias"].map((tipo) => (
+              <Button
+                key={tipo}
+                variant="text"
+                onClick={() => setFiltroTipo(tipo)}
+                sx={{
+                  color: filtroTipo === tipo ? "#0B6E4F" : "black",
+                  borderRadius: "10px",
+                  textTransform: "none",
+                  fontWeight: filtroTipo === tipo ? "bold" : "500",
+                  minWidth: "auto",
+                }}
+              >
+                {tipo}
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
       <Table sx={{ minWidth: 750, bgcolor: 'white' }}>
         <TableHead sx={{ bgcolor: "#f1f5f9" }}>
           <TableRow>

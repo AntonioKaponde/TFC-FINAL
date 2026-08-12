@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Navigate } from "react-router-dom";
-import { obterToken, limparSessao, restaurarSessaoLembrada } from "../utils/authStorage";
+import { obterToken, limparSessao } from "../utils/authStorage";
 
 /** Verifica se o token JWT está expirado */
 function tokenExpirado(token) {
@@ -15,12 +14,14 @@ function tokenExpirado(token) {
   }
 }
 
+/**
+ * Protege as rotas privadas.
+ *
+ * A sessão vive apenas no sessionStorage da aba atual. Numa aba nova (por
+ * exemplo, ao copiar e colar uma URL de qualquer tela do sistema), não existe
+ * sessão — o utilizador é redirecionado para o login para iniciar sessão de novo.
+ */
 export default function PrivateRoute({ children }) {
-  // Numa aba nova, restaura a sessão lembrada (se "Manter sessão" foi marcado).
-  // Usado no inicializador de estado para ser executado apenas uma vez por
-  // montagem, sem efeitos laterais durante o render.
-  useState(() => restaurarSessaoLembrada());
-
   const token = obterToken();
 
   // Sem sessão ativa nesta aba: limpa e redireciona para o login

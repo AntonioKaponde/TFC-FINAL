@@ -51,7 +51,7 @@ export default function TabelaFornecedor() {
   const [fornecedores, setFornecedores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
-  const itensPorPagina = 5;
+  const itensPorPagina = 6;
 
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos Fornecedores");
@@ -138,7 +138,46 @@ export default function TabelaFornecedor() {
     <Paper sx={{ boxShadow: "none", background: "transparent", width: "100%", minWidth: 0 }}>
       {/* Quick Filters */}
       <Box sx={{ marginTop: "20px" }}>
-        <Card sx={{ maxWidth: 2000 }}>
+      </Box>
+
+      {/* Search Input */}
+      <Box sx={{ marginTop: "2px" }}>
+      </Box>
+
+      {/* Tabela */}
+      <Box sx={{ mt: 2 }}>
+        <Card sx={{ maxWidth: 2000, overflowX: "auto" }}>
+          <CardContent
+            sx={{
+              display: "flex",
+              gap: { xs: 1, sm: 5 },
+              height: "50px",
+              alignItems: "center",
+            }}
+          >
+            <Paper
+              component="form"
+              onSubmit={(e) => e.preventDefault()}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                width: { xs: "100%", sm: 350 },
+                background: "#F4F7F9",
+                height: "30px",
+              }}
+            >
+              <IconButton sx={{ p: "10px" }} aria-label="menu">
+                <SearchIcon />
+              </IconButton>
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Pesquisar por Nome, NIF, Email..."
+                value={pesquisa}
+                onChange={(e) => setPesquisa(e.target.value)}
+              />
+            </Paper>
+
+          </CardContent>
           <CardContent
             sx={{
               display: "flex",
@@ -177,62 +216,6 @@ export default function TabelaFornecedor() {
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Exportar</Box>
             </Button>*/}
           </CardContent>
-        </Card>
-      </Box>
-
-      {/* Search Input */}
-      <Box sx={{ marginTop: "2px" }}>
-        <Card sx={{ maxWidth: 2000 }}>
-          <CardContent
-            sx={{
-              display: "flex",
-              gap: { xs: 1, sm: 5 },
-              height: "50px",
-              alignItems: "center",
-            }}
-          >
-            <Paper
-              component="form"
-              onSubmit={(e) => e.preventDefault()}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                width: { xs: "100%", sm: 350 },
-                background: "#F4F7F9",
-                height: "30px",
-              }}
-            >
-              <IconButton sx={{ p: "10px" }} aria-label="menu">
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="Pesquisar por Nome, NIF, Email..."
-                value={pesquisa}
-                onChange={(e) => setPesquisa(e.target.value)}
-              />
-            </Paper>
-            <Button
-              variant="outlined"
-              sx={{
-                background: "#F4F7F9",
-                color: "black",
-                border: " 1px solid #262a2c1e",
-                height: "30px",
-                textTransform: "none",
-                display: { xs: 'none', sm: 'flex' }
-              }}
-            >
-              {" "}
-              <FilterAltOutlinedIcon /> Filtros
-            </Button>
-          </CardContent>
-        </Card>
-      </Box>
-
-      {/* Tabela */}
-      <Box sx={{ mt: 2 }}>
-        <Card sx={{ maxWidth: 2000, overflowX: "auto" }}>
           <Table sx={{ minWidth: 750 }}>
             <TableHead sx={{ bgcolor: "#f1f5f9" }}>
               <TableRow>

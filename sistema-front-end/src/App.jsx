@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { Routes, Route, BrowserRouter, useNavigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import PageSkeleton from "./components/PageSkeleton";
 import { MenuProvider } from "./context/MenuContext";
@@ -34,12 +34,27 @@ const GestaoSuporte = lazy(() => import("./pages/GestaoSuporte"));
 const InteligenciaFiscal = lazy(() => import("./pages/InteligenciaFiscal"));
 const PrevisaoStock = lazy(() => import("./pages/PrevisaoStock"));
 
+/**
+ * Ouvinte interno (SPA): quando a API devolve 401 e a sessão é limpa, navega
+ * para o login SEM recarregar a página (redirecionamento suave).
+ */
+function RedirectParaLogin() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const redirecionar = () => navigate("/", { replace: true });
+    window.addEventListener("auth:sessao-expirada", redirecionar);
+    return () => window.removeEventListener("auth:sessao-expirada", redirecionar);
+  }, [navigate]);
+  return null;
+}
+
 function App() {
   return (
     <div style={{ background: "#F4F7F9", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <MenuProvider>
         <NotificacoesProvider>
           <BrowserRouter>
+            <RedirectParaLogin />
             <Suspense fallback={<PageSkeleton />}>
               <Routes>
                 <Route path="/" element={<Login />} />

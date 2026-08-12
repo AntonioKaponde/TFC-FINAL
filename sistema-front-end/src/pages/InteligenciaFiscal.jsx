@@ -2,15 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { obterRoles } from '../utils/authStorage';
 import {
-  Box, Typography, Card, Grid, CircularProgress, Chip, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Stack, Alert, Tooltip, Paper, Divider
+  Box, Typography, Card, CardContent, Grid, CircularProgress, Chip, Table, TableBody,
+  TableCell, TableContainer, TableHead, TableRow, Stack, Alert, Tooltip, Paper,
+  InputBase, IconButton, Button
 } from '@mui/material';
 import {
   Insights as InsightsIcon,
   TrendingUp as TrendingUpIcon,
   EventAvailable as ObrigacoesIcon,
   History as HistoryIcon,
-  WarningAmber as AlertaIcon
+  WarningAmber as AlertaIcon,
+  Search as SearchIcon,
+  FilterAltOutlined as FilterAltOutlinedIcon
 } from '@mui/icons-material';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
@@ -24,11 +27,22 @@ const STATUS_OBRIGACAO = {
   PROGRAMADA: { label: 'Programada', cor: 'success' },
 };
 
+const FILTROS_HISTORICO = [
+  { valor: 'TODOS', label: 'Todos os meses' },
+  { valor: 'COM_FATURACAO', label: 'Com faturação' },
+  { valor: 'COM_IVA', label: 'Com IVA a entregar' },
+];
+
+const itensPorPagina = 2;
+
 export default function InteligenciaFiscal() {
   const navigate = useNavigate();
   const [dados, setDados] = useState(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
+  const [pesquisa, setPesquisa] = useState('');
+  const [filtroMes, setFiltroMes] = useState('TODOS');
+  const [paginaAtual, setPaginaAtual] = useState(0);
 
   // Apenas Admin, Contabilista e Gerente podem visualizar a Inteligência Fiscal.
   useEffect(() => {
@@ -54,6 +68,11 @@ export default function InteligenciaFiscal() {
     };
     carregar();
   }, [navigate]);
+
+  // Repõe a página ao alterar pesquisa ou filtros
+  useEffect(() => {
+    setPaginaAtual(0);
+  }, [pesquisa, filtroMes]);
 
   if (loading) {
     return (
@@ -86,6 +105,23 @@ export default function InteligenciaFiscal() {
   const variacaoLabel = dados?.variacaoIvaPercentual != null
     ? `${dados.variacaoIvaPercentual > 0 ? '+' : ''}${Number(dados.variacaoIvaPercentual).toLocaleString('pt-PT')}%`
     : '—';
+
+  // Filtros e paginação do histórico (padrão dos módulos de faturação/clientes/fornecedores)
+  const historico = dados?.historico || [];
+  const historicoFiltrado = historico.filter((h) => {
+    const q = pesquisa.toLowerCase();
+    const matchPesquisa = !q || `${h.mes} ${h.ano}`.toLowerCase().includes(q);
+
+    let matchTipo = true;
+    if (filtroMes === 'COM_FATURACAO') matchTipo = Number(h.faturacao) > 0;
+    if (filtroMes === 'COM_IVA') matchTipo = Number(h.ivaEntregar) > 0;
+
+    return matchPesquisa && matchTipo;
+  });
+  const totalPaginas = Math.ceil(historicoFiltrado.length / itensPorPagina);
+  // Garante que a página nunca ultrapasse os dados disponíveis após alterações
+  const startIndex = Math.min(paginaAtual * itensPorPagina, Math.max(0, historicoFiltrado.length - itensPorPagina));
+  const historicoPaginado = historicoFiltrado.slice(startIndex, startIndex + itensPorPagina);
 
   return (
     <div>
@@ -239,6 +275,7 @@ export default function InteligenciaFiscal() {
                   ))}
                 </Grid>
               </Card>
+
               <Box sx={{ width: '100%' }}>
                 {/* Histórico */}
                   <Card variant="outlined" sx={{ borderRadius: 3, width: '100%' }}>
@@ -246,35 +283,78 @@ export default function InteligenciaFiscal() {
                       <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>Histórico de impostos do ano</Typography>
                       <Typography variant="caption" color="textSecondary">IVA liquidado vs IVA dedutível e IVA a entregar por mês</Typography>
                     </Box>
+
                     <TableContainer sx={{ overflowX: 'auto' }}>
                       <Table size="small" sx={{ minWidth: 700 }}>
-                        <TableHead>
+                        <TableHead sx={{ bgcolor: "#f1f5f9" }}>
                           <TableRow>
                             {['Mês', 'Faturação (Kz)', 'IVA liquidado (Kz)', 'IVA dedutível (Kz)', 'IVA a entregar (Kz)'].map((h) => (
-                              <TableCell key={h} sx={{ fontWeight: 600, bgcolor: '#f8f9fa', color: '#334155', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>{h}</TableCell>
+                              <TableCell key={h} sx={{ fontWeight: "600", color: "#64748b", fontSize: "0.75rem", whiteSpace: 'nowrap' }}>{h}</TableCell>
                             ))}
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {dados.historico?.length === 0 && (
+                          {historico.length === 0 ? (
                             <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4 }}>
                               <Typography color="textSecondary">Sem faturação registada no ano corrente.</Typography>
                             </TableCell></TableRow>
+                          ) : historicoPaginado.length === 0 ? (
+                            <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                              <Typography color="textSecondary">Nenhum mês encontrado com os filtros atuais.</Typography>
+                            </TableCell></TableRow>
+                          ) : (
+                            historicoPaginado.map((h) => (
+                              <TableRow key={`${h.ano}-${h.mes}`} hover>
+                                <TableCell sx={{ fontWeight: 600, fontSize: '0.83rem' }}>{h.mes} {h.ano}</TableCell>
+                                <TableCell sx={{ fontSize: '0.83rem' }}>{formatKzSemPrefixo(h.faturacao)}</TableCell>
+                                <TableCell sx={{ fontSize: '0.83rem' }}>{formatKzSemPrefixo(h.ivaLiquidado)}</TableCell>
+                                <TableCell sx={{ fontSize: '0.83rem' }}>{formatKzSemPrefixo(h.ivaDedutivel)}</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: '0.83rem', color: Number(h.ivaEntregar) > 0 ? '#083927' : '#94A3B8' }}>
+                                  {formatKzSemPrefixo(h.ivaEntregar)}
+                                </TableCell>
+                              </TableRow>
+                            ))
                           )}
-                          {dados.historico?.map((h) => (
-                            <TableRow key={`${h.ano}-${h.mes}`} hover>
-                              <TableCell sx={{ fontWeight: 600, fontSize: '0.83rem' }}>{h.mes} {h.ano}</TableCell>
-                              <TableCell sx={{ fontSize: '0.83rem' }}>{formatKzSemPrefixo(h.faturacao)}</TableCell>
-                              <TableCell sx={{ fontSize: '0.83rem' }}>{formatKzSemPrefixo(h.ivaLiquidado)}</TableCell>
-                              <TableCell sx={{ fontSize: '0.83rem' }}>{formatKzSemPrefixo(h.ivaDedutivel)}</TableCell>
-                              <TableCell sx={{ fontWeight: 700, fontSize: '0.83rem', color: Number(h.ivaEntregar) > 0 ? '#083927' : '#94A3B8' }}>
-                                {formatKzSemPrefixo(h.ivaEntregar)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
                         </TableBody>
                       </Table>
                     </TableContainer>
+
+                    {/* Paginação */}
+                    <Box
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        borderTop: "1px solid #f1f5f9",
+                        flexWrap: "wrap",
+                        gap: 1
+                      }}
+                    >
+                      <Typography variant="caption" color="textSecondary">
+                        A mostrar {historicoFiltrado.length > 0 ? startIndex + 1 : 0} a{" "}
+                        {Math.min(startIndex + itensPorPagina, historicoFiltrado.length)} de{" "}
+                        {historicoFiltrado.length} mês(es)
+                      </Typography>
+                      <Stack direction="row" spacing={1}>
+                        <Button
+                          size="small"
+                          onClick={() => setPaginaAtual((p) => Math.max(0, p - 1))}
+                          disabled={paginaAtual === 0}
+                          sx={{ textTransform: "none" }}
+                        >
+                          Anterior
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() => setPaginaAtual((p) => Math.min(totalPaginas - 1, p + 1))}
+                          disabled={paginaAtual >= totalPaginas - 1 || totalPaginas === 0}
+                          sx={{ textTransform: "none" }}
+                        >
+                          Próximo
+                        </Button>
+                      </Stack>
+                    </Box>
                   </Card>
               </Box>
             </>

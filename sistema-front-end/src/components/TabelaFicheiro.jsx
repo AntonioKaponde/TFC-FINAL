@@ -17,7 +17,7 @@ const TabelaFicheiro = () => {
   const [grupos, setGrupos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
-  const itensPorPagina = 5;
+  const itensPorPagina = 2;
 
   const startIndex = paginaAtual * itensPorPagina;
   const endIndex = startIndex + itensPorPagina;
