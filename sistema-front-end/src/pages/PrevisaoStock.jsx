@@ -49,7 +49,7 @@ export default function PrevisaoStock() {
   const [filtroEstado, setFiltroEstado] = useState("TODOS");
   const [paginaAtual, setPaginaAtual] = useState(0);
 
-  // Apenas Admin e Gerente de estoque podem visualizar a previsão de stock.
+  // Apenas Admin e Gerente podem visualizar a previsão de stock.
   useEffect(() => {
     const userRoles = obterRoles();
     const isOperador = userRoles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');

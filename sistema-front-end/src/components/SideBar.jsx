@@ -191,6 +191,7 @@ function SideBar() {
           </ListItemButton>
         </ListItem>
         )}
+        {!ehGestorEstoque(userRoles) && (
         <ListItem
           onClick={() => {
             navigate("/clientes");
@@ -207,6 +208,7 @@ function SideBar() {
             Clientes
           </ListItemButton>
         </ListItem>
+        )}
         {!isOperador && (
         <ListItem
           onClick={() => {

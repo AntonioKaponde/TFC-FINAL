@@ -16,9 +16,9 @@ public class PrevisaoStockController {
     private final PrevisaoStockService previsaoStockService;
 
     /** Previsão de stock: consumo, dias restantes, sugestões de reposição e produtos parados.
-     *  Apenas Admin e Gerente de estoque podem aceder (Operador e Contabilista não têm acesso). */
+     *  Apenas Admin e Gerente podem aceder (Operador e Contabilista não têm acesso). */
     @GetMapping("/previsao")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
     public PrevisaoStockResponse obterPrevisao() {
         return previsaoStockService.obterPrevisao();
     }

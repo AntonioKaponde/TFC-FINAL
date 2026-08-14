@@ -21,18 +21,20 @@ public class ClienteController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR', 'CONTABILISTA')")
     public List<ClienteResponse> listar(@RequestParam(required = false) String pesquisa) {
         return clienteService.listar(pesquisa);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR', 'CONTABILISTA')")
     public ClienteResponse buscar(@PathVariable Long id) {
         return clienteService.buscar(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public ClienteResponse criar(@Valid @RequestBody ClienteRequest request) {
         ClienteResponse response = clienteService.criar(request);
         auditoriaService.registrarAuditoria("CRIOU", "Cliente", "Criou o cliente " + response.getNome());
@@ -40,7 +42,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ClienteResponse atualizar(@PathVariable Long id, @Valid @RequestBody ClienteRequest request) {
         ClienteResponse response = clienteService.atualizar(id, request);
         auditoriaService.registrarAuditoria("ATUALIZOU", "Cliente", "Atualizou o cliente " + response.getNome());

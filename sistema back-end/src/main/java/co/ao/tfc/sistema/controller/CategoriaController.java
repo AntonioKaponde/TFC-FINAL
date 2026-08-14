@@ -20,7 +20,7 @@ public class CategoriaController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'OPERADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")
     public List<CategoriaResponse> listar() {
         return categoriaService.listar();
     }

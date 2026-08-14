@@ -63,7 +63,7 @@ function App() {
                 <Route path="/dashboard" element={<PrivateRoute negarRoles={[...PAPEIS_GESTOR_ESTOQUE, 'OPERADOR', 'VENDEDOR']}><Dashboard /></PrivateRoute>} />
                 <Route path="/faturacao" element={<PrivateRoute negarRoles={[...PAPEIS_GESTOR_ESTOQUE, 'CONTABILISTA']}><Faturacao /></PrivateRoute>} />
                 <Route path="/inventario" element={<PrivateRoute negarRoles={['CONTABILISTA']}><Inventario /></PrivateRoute>} />
-                <Route path="/clientes" element={<PrivateRoute><Clientes /></PrivateRoute>} />
+                <Route path="/clientes" element={<PrivateRoute negarRoles={PAPEIS_GESTOR_ESTOQUE}><Clientes /></PrivateRoute>} />
                 <Route path="/fornecedores" element={<PrivateRoute negarRoles={['OPERADOR', 'VENDEDOR']}><Fornecedores /></PrivateRoute>} />
                 <Route path="/ficheiro" element={<PrivateRoute><Ficheiro /></PrivateRoute>} />
                 <Route path="/relatorio" element={<PrivateRoute><Relatorio /></PrivateRoute>} />
@@ -72,7 +72,7 @@ function App() {
                 <Route path="/permissoes" element={<PrivateRoute><PapeisPermissoes /></PrivateRoute>} />
                 <Route path="/venda" element={<PrivateRoute negarRoles={[...PAPEIS_GESTOR_ESTOQUE, 'CONTABILISTA']}><Vendas /></PrivateRoute>} />
                 <Route path="/novoFornecedor" element={<PrivateRoute negarRoles={['OPERADOR', 'VENDEDOR']}><NovoFornecedor /></PrivateRoute>} />
-                <Route path="/novoCliente" element={<PrivateRoute><NovoCliente /></PrivateRoute>} />
+                <Route path="/novoCliente" element={<PrivateRoute negarRoles={PAPEIS_GESTOR_ESTOQUE}><NovoCliente /></PrivateRoute>} />
                 <Route path="/novoArtigo" element={<PrivateRoute negarRoles={['CONTABILISTA']}><NovoArtigo /></PrivateRoute>} />
                 <Route path="/novoUsuario" element={<PrivateRoute><CriarUsuarios /></PrivateRoute>} />
                 <Route path="/novoPapel" element={<PrivateRoute><CriarPapel /></PrivateRoute>} />

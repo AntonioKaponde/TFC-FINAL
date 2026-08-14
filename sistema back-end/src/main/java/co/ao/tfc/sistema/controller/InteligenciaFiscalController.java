@@ -16,7 +16,7 @@ public class InteligenciaFiscalController {
     private final InteligenciaFiscalService inteligenciaFiscalService;
 
     /** Previsão de IVA, histórico e obrigações fiscais próximas.
-     *  Apenas Admin, Contabilista e Gerente podem aceder (Gestor de estoque e Operador não têm acesso). */
+     *  Apenas Admin, Contabilista e Gerente podem aceder (Operador não tem acesso). */
     @GetMapping("/previsao")
     @PreAuthorize("hasAnyRole('ADMIN', 'CONTABILISTA', 'GERENTE')")
     public PrevisaoFiscalResponse obterPrevisao() {

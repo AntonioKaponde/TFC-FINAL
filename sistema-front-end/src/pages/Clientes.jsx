@@ -21,12 +21,12 @@ import TabelaClientes from "../components/TabelaClientes";
 import { Link } from "react-router-dom";
 import { exportarPDF } from "../utils/pdfExport";
 import { obterRoles } from "../utils/authStorage";
+import { ehGestorEstoque } from "../utils/roles";
 
 export default function Clientes() {
   const userRoles = obterRoles();
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
-  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
-  const hideNovoCliente = isContabilista || isGerente;
+  const hideNovoCliente = isContabilista || ehGestorEstoque(userRoles);
 
   return (
     <div>

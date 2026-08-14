@@ -31,7 +31,8 @@ public class PerfilRoleService {
             case "ADMIN":
             case "NOVOADMIN":
                 return new HashSet<>(Arrays.asList(Permissao.values()));
-            case "GERENTE DE ESTOQUE":
+            case "GERENTE":
+            case "GERENTE DE ESTOQUE": // nome antigo — mantido por compatibilidade com empresas já criadas
                 return new HashSet<>(Arrays.asList(
                         Permissao.USUARIO_VIEW,
                         Permissao.FORNECEDOR_VIEW, Permissao.FORNECEDOR_EDIT,
@@ -82,7 +83,7 @@ public class PerfilRoleService {
                     .permissoes(new HashSet<>(Arrays.asList(Permissao.values())))
                     .empresa(empresa).build()));
             roles.add(perfilRoleRepository.save(PerfilRole.builder()
-                    .nome("Gerente de estoque")
+                    .nome("Gerente")
                     .permissoes(new HashSet<>(Arrays.asList(
                             Permissao.USUARIO_VIEW,
                             Permissao.FORNECEDOR_VIEW, Permissao.FORNECEDOR_EDIT,
@@ -152,16 +153,16 @@ public class PerfilRoleService {
 
     @Transactional
     public void criarRole(PerfilRoleRequest request) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "O sistema permite apenas 4 tipos de usuários: Admin, Gerente de estoque, Contabilista e Operador. Não é possível criar novos papéis.");
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "O sistema permite apenas 4 tipos de usuários: Admin, Gerente, Contabilista e Operador. Não é possível criar novos papéis.");
     }
 
     @Transactional
     public void atualizarRole(Long id, PerfilRoleRequest request) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "O sistema permite apenas 4 tipos de usuários: Admin, Gerente de estoque, Contabilista e Operador. Não é possível alterar os papéis padrão.");
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "O sistema permite apenas 4 tipos de usuários: Admin, Gerente, Contabilista e Operador. Não é possível alterar os papéis padrão.");
     }
 
     @Transactional
     public void deletarRole(Long id) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "O sistema permite apenas 4 tipos de usuários: Admin, Gerente de estoque, Contabilista e Operador. Não é possível deletar os papéis padrão.");
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "O sistema permite apenas 4 tipos de usuários: Admin, Gerente, Contabilista e Operador. Não é possível deletar os papéis padrão.");
     }
 }

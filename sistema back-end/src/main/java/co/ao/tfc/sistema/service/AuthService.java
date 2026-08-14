@@ -95,7 +95,7 @@ public class AuthService {
                 .permissoes(new HashSet<>(Arrays.asList(Permissao.values())))
                 .empresa(empresa).build());
         perfilRoleRepository.save(PerfilRole.builder()
-                .nome("Gerente de estoque")
+                .nome("Gerente")
                 .permissoes(new HashSet<>(Arrays.asList(
                         Permissao.USUARIO_VIEW,
                         Permissao.FORNECEDOR_VIEW, Permissao.FORNECEDOR_EDIT,

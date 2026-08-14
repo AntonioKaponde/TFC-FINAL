@@ -233,7 +233,7 @@ export default function PapeisPermissoes() {
                Papéis e Permissões
              </Typography>
              <Typography variant="caption" color="textSecondary">
-               Visualize o nível de acesso para cada função padrão do sistema. O sistema suporta apenas 4 papéis: Admin, Gerente de estoque, Contabilista e Operador.
+               Visualize o nível de acesso para cada função padrão do sistema. O sistema suporta apenas 4 papéis: Admin, Gerente, Contabilista e Operador.
              </Typography>
            </Box>
          </Box>
