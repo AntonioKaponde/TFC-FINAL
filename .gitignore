@@ -1,0 +1,4 @@
+.env
+drizzle
+**/node_modules
+dist

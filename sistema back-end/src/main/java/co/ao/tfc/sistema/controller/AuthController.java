@@ -20,6 +20,11 @@ public class AuthController {
     private final AuthService authService;
     private final AuditoriaService auditoriaService;
 
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("OK");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> authenticateUser(
             @Valid @RequestBody LoginRequest loginRequest,
