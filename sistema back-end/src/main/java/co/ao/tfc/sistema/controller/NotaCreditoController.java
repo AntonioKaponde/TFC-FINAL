@@ -22,12 +22,13 @@ public class NotaCreditoController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public ResponseEntity<List<NotaCreditoResponse>> listar() {
         return ResponseEntity.ok(notaCreditoService.listar());
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public ResponseEntity<NotaCreditoResponse> criar(@Valid @RequestBody NotaCreditoRequest request) {
         NotaCreditoResponse response = notaCreditoService.criar(request);
         auditoriaService.registrarAuditoria("CRIOU", "NotaCredito", "Criou nota de crédito " + response.getNumero() + " para fatura " + response.getFaturaNumero());

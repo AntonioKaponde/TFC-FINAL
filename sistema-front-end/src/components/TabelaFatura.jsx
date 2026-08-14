@@ -121,7 +121,16 @@ export default function FaturasTable() {
   const carregar = useCallback(() => {
     faturasApi
       .listar()
-      .then(setFaturas)
+      .then((dados) =>
+        // Ordena da faturação mais recente para a mais antiga
+        setFaturas(
+          [...dados].sort(
+            (a, b) =>
+              (b.dataEmissao || '').localeCompare(a.dataEmissao || '') ||
+              b.id - a.id
+          )
+        )
+      )
       .finally(() => setLoading(false));
   }, []);
 

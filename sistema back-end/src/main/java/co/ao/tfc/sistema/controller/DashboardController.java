@@ -28,19 +28,19 @@ public class DashboardController {
     private final EmpresaService empresaService;
 
     @GetMapping("/indicadores")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTABILISTA')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTABILISTA')")
     public DashboardIndicadoresResponse indicadores(@RequestParam(required = false) Integer ano) {
         return dashboardService.obterIndicadores(ano);
     }
 
     @GetMapping("/comparativo-mensal")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTABILISTA')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTABILISTA')")
     public List<DashboardMensalResponse> comparativoMensal(@RequestParam(required = false) Integer ano) {
         return dashboardService.obterComparativoMensal(ano);
     }
 
     @GetMapping("/relatorio-impostos/pdf")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTABILISTA')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTABILISTA')")
     public ResponseEntity<?> baixarRelatorioImpostosPdf(@RequestParam(required = false) Integer ano) {
         try {
             if (ano == null) {

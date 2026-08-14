@@ -21,6 +21,7 @@ public class MovimentoEstoqueController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'OPERADOR')")
     public List<MovimentoEstoqueResponse> listar() {
         return movimentoEstoqueService.listar();
     }

@@ -16,7 +16,8 @@ import {
   Info as InfoIcon,
   WarningAmber as WarningAmberIcon,
   Search as SearchIcon,
-  FilterAltOutlined as FilterAltOutlinedIcon
+  FilterAltOutlined as FilterAltOutlinedIcon,
+  
 } from '@mui/icons-material';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
@@ -109,11 +110,11 @@ export default function PrevisaoStock() {
   const resumo = dados?.resumo;
 
   const cards = [
-    { icon: <InventoryIcon />, label: 'Total de produtos', valor: resumo?.totalArtigos ?? 0, cor: '#083927' },
-    { icon: <AlertaIcon />, label: 'Vão acabar em breve', valor: resumo?.aAcabar ?? 0, cor: '#EF4444' },
+    { icon: <InventoryIcon sx={{ fontSize: '2rem' }}/>, label: 'Total de produtos', valor: resumo?.totalArtigos ?? 0, cor: '#083927' },
+    { icon: <AlertaIcon sx={{ fontSize: '2rem' }}/>, label: 'Vão acabar em breve', valor: resumo?.aAcabar ?? 0, cor: '#EF4444' },
     
-    { icon: <ParadoIcon />, label: 'Produtos parados', valor: resumo?.parados ?? 0, cor: '#64748B' },
-    { icon: <ReporIcon />, label: 'Com sugestão de reposição', valor: resumo?.comSugestaoReposicao ?? 0, cor: '#22C55E' },
+    { icon: <ParadoIcon sx={{ fontSize: '2rem' }}/>, label: 'Produtos parados', valor: resumo?.parados ?? 0, cor: '#64748B' },
+    { icon: <ReporIcon sx={{ fontSize: '2rem' }}/>, label: 'Com sugestão de reposição', valor: resumo?.comSugestaoReposicao ?? 0, cor: '#22C55E' },
   ];
 
   const artigos = dados?.artigos || [];
@@ -176,7 +177,7 @@ export default function PrevisaoStock() {
                   <Card key={c.label} sx={{ width: "100%", p: 5, minHeight: "10rem", borderRadius: 3}}>
                     <Box sx={{display:"flex",justifyContent:"space-between"}}>
                       <Typography variant="caption" color="textSecondary" sx={{fontSize: '1rem', color: '#64748b'}}>{c.label}</Typography>
-                      <Box sx={{ color: c.cor }}>{c.icon}</Box>
+                      <Box sx={{ color: c.cor}}>{c.icon}</Box>
                     </Box>
                     <Box>
                       

@@ -21,11 +21,13 @@ public class ArtigoController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'OPERADOR')")
     public List<ArtigoResponse> listar(@RequestParam(required = false) String pesquisa) {
         return artigoService.listar(pesquisa);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'OPERADOR')")
     public ArtigoResponse buscar(@PathVariable Long id) {
         return artigoService.buscar(id);
     }

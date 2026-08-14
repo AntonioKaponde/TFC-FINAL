@@ -30,6 +30,7 @@ public class FaturaController {
 
     @GetMapping("/{id}/pdf")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public ResponseEntity<byte[]> baixarPdf(@PathVariable Long id) {
         try {
             co.ao.tfc.sistema.model.Fatura fatura = faturaService.buscarEntidade(id);
@@ -47,19 +48,21 @@ public class FaturaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public List<FaturaResponse> listar() {
         faturaService.atualizarEstadosVencidas();
         return faturaService.listar();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public FaturaResponse buscar(@PathVariable Long id) {
         return faturaService.buscar(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public FaturaResponse criar(@Valid @RequestBody FaturaRequest request) {
         FaturaResponse response = faturaService.criar(request);
         auditoriaService.registrarAuditoria("CRIOU", "Fatura", "Emitiu a fatura " + response.getNumero());
@@ -68,7 +71,7 @@ public class FaturaController {
 
 
     @PostMapping("/faturas")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public ResponseEntity<List<FaturaResponse>> criarMensais(
             @RequestBody FaturaMensalRequest request) {
         List<FaturaResponse> faturas = faturaService.criarFaturasMensais2024(request);
@@ -77,7 +80,7 @@ public class FaturaController {
     }
 
     @PatchMapping("/{id}/pagar")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'OPERADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     public FaturaResponse marcarComoPaga(@PathVariable Long id) {
         FaturaResponse response = faturaService.marcarComoPaga(id);
         auditoriaService.registrarAuditoria("ATUALIZOU", "Fatura", "Marcou a fatura " + response.getNumero() + " como Paga");

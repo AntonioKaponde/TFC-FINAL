@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, BrowserRouter, useNavigate } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import PageSkeleton from "./components/PageSkeleton";
+import { PAPEIS_GESTOR_ESTOQUE } from "./utils/roles";
 import { MenuProvider } from "./context/MenuContext";
 import { NotificacoesProvider } from "./context/NotificacoesContext";
 
@@ -59,24 +60,24 @@ function App() {
               <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/cadastro" element={<Cadastro />} />
-                <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                <Route path="/faturacao" element={<PrivateRoute><Faturacao /></PrivateRoute>} />
-                <Route path="/inventario" element={<PrivateRoute><Inventario /></PrivateRoute>} />
+                <Route path="/dashboard" element={<PrivateRoute negarRoles={[...PAPEIS_GESTOR_ESTOQUE, 'OPERADOR', 'VENDEDOR']}><Dashboard /></PrivateRoute>} />
+                <Route path="/faturacao" element={<PrivateRoute negarRoles={[...PAPEIS_GESTOR_ESTOQUE, 'CONTABILISTA']}><Faturacao /></PrivateRoute>} />
+                <Route path="/inventario" element={<PrivateRoute negarRoles={['CONTABILISTA']}><Inventario /></PrivateRoute>} />
                 <Route path="/clientes" element={<PrivateRoute><Clientes /></PrivateRoute>} />
-                <Route path="/fornecedores" element={<PrivateRoute><Fornecedores /></PrivateRoute>} />
+                <Route path="/fornecedores" element={<PrivateRoute negarRoles={['OPERADOR', 'VENDEDOR']}><Fornecedores /></PrivateRoute>} />
                 <Route path="/ficheiro" element={<PrivateRoute><Ficheiro /></PrivateRoute>} />
                 <Route path="/relatorio" element={<PrivateRoute><Relatorio /></PrivateRoute>} />
                 <Route path="/configuracoes" element={<PrivateRoute><Configuracoes /></PrivateRoute>} />
                 <Route path="/gestaoUsuarios" element={<PrivateRoute><GestaoDeUsuarios /></PrivateRoute>} />
                 <Route path="/permissoes" element={<PrivateRoute><PapeisPermissoes /></PrivateRoute>} />
-                <Route path="/venda" element={<PrivateRoute><Vendas /></PrivateRoute>} />
-                <Route path="/novoFornecedor" element={<PrivateRoute><NovoFornecedor /></PrivateRoute>} />
+                <Route path="/venda" element={<PrivateRoute negarRoles={[...PAPEIS_GESTOR_ESTOQUE, 'CONTABILISTA']}><Vendas /></PrivateRoute>} />
+                <Route path="/novoFornecedor" element={<PrivateRoute negarRoles={['OPERADOR', 'VENDEDOR']}><NovoFornecedor /></PrivateRoute>} />
                 <Route path="/novoCliente" element={<PrivateRoute><NovoCliente /></PrivateRoute>} />
-                <Route path="/novoArtigo" element={<PrivateRoute><NovoArtigo /></PrivateRoute>} />
+                <Route path="/novoArtigo" element={<PrivateRoute negarRoles={['CONTABILISTA']}><NovoArtigo /></PrivateRoute>} />
                 <Route path="/novoUsuario" element={<PrivateRoute><CriarUsuarios /></PrivateRoute>} />
                 <Route path="/novoPapel" element={<PrivateRoute><CriarPapel /></PrivateRoute>} />
                 <Route path="/resumo-empresa" element={<PrivateRoute><ResumoEmpresa /></PrivateRoute>} />
-                <Route path="/categorias" element={<PrivateRoute><Categorias /></PrivateRoute>} />
+                <Route path="/categorias" element={<PrivateRoute negarRoles={['CONTABILISTA']}><Categorias /></PrivateRoute>} />
                 <Route path="/auditoria" element={<PrivateRoute><Auditoria /></PrivateRoute>} />
                 <Route path="/alterar-password" element={<PrivateRoute><AlterarPassword /></PrivateRoute>} />
                 <Route path="/suporte" element={<PrivateRoute><PedidoSuporte /></PrivateRoute>} />

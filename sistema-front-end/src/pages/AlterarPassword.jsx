@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { usuariosApi } from '../api';
 import { obterRoles, obterPrimeiroAcesso, removerPrimeiroAcesso } from '../utils/authStorage';
+import { destinoPadrao } from '../utils/roles';
 
 export default function AlterarPassword() {
   const navigate = useNavigate();
@@ -38,12 +39,7 @@ export default function AlterarPassword() {
   const forcarTroca = obterPrimeiroAcesso();
 
   const irParaPainel = () => {
-    let destino = '/dashboard';
-    const roles = obterRoles();
-    if (roles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR')) {
-      destino = '/faturacao';
-    }
-    navigate(destino);
+    navigate(destinoPadrao(obterRoles()));
   };
 
   const handleSubmit = async (e) => {

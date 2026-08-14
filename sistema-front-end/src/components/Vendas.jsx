@@ -31,6 +31,7 @@ import {
   hojeIso,
 } from "../utils/formatters";
 import { obterRoles } from "../utils/authStorage";
+import { ehGestorEstoque, destinoPadrao } from "../utils/roles";
 
 const linhaVazia = () => ({ artigoId: "", quantidade: 1 });
 
@@ -38,14 +39,14 @@ export default function Vendas() {
   const navigate = useNavigate();
 
   const userRoles = obterRoles();
-  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+  const semAcessoFaturacao = ehGestorEstoque(userRoles) || isContabilista;
 
   useEffect(() => {
-    if (isGerente || isContabilista) {
-      navigate('/faturacao');
+    if (semAcessoFaturacao) {
+      navigate(destinoPadrao(userRoles));
     }
-  }, [isGerente, isContabilista, navigate]);
+  }, [semAcessoFaturacao, navigate]);
   const [clientes, setClientes] = useState([]);
   const [artigos, setArtigos] = useState([]);
   const [loading, setLoading] = useState(true);

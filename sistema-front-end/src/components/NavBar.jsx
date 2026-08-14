@@ -26,7 +26,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { memo, useState } from "react";
 import { useMenu } from "../context/MenuContext";
 import { useNotificacoes } from "../context/NotificacoesContext";
-import { obterNome, limparSessao } from "../utils/authStorage";
+import { obterNome, obterRoles, limparSessao } from "../utils/authStorage";
 
 /** Tempo relativo simples, ex.: "há 5 min", "há 2 h", "há 3 dias" */
 function tempoRelativo(dataIso) {
@@ -70,7 +70,8 @@ export function NavBar() {
     if (parts.length > 1) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     return name.substring(0, 2).toUpperCase();
   });
-  const [hasAuditAccess] = useState(true); // renderiza; o backend protege os dados
+  // Só o administrador vê a opção Auditoria no menu do avatar
+  const hasAuditAccess = obterRoles().some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
   const [anchorEl, setAnchorEl] = useState(null);
   const [bellEl, setBellEl] = useState(null);
   const { handleDrawerToggle } = useMenu();

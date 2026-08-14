@@ -22,6 +22,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import { useNavigate } from "react-router-dom";
 import { memo, useState } from "react";
 import { obterRoles, limparSessao } from "../utils/authStorage";
+import { ehGestorEstoque } from "../utils/roles";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -100,7 +101,7 @@ function SideBar() {
             </ListItemButton>
           </ListItem>
         )}
-        {!isOperador && (
+        {!isOperador && !ehGestorEstoque(userRoles) && (
           <ListItem
             onClick={() => {
               navigate("/dashboard");
@@ -118,6 +119,7 @@ function SideBar() {
             </ListItemButton>
           </ListItem>
         )}
+        {!ehGestorEstoque(userRoles) && !isContabilista && (
         <ListItem
           onClick={() => {
             navigate("/faturacao");
@@ -134,6 +136,8 @@ function SideBar() {
             Facturação
           </ListItemButton>
         </ListItem>
+        )}
+        {!isContabilista && (
         <ListItem
           onClick={() => {
             navigate("/inventario");
@@ -150,6 +154,7 @@ function SideBar() {
             Inventário
           </ListItemButton>
         </ListItem>
+        )}
         {!isOperador && !isContabilista && (
         <ListItem
           onClick={() => {
@@ -168,7 +173,7 @@ function SideBar() {
           </ListItemButton>
         </ListItem>
         )}
-        {!isOperador && (
+        {!isOperador && !isContabilista && (
         <ListItem
           onClick={() => {
             navigate("/categorias");
@@ -202,6 +207,7 @@ function SideBar() {
             Clientes
           </ListItemButton>
         </ListItem>
+        {!isOperador && (
         <ListItem
           onClick={() => {
             navigate("/fornecedores");
@@ -218,6 +224,7 @@ function SideBar() {
             Fornecedores
           </ListItemButton>
         </ListItem>
+        )}
       </List>
       
       {isAdmin && (

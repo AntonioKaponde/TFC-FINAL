@@ -30,10 +30,10 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
 
   useEffect(() => {
     if (open) {
-      Promise.all([artigosApi.listar(), fornecedoresApi.listar()])
-        .then(([arts, forns]) => {
+      // Artigos: carregamento essencial do modal
+      artigosApi.listar()
+        .then((arts) => {
           setArtigos(arts);
-          setFornecedores(forns);
           // Se um artigoId foi passado, pré-selecionar e preencher o fornecedor responsável
           if (artigoIdProp && arts.some(a => a.id === Number(artigoIdProp))) {
             const artigoSel = arts.find(a => a.id === Number(artigoIdProp));
@@ -44,6 +44,10 @@ export default function MovimentoStockModal({ open, onClose, onSucesso, artigoId
             }));
           }
         })
+        .catch(e => console.error(e));
+      // Fornecedores: opcional — pode falhar para papéis sem acesso ao módulo de fornecedores
+      fornecedoresApi.listar()
+        .then(setFornecedores)
         .catch(e => console.error(e));
       setForm({
         artigoId: artigoIdProp ? String(artigoIdProp) : "",

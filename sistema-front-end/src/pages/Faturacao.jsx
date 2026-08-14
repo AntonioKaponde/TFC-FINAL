@@ -21,12 +21,12 @@ import CardFatura from "../components/CardFatura"
 import { Link } from "react-router-dom";
 import { exportarPDF } from "../utils/pdfExport";
 import { obterRoles } from "../utils/authStorage";
+import { ehGestorEstoque } from "../utils/roles";
 
 export default function Faturacao() {
   const userRoles = obterRoles();
-  const isGerente = userRoles.some(r => r.toUpperCase() === 'GERENTE');
   const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
-  const hideNovaFatura = isGerente || isContabilista;
+  const hideNovaFatura = ehGestorEstoque(userRoles) || isContabilista;
   return (
     <div>
       <NavBar />

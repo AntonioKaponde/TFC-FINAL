@@ -21,12 +21,14 @@ public class FornecedorController {
     private final AuditoriaService auditoriaService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'CONTABILISTA')")
     public List<FornecedorResponse> listar(@RequestParam(required = false) String pesquisa) {
         return fornecedorService.listar(pesquisa);
     }
 
   
     @GetMapping("/por-produto")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'CONTABILISTA')")
     public org.springframework.http.ResponseEntity<FornecedorResponse> buscarPorProduto(@RequestParam String nome) {
         return fornecedorService.buscarPorProduto(nome)
                 .map(org.springframework.http.ResponseEntity::ok)
@@ -34,6 +36,7 @@ public class FornecedorController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'GERENTE DE ESTOQUE', 'CONTABILISTA')")
     public FornecedorResponse buscar(@PathVariable Long id) {
         return fornecedorService.buscar(id);
     }

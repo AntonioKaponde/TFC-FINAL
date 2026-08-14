@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { guardarSessao } from '../utils/authStorage';
+import { destinoPadrao } from '../utils/roles';
 import {
   Grid,
   Box,
@@ -72,12 +73,8 @@ export default function Login() {
         if (response.roles && response.roles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN')) {
           atualizarNotificacoes();
         }
-        const isOperador = response.roles.some(r => r.toUpperCase() === 'OPERADOR' || r.toUpperCase() === 'VENDEDOR');
-        if (isOperador) {
-          navigate('/faturacao');
-          return;
-        }
-        navigate('/dashboard');
+        // Cada papel entra diretamente na página inicial que lhe é permitida
+        navigate(destinoPadrao(response.roles));
       }
     } catch (err) {
       // O erro tem a propriedade .status quando vem do nosso client.js
