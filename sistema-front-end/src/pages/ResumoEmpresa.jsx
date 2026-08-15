@@ -33,7 +33,7 @@ export default function ResumoEmpresa() {
       }
     };
     fetchEmpresa();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (

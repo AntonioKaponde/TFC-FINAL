@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    # H2 em modo de compatibilidade PostgreSQL — valida que as queries
+    # EXTRACT(MONTH/YEAR/DAY ...) funcionam no dialeto usado em produção.
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    open-in-view: false

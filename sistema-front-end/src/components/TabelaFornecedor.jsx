@@ -91,7 +91,12 @@ export default function TabelaFornecedor() {
   };
 
   useEffect(() => {
-    carregar();
+    let ativo = true;
+    fornecedoresApi
+      .listar()
+      .then((data) => { if (ativo) setFornecedores(data); })
+      .finally(() => { if (ativo) setLoading(false); });
+    return () => { ativo = false; };
   }, []);
 
   // Filtros locais — useMemo evita recalcular em cada render
@@ -113,13 +118,15 @@ export default function TabelaFornecedor() {
   }), [fornecedores, pesquisa, filtroTipo]);
 
   const { startIndex, endIndex, fornecedoresPaginados, totalPaginas } = useMemo(() => {
-    const start = paginaAtual * itensPorPagina;
+    const totalPaginas = Math.ceil(fornecedoresFiltrados.length / itensPorPagina);
+    const paginaEfetiva = Math.min(paginaAtual, Math.max(0, totalPaginas - 1));
+    const start = paginaEfetiva * itensPorPagina;
     const end = start + itensPorPagina;
     return {
       startIndex: start,
       endIndex: end,
       fornecedoresPaginados: fornecedoresFiltrados.slice(start, end),
-      totalPaginas: Math.ceil(fornecedoresFiltrados.length / itensPorPagina),
+      totalPaginas,
     };
   }, [fornecedoresFiltrados, paginaAtual]);
 
@@ -130,9 +137,6 @@ export default function TabelaFornecedor() {
     if (paginaAtual < totalPaginas - 1) setPaginaAtual((p) => p + 1);
   };
 
-  useEffect(() => {
-    setPaginaAtual(0);
-  }, [pesquisa, filtroTipo]);
 
   return (
     <Paper sx={{ boxShadow: "none", background: "transparent", width: "100%", minWidth: 0 }}>

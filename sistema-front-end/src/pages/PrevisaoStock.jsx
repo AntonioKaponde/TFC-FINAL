@@ -186,6 +186,48 @@ export default function PrevisaoStock() {
                   </Card>
                 ))}
               </Box>
+              {/* Pesquisa e filtros */}
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', mb: 2 }}>
+                <Paper
+                  component="form"
+                  onSubmit={(e) => e.preventDefault()}
+                  sx={{ display: "flex", alignItems: "center", background: "#F4F7F9", height: "36px", borderRadius: 2, flex: '1 1 220px', maxWidth: 380 }}
+                >
+                  <IconButton sx={{ p: "8px" }} aria-label="pesquisar">
+                    <SearchIcon />
+                  </IconButton>
+                  <InputBase
+                    sx={{ ml: 0.5, flex: 1, fontSize: '0.85rem' }}
+                    placeholder="Pesquisar por nome, SKU ou categoria..."
+                    value={pesquisa}
+                    onChange={(e) => setPesquisa(e.target.value)}
+                  />
+                </Paper>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap', gap: 1 }}>
+                  <FilterAltOutlinedIcon sx={{ color: '#64748b', fontSize: 20 }} />
+                  {['TODOS', 'A_ACABAR', 'STOCK_BAIXO', 'PARADO', 'SEM_STOCK', 'NORMAL'].map((estado) => (
+                    <Button
+                      key={estado}
+                      size="small"
+                      variant="text"
+                      onClick={() => setFiltroEstado(estado)}
+                      sx={{
+                        color: filtroEstado === estado ? '#0B6E4F' : '#64748b',
+                        textTransform: 'none',
+                        fontWeight: filtroEstado === estado ? 700 : 500,
+                        minWidth: 'auto',
+                        px: 1,
+                        fontSize: '0.78rem',
+                        bgcolor: filtroEstado === estado ? '#E6F4EF' : 'transparent',
+                        borderRadius: 2
+                      }}
+                    >
+                      {STATUS[estado]?.label || estado}
+                    </Button>
+                  ))}
+                </Stack>
+              </Box>
+
               {/* Tabela */}
               <Card sx={{ maxWidth: 2000 }}>
                 <TableContainer sx={{ maxHeight: { xs: '70vh', md: '62vh' }, overflowX: 'auto' }}>

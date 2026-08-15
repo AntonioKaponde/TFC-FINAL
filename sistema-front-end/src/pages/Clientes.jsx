@@ -19,7 +19,6 @@ import TabelaCliente from "../components/TabelaClientes";
 import { Radio } from "@mui/material";
 import TabelaClientes from "../components/TabelaClientes";
 import { Link } from "react-router-dom";
-import { exportarPDF } from "../utils/pdfExport";
 import { obterRoles } from "../utils/authStorage";
 import { ehGestorEstoque } from "../utils/roles";
 

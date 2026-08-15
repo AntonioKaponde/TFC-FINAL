@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -50,7 +50,11 @@ export default function GestaoDeUsuarios() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
-  const fetchData = async () => {
+  const showNotification = useCallback((message, severity) => {
+    setNotification({ open: true, message, severity });
+  }, []);
+
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [usersData, rolesData] = await Promise.all([
@@ -59,16 +63,16 @@ export default function GestaoDeUsuarios() {
       ]);
       setUsers(usersData);
       setRoles(rolesData);
-    } catch (error) {
+    } catch {
       showNotification('Erro ao carregar dados', 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showNotification]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const userRoles = obterRoles();
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
@@ -98,10 +102,6 @@ export default function GestaoDeUsuarios() {
     } catch (error) {
       showNotification(error.message || 'Erro ao criar usuário', 'error');
     }
-  };
-
-  const showNotification = (message, severity) => {
-    setNotification({ open: true, message, severity });
   };
 
   const handleRemoveUserClick = (id) => {

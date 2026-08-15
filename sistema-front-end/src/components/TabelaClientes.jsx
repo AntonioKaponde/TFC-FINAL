@@ -94,7 +94,12 @@ export default function TabelaClientes() {
   };
 
   useEffect(() => {
-    carregar();
+    let ativo = true;
+    clientesApi
+      .listar("")
+      .then((data) => { if (ativo) setClientes(data); })
+      .finally(() => { if (ativo) setLoading(false); });
+    return () => { ativo = false; };
   }, []);
 
   // Filtros locais — useMemo evita recalcular em cada render
@@ -120,13 +125,15 @@ export default function TabelaClientes() {
   }), [clientes, pesquisa, filtroTipo]);
 
   const { startIndex, endIndex, clientesPaginados, totalPaginas } = useMemo(() => {
-    const start = paginaAtual * itensPorPagina;
+    const totalPaginas = Math.ceil(clientesFiltrados.length / itensPorPagina);
+    const paginaEfetiva = Math.min(paginaAtual, Math.max(0, totalPaginas - 1));
+    const start = paginaEfetiva * itensPorPagina;
     const end = start + itensPorPagina;
     return {
       startIndex: start,
       endIndex: end,
       clientesPaginados: clientesFiltrados.slice(start, end),
-      totalPaginas: Math.ceil(clientesFiltrados.length / itensPorPagina),
+      totalPaginas,
     };
   }, [clientesFiltrados, paginaAtual]);
 
@@ -137,9 +144,6 @@ export default function TabelaClientes() {
     if (paginaAtual < totalPaginas - 1) setPaginaAtual((p) => p + 1);
   };
 
-  useEffect(() => {
-    setPaginaAtual(0);
-  }, [pesquisa, filtroTipo]);
 
   return (
     <Box

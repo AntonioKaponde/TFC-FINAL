@@ -75,7 +75,7 @@ export default function CriarUsuarios() {
     }
 
     try {
-      const response = await api.post('/api/usuarios', {
+      await api.post('/api/usuarios', {
         nome: formData.nomeCompleto,
         email: formData.emailProfissional,
         password: formData.password,

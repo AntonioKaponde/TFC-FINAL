@@ -31,35 +31,37 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
 
     /**
      * Resumo mensal: mês, faturação base (sem IVA), IVA liquidado e quantidade de documentos emitidos.
+     * Usa EXTRACT(...) — compatível com MySQL e PostgreSQL (Railway).
      */
     @Query("""
-            SELECT FUNCTION('MONTH', f.dataEmissao),
+            SELECT EXTRACT(MONTH FROM f.dataEmissao),
                    COALESCE(SUM(f.subtotal), 0),
                    COALESCE(SUM(f.totalIva), 0),
                    COUNT(f.id)
             FROM Fatura f
-            WHERE f.empresa = :empresa AND FUNCTION('YEAR', f.dataEmissao) = :ano
-            GROUP BY FUNCTION('MONTH', f.dataEmissao)
-            ORDER BY FUNCTION('MONTH', f.dataEmissao)
+            WHERE f.empresa = :empresa AND EXTRACT(YEAR FROM f.dataEmissao) = :ano
+            GROUP BY EXTRACT(MONTH FROM f.dataEmissao)
+            ORDER BY EXTRACT(MONTH FROM f.dataEmissao)
             """)
     List<Object[]> resumoMensalPorAno(@Param("empresa") Empresa empresa, @Param("ano") int ano);
 
     /**
      * Resumo diário de documentos emitidos num mês específico.
      * Retorna: dia, quantidade de documentos, valor total faturado, total IVA do dia.
+     * Usa EXTRACT(...) — compatível com MySQL e PostgreSQL (Railway).
      */
     @Query("""
-            SELECT FUNCTION('DAY', f.dataEmissao),
+            SELECT EXTRACT(DAY FROM f.dataEmissao),
                    COUNT(f.id),
                    COALESCE(SUM(f.total), 0),
                    COALESCE(SUM(f.totalIva), 0),
                    COALESCE(SUM(f.subtotal), 0)
             FROM Fatura f
             WHERE f.empresa = :empresa
-              AND FUNCTION('YEAR', f.dataEmissao) = :ano
-              AND FUNCTION('MONTH', f.dataEmissao) = :mes
-            GROUP BY FUNCTION('DAY', f.dataEmissao)
-            ORDER BY FUNCTION('DAY', f.dataEmissao)
+              AND EXTRACT(YEAR FROM f.dataEmissao) = :ano
+              AND EXTRACT(MONTH FROM f.dataEmissao) = :mes
+            GROUP BY EXTRACT(DAY FROM f.dataEmissao)
+            ORDER BY EXTRACT(DAY FROM f.dataEmissao)
             """)
     List<Object[]> resumoDiarioPorMes(
             @Param("empresa") Empresa empresa,
@@ -76,7 +78,7 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
                    COUNT(f.id)
             FROM Fatura f
             WHERE f.empresa = :empresa
-              AND FUNCTION('YEAR', f.dataEmissao) = :ano
+              AND EXTRACT(YEAR FROM f.dataEmissao) = :ano
               AND f.metodoPagamento IS NOT NULL
             GROUP BY f.metodoPagamento
             ORDER BY COUNT(f.id) DESC
@@ -95,7 +97,7 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
                    COUNT(f.id)
             FROM Fatura f
             WHERE f.empresa = :empresa
-              AND FUNCTION('YEAR', f.dataEmissao) = :ano
+              AND EXTRACT(YEAR FROM f.dataEmissao) = :ano
             GROUP BY f.tipoDocumento
             ORDER BY COUNT(f.id) DESC
             """)
@@ -113,7 +115,7 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
                    COUNT(f.id)
             FROM Fatura f
             WHERE f.empresa = :empresa
-              AND FUNCTION('YEAR', f.dataEmissao) = :ano
+              AND EXTRACT(YEAR FROM f.dataEmissao) = :ano
             GROUP BY f.estado
             ORDER BY COUNT(f.id) DESC
             """)
@@ -132,7 +134,7 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
             FROM Fatura f
             JOIN f.cliente c
             WHERE f.empresa = :empresa
-              AND FUNCTION('YEAR', f.dataEmissao) = :ano
+              AND EXTRACT(YEAR FROM f.dataEmissao) = :ano
             GROUP BY c.id, c.nome
             ORDER BY COALESCE(SUM(f.total), 0) DESC
             """)
@@ -143,7 +145,7 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long> {
     /**
      * Conta total de documentos num período (ano).
      */
-    @Query("SELECT COUNT(f) FROM Fatura f WHERE f.empresa = :empresa AND FUNCTION('YEAR', f.dataEmissao) = :ano")
+    @Query("SELECT COUNT(f) FROM Fatura f WHERE f.empresa = :empresa AND EXTRACT(YEAR FROM f.dataEmissao) = :ano")
     Long contarDocumentosPorAno(@Param("empresa") Empresa empresa, @Param("ano") int ano);
 
     /**

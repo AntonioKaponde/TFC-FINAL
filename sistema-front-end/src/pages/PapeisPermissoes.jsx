@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
-  Button,
   Grid,
   Card,
   Checkbox,
@@ -12,30 +11,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
   Chip,
   Divider,
   Paper,
   Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
   CircularProgress,
   Snackbar,
   Alert,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  MoreVert as MoreVertIcon,
-  Delete as DeleteIcon,
-  Shield as ShieldIcon,
-} from '@mui/icons-material';
+import { Shield as ShieldIcon } from '@mui/icons-material';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 import { api } from '../api/client';
@@ -58,20 +42,27 @@ export default function PapeisPermissoes() {
   const [modules, setModules] = useState([...initialModulesTemplate]);
   
   const [loading, setLoading] = useState(true);
-  const [openModal, setOpenModal] = useState(false);
-  const [newRoleName, setNewRoleName] = useState('');
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(false);
-  
-  // Menu de contexto
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [menuRole, setMenuRole] = useState(null);
-  
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
 
-  const MAX_ROLES = 10;
+  const showNotification = useCallback((message, severity) => {
+    setNotification({ open: true, message, severity });
+  }, []);
 
-  const fetchRoles = async () => {
+  const handleSelectRole = useCallback((role) => {
+    if (!role) return;
+    setSelectedRole(role);
+
+    const perms = role.permissoes || [];
+    const updatedModules = initialModulesTemplate.map(mod => ({
+      ...mod,
+      view: perms.includes(`${mod.id}_VIEW`),
+      edit: perms.includes(`${mod.id}_EDIT`),
+      delete: perms.includes(`${mod.id}_DELETE`),
+    }));
+    setModules(updatedModules);
+  }, []);
+
+  const fetchRoles = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.get('/api/roles');
@@ -95,121 +86,11 @@ export default function PapeisPermissoes() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRole, handleSelectRole, showNotification]);
 
   useEffect(() => {
     fetchRoles();
-  }, []);
-
-  const handleSelectRole = (role) => {
-    if (!role) return;
-    setSelectedRole(role);
-    
-    const perms = role.permissoes || [];
-    const updatedModules = initialModulesTemplate.map(mod => ({
-      ...mod,
-      view: perms.includes(`${mod.id}_VIEW`),
-      edit: perms.includes(`${mod.id}_EDIT`),
-      delete: perms.includes(`${mod.id}_DELETE`),
-    }));
-    setModules(updatedModules);
-  };
-
-  const handlePermissionChange = (moduleId, field) => {
-    setModules(prevModules =>
-      prevModules.map(mod =>
-        mod.id === moduleId ? { ...mod, [field]: !mod[field] } : mod
-      )
-    );
-  };
-
-  const handleSavePermissions = async () => {
-    if (!selectedRole) return;
-    setSaveLoading(true);
-    
-    const permissoes = [];
-    modules.forEach(mod => {
-      if (mod.view) permissoes.push(`${mod.id}_VIEW`);
-      if (mod.edit) permissoes.push(`${mod.id}_EDIT`);
-      if (mod.delete) permissoes.push(`${mod.id}_DELETE`);
-    });
-
-    try {
-      await api.put(`/api/roles/${selectedRole.id}`, {
-        nome: selectedRole.nome,
-        permissoes
-      });
-      showNotification('Permissões salvas com sucesso!', 'success');
-      fetchRoles();
-    } catch (error) {
-      const msg = error.message || 'Erro ao salvar permissões';
-      showNotification(msg, 'error');
-    } finally {
-      setSaveLoading(false);
-    }
-  };
-
-  const handleCreateRole = async () => {
-    if (!newRoleName.trim()) {
-      showNotification('O nome do papel é obrigatório', 'warning');
-      return;
-    }
-    
-    try {
-      await api.post('/api/roles', {
-        nome: newRoleName.trim(),
-        permissoes: []
-      });
-      setOpenModal(false);
-      setNewRoleName('');
-      showNotification('Papel criado com sucesso!', 'success');
-      fetchRoles();
-    } catch (error) {
-      const msg = error.message || 'Erro ao criar papel';
-      showNotification(msg, 'error');
-    }
-  };
-
-  const handleDeleteRole = async () => {
-    if (!menuRole) return;
-    setConfirmDeleteOpen(false);
-    
-    try {
-      await api.delete(`/api/roles/${menuRole.id}`);
-      showNotification(`Papel "${menuRole.nome}" removido com sucesso!`, 'success');
-      if (selectedRole?.id === menuRole.id) {
-        setSelectedRole(null);
-        setModules([...initialModulesTemplate]);
-      }
-      setMenuRole(null);
-      fetchRoles();
-    } catch (error) {
-      const msg = error.message || 'Erro ao remover papel';
-      showNotification(msg, 'error');
-    }
-  };
-
-  // Menu handlers
-  const handleMenuOpen = (event, role) => {
-    setAnchorEl(event.currentTarget);
-    setMenuRole(role);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setMenuRole(null);
-  };
-
-  const handleDeleteClick = () => {
-    handleMenuClose();
-    setConfirmDeleteOpen(true);
-  };
-
-  const showNotification = (message, severity) => {
-    setNotification({ open: true, message, severity });
-  };
-
-  const canCreateMore = roles.length < MAX_ROLES;
+  }, [fetchRoles]);
 
   return (
    <div>
@@ -396,79 +277,6 @@ export default function PapeisPermissoes() {
          )}
        </Box>
     </Box>
-
-    {/* Create Role Dialog */}
-    <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#222' }}>Criar Novo Papel</DialogTitle>
-        <DialogContent>
-            <TextField
-                autoFocus
-                margin="dense"
-                label="Nome do Papel (ex: Vendedor)"
-                fullWidth
-                variant="outlined"
-                value={newRoleName}
-                onChange={(e) => setNewRoleName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleCreateRole()}
-                sx={{ mt: 2 }}
-            />
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-            <Button onClick={() => { setOpenModal(false); setNewRoleName(''); }} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleCreateRole} 
-              variant="contained" 
-              disabled={!newRoleName.trim()}
-              sx={{ bgcolor: "#083927", '&:hover': { bgcolor: '#06291c' }, textTransform: 'none', fontWeight: 600 }}
-            >
-              Criar
-            </Button>
-        </DialogActions>
-    </Dialog>
-
-    {/* Delete Confirmation Dialog */}
-    <Dialog open={confirmDeleteOpen} onClose={() => setConfirmDeleteOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 700, color: '#d32f2f' }}>Confirmar Exclusão</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">
-            Tem certeza que deseja remover o papel <strong>{menuRole?.nome}</strong>?
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            Esta ação não pode ser desfeita. Usuários associados a este papel precisarão ser reatribuídos.
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-            <Button onClick={() => setConfirmDeleteOpen(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleDeleteRole} 
-              variant="contained" 
-              color="error"
-              sx={{ textTransform: 'none', fontWeight: 600 }}
-            >
-              Remover Papel
-            </Button>
-        </DialogActions>
-    </Dialog>
-
-    {/* Context Menu for role actions */}
-    <Menu
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={handleMenuClose}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-    >
-      <MenuItem onClick={handleDeleteClick} sx={{ color: '#d32f2f' }}>
-        <ListItemIcon>
-          <DeleteIcon fontSize="small" sx={{ color: '#d32f2f' }} />
-        </ListItemIcon>
-        <ListItemText>Remover Papel</ListItemText>
-      </MenuItem>
-    </Menu>
 
     {/* Notifications */}
     <Snackbar 

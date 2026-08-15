@@ -12,8 +12,8 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // Em produção, isso deve vir do application.properties/yml via @Value
-    private final String jwtSecret = "413F4428472B4B6250655368566D5970337336763979244226452948404D6351";
+    @Value("${JWT_SECRET:413F4428472B4B6250655368566D5970337336763979244226452948404D6351}")
+    private String jwtSecret;
     private final int jwtExpirationInMs = 604800000; // 7 dias
 
     private Key getSigningKey() {

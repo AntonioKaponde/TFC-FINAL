@@ -2,12 +2,10 @@ import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SideBar from '../components/SideBar'
 import NavBar from '../components/NavBar'
-import { Box, Button, Card, CircularProgress, Divider, Grid, Typography, Snackbar, Alert } from '@mui/material'
-import BuildCircleOutlinedIcon from '@mui/icons-material/BuildCircleOutlined';
+import { Box, Button, CircularProgress, Grid, Typography, Snackbar, Alert } from '@mui/material'
 import PerfilEmpresa from '../components/PerfilEmpresa'
 import ConfiguracoesFiscais from '../components/ConfiguracoesFiscais'
 import SerieDocumentos from '../components/SerieDocumentos'
-import { movimentosEstoqueApi } from '../api';
 import { obterRoles } from '../utils/authStorage';
 
 export default function Configuracoes() {
@@ -17,35 +15,10 @@ export default function Configuracoes() {
 
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-  const [fixando, setFixando] = useState({ artigos: false, iva: false });
   const navigate = useNavigate();
 
   const userRoles = obterRoles();
   const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN');
-
-  const handleCorrigirArtigos = async () => {
-    setFixando(p => ({ ...p, artigos: true }));
-    try {
-      const resp = await movimentosEstoqueApi.corrigirArtigos();
-      setSnackbar({ open: true, message: resp.mensagem || `Artigos corrigidos com sucesso!`, severity: 'success' });
-    } catch (e) {
-      setSnackbar({ open: true, message: 'Erro ao corrigir artigos: ' + (e.response?.data?.message || e.message), severity: 'error' });
-    } finally {
-      setFixando(p => ({ ...p, artigos: false }));
-    }
-  };
-
-  const handleRecalcularIva = async () => {
-    setFixando(p => ({ ...p, iva: true }));
-    try {
-      const resp = await movimentosEstoqueApi.recalcularIva();
-      setSnackbar({ open: true, message: resp.mensagem || `IVA recalculado com sucesso!`, severity: 'success' });
-    } catch (e) {
-      setSnackbar({ open: true, message: 'Erro ao recalcular IVA: ' + (e.response?.data?.message || e.message), severity: 'error' });
-    } finally {
-      setFixando(p => ({ ...p, iva: false }));
-    }
-  };
 
   const handleSaveAll = async () => {
     setSaving(true);

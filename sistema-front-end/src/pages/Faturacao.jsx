@@ -19,7 +19,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import TabelaFatura from "../components/TabelaFatura"
 import CardFatura from "../components/CardFatura"
 import { Link } from "react-router-dom";
-import { exportarPDF } from "../utils/pdfExport";
 import { obterRoles } from "../utils/authStorage";
 import { ehGestorEstoque } from "../utils/roles";
 

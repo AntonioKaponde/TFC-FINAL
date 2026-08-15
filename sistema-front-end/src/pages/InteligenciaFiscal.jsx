@@ -277,6 +277,47 @@ export default function InteligenciaFiscal() {
               </Card>
 
               <Box sx={{ width: '100%' }}>
+                {/* Pesquisa e filtros do histórico */}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', mb: 2 }}>
+                  <Paper
+                    component="form"
+                    onSubmit={(e) => e.preventDefault()}
+                    sx={{ display: "flex", alignItems: "center", background: "#F4F7F9", height: "36px", borderRadius: 2, flex: '1 1 220px', maxWidth: 380 }}
+                  >
+                    <IconButton sx={{ p: "8px" }} aria-label="pesquisar">
+                      <SearchIcon />
+                    </IconButton>
+                    <InputBase
+                      sx={{ ml: 0.5, flex: 1, fontSize: '0.85rem' }}
+                      placeholder="Pesquisar por mês ou ano..."
+                      value={pesquisa}
+                      onChange={(e) => setPesquisa(e.target.value)}
+                    />
+                  </Paper>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap', gap: 1 }}>
+                    <FilterAltOutlinedIcon sx={{ color: '#64748b', fontSize: 20 }} />
+                    {FILTROS_HISTORICO.map((f) => (
+                      <Button
+                        key={f.valor}
+                        size="small"
+                        variant="text"
+                        onClick={() => setFiltroMes(f.valor)}
+                        sx={{
+                          color: filtroMes === f.valor ? '#0B6E4F' : '#64748b',
+                          textTransform: 'none',
+                          fontWeight: filtroMes === f.valor ? 700 : 500,
+                          minWidth: 'auto',
+                          px: 1,
+                          fontSize: '0.78rem',
+                          bgcolor: filtroMes === f.valor ? '#E6F4EF' : 'transparent',
+                          borderRadius: 2
+                        }}
+                      >
+                        {f.label}
+                      </Button>
+                    ))}
+                  </Stack>
+                </Box>
                 {/* Histórico */}
                   <Card variant="outlined" sx={{ borderRadius: 3, width: '100%' }}>
                     <Box sx={{ p: 2.5, borderBottom: '1px solid #F1F5F9' }}>

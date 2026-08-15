@@ -25,6 +25,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copiar o build do frontend
 COPY --from=build /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+# Entrypoint: substitui ${PORT} (Railway) no nginx.conf antes de arrancar
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/entrypoint.sh"]

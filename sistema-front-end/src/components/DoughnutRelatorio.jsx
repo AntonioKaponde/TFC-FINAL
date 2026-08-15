@@ -11,19 +11,18 @@ export default function DoughnutRelatorio({ valores: valoresProp }) {
   const [loading, setLoading] = useState(!valoresProp);
 
   useEffect(() => {
-    if (valoresProp) {
-      setValores(valoresProp);
-      setLoading(false);
-      return;
-    }
+    if (valoresProp) return;
+    let ativo = true;
     dashboardApi
       .indicadores(ANO_REFERENCIA)
       .then((data) => {
+        if (!ativo) return;
         const ivaAPagar = Number(data.ivaAPagar ?? 0);
         const ivaARecuperar = Number(data.ivaARecuperar ?? 0);
         setValores([ivaAPagar, ivaARecuperar]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => { if (ativo) setLoading(false); });
+    return () => { ativo = false; };
   }, [valoresProp]);
 
   if (loading || !valores) {

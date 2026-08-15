@@ -8,7 +8,6 @@ import MovimentoStockModal from "../components/MovimentoStockModal";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import AddIcon from "@mui/icons-material/Add";
 import { Link } from "react-router-dom";
-import { exportarPDF } from "../utils/pdfExport";
 import { obterRoles } from "../utils/authStorage";
 
 export default function Inventário() {

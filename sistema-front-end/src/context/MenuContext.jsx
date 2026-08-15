@@ -16,6 +16,7 @@ export const MenuProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMenu = () => {
   const context = useContext(MenuContext);
   if (!context) {

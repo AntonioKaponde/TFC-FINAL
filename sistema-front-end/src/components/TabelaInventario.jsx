@@ -16,13 +16,7 @@ import {
   CardContent,
   InputBase,
   Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Snackbar,
-  Alert
+  CircularProgress
 } from "@mui/material";
 
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
@@ -30,11 +24,8 @@ import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import CircularProgress from "@mui/material/CircularProgress";
 import { artigosApi } from "../api";
 import { formatKzSemPrefixo, labelEstadoArtigo } from "../utils/formatters";
-import { obterRoles } from "../utils/authStorage";
 
 function getStatusColor(status) {
   switch (status) {
@@ -58,42 +49,13 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
   const [pesquisa, setPesquisa] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("Todos os Artigos");
 
-  const userRoles = obterRoles();
-  const isAdmin = userRoles.some(r => r.toUpperCase() === 'ADMIN' || r.toUpperCase() === 'NOVOADMIN');
-
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
-
-  const carregar = () => {
-    setLoading(true);
+  useEffect(() => {
+    let ativo = true;
     artigosApi
       .listar("")
-      .then(setArtigos)
-      .finally(() => setLoading(false));
-  };
-
-  const handleRemoverClick = (id) => {
-    setItemToDelete(id);
-    setOpenDeleteDialog(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (itemToDelete) {
-      artigosApi.remover(itemToDelete).then(() => {
-        carregar();
-        setNotification({ open: true, message: 'Artigo eliminado com sucesso!', severity: 'success' });
-      }).catch((e) => {
-        setNotification({ open: true, message: e.response?.data || "Erro ao eliminar o artigo.", severity: 'error' });
-      }).finally(() => {
-        setOpenDeleteDialog(false);
-        setItemToDelete(null);
-      });
-    }
-  };
-
-  useEffect(() => {
-    carregar();
+      .then((data) => { if (ativo) setArtigos(data); })
+      .finally(() => { if (ativo) setLoading(false); });
+    return () => { ativo = false; };
   }, [refreshKey]);
 
   // Filtros locais — useMemo evita recalcular em cada render
@@ -115,13 +77,15 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
   }), [artigos, pesquisa, filtroTipo]);
 
   const { startIndex, endIndex, artigosPaginados, totalPaginas } = useMemo(() => {
-    const start = paginaAtual * itensPorPagina;
+    const totalPaginas = Math.ceil(artigosFiltrados.length / itensPorPagina);
+    const paginaEfetiva = Math.min(paginaAtual, Math.max(0, totalPaginas - 1));
+    const start = paginaEfetiva * itensPorPagina;
     const end = start + itensPorPagina;
     return {
       startIndex: start,
       endIndex: end,
       artigosPaginados: artigosFiltrados.slice(start, end),
-      totalPaginas: Math.ceil(artigosFiltrados.length / itensPorPagina),
+      totalPaginas,
     };
   }, [artigosFiltrados, paginaAtual]);
 
@@ -132,9 +96,6 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
     if (paginaAtual < totalPaginas - 1) setPaginaAtual((p) => p + 1);
   };
 
-  useEffect(() => {
-    setPaginaAtual(0);
-  }, [pesquisa, filtroTipo]);
 
   return (
     <Paper sx={{ width: "100%", minWidth: 0, boxShadow: "none", background: "transparent" }}>
@@ -330,22 +291,6 @@ export default function TabelaInventario({ onMovimentar, refreshKey }) {
       </Table>
       </Box>
 
-      <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
-        <DialogTitle sx={{ fontWeight: 'bold' }}>Confirmar Eliminação</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Tem a certeza que deseja eliminar este artigo? Esta acção não pode ser desfeita.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: 'text.secondary', textTransform: 'none', fontWeight: 600 }}>Cancelar</Button>
-          <Button onClick={handleConfirmDelete} color="error" variant="contained" sx={{ textTransform: 'none', fontWeight: 600 }}>Eliminar</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Snackbar open={notification.open} autoHideDuration={4000} onClose={() => setNotification({...notification, open: false})} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-          <Alert severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
-      </Snackbar>
     </Paper>
   );
 }

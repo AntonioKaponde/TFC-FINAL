@@ -2,10 +2,13 @@ spring:
   application:
     name: sistema-api
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/sistema}
+    # O Railway injeta PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD quando um
+    # serviço PostgreSQL está ligado. Isto evita o problema do DATABASE_URL
+    # vir sem o prefixo "jdbc:" que o Hikari exige.
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:postgres}
     driver-class-name: org.postgresql.Driver
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -25,4 +28,4 @@ server:
 
 app:
   cors:
-    allowed-origins: ${FRONTEND_URL}
+    allowed-origins: ${FRONTEND_URL:http://localhost:5173}

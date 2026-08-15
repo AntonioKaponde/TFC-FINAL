@@ -109,7 +109,7 @@ public class DashboardService {
 
         return faturaRepository.resumoMensalPorAno(empresa, anoReferencia).stream()
                 .map(row -> {
-                    int mes = (Integer) row[0];
+                    int mes = ((Number) row[0]).intValue();
                     BigDecimal lucroBrutoRow = (BigDecimal) row[1];
                     BigDecimal ivaRow = (BigDecimal) row[2];
 

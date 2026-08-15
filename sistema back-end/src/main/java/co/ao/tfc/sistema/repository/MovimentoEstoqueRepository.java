@@ -49,17 +49,18 @@ public interface MovimentoEstoqueRepository extends JpaRepository<MovimentoEstoq
 
     /**
      * Resumo mensal de IVA dedutível (compras a fornecedor) para um dado ano.
+     * Usa EXTRACT(...) — compatível com MySQL e PostgreSQL (Railway).
      */
     @Query("""
-        SELECT FUNCTION('MONTH', m.dataHora), COALESCE(SUM(m.ivaCompra), 0)
+        SELECT EXTRACT(MONTH FROM m.dataHora), COALESCE(SUM(m.ivaCompra), 0)
         FROM MovimentoEstoque m
         WHERE m.empresa = :empresa
           AND m.tipoMovimento = 'ENTRADA'
           AND m.fornecedor IS NOT NULL
           AND m.ivaCompra IS NOT NULL
-          AND FUNCTION('YEAR', m.dataHora) = :ano
-        GROUP BY FUNCTION('MONTH', m.dataHora)
-        ORDER BY FUNCTION('MONTH', m.dataHora)
+          AND EXTRACT(YEAR FROM m.dataHora) = :ano
+        GROUP BY EXTRACT(MONTH FROM m.dataHora)
+        ORDER BY EXTRACT(MONTH FROM m.dataHora)
     """)
     List<Object[]> resumoMensalIvaDedutivel(
             @Param("empresa") Empresa empresa,

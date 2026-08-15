@@ -38,15 +38,14 @@ const linhaVazia = () => ({ artigoId: "", quantidade: 1 });
 export default function Vendas() {
   const navigate = useNavigate();
 
-  const userRoles = obterRoles();
-  const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
-  const semAcessoFaturacao = ehGestorEstoque(userRoles) || isContabilista;
-
   useEffect(() => {
+    const userRoles = obterRoles();
+    const isContabilista = userRoles.some(r => r.toUpperCase() === 'CONTABILISTA');
+    const semAcessoFaturacao = ehGestorEstoque(userRoles) || isContabilista;
     if (semAcessoFaturacao) {
       navigate(destinoPadrao(userRoles));
     }
-  }, [semAcessoFaturacao, navigate]);
+  }, [navigate]);
   const [clientes, setClientes] = useState([]);
   const [artigos, setArtigos] = useState([]);
   const [loading, setLoading] = useState(true);

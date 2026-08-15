@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { guardarSessao } from '../utils/authStorage';
@@ -35,14 +35,12 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [currentTime, setCurrentTime] = useState("");
-  const navigate = useNavigate();
-
-  useEffect(() => {
+  const [currentTime] = useState(() => {
     const now = new Date();
     const timeString = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-    setCurrentTime(`Hoje, ${timeString}`);
-  }, []);
+    return `Hoje, ${timeString}`;
+  });
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     if (!email.endsWith('@gmail.com')) {
@@ -351,7 +349,7 @@ export default function Login() {
         {/* Rodapé Direito */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 480, mx: 'auto', flexWrap: 'wrap', gap: 2 }}>
           <Typography variant="body2" sx={{ color: '#64748B' }}>
-            Não tem conta? <Button variant="text" sx={{ p: 0, textTransform: 'none', fontWeight: 600, color: "#083927", minWidth: 'auto',color: "inherit",
+            Não tem conta?          <Button variant="text" sx={{ p: 0, textTransform: 'none', fontWeight: 600, color: "#083927", minWidth: 'auto',
     "&.active": {
       bgcolor: "primary.main",
       color: "white",

@@ -83,13 +83,15 @@ export default function FaturasTable() {
   }), [faturas, pesquisa, filtroTipo]);
 
   const { startIndex, endIndex, faturasPaginadas, totalPaginas } = useMemo(() => {
-    const start = paginaAtual * itensPorPagina;
+    const totalPaginas = Math.ceil(faturasFiltradas.length / itensPorPagina);
+    const paginaEfetiva = Math.min(paginaAtual, Math.max(0, totalPaginas - 1));
+    const start = paginaEfetiva * itensPorPagina;
     const end = start + itensPorPagina;
     return {
       startIndex: start,
       endIndex: end,
       faturasPaginadas: faturasFiltradas.slice(start, end),
-      totalPaginas: Math.ceil(faturasFiltradas.length / itensPorPagina),
+      totalPaginas,
     };
   }, [faturasFiltradas, paginaAtual]);
 
@@ -100,9 +102,6 @@ export default function FaturasTable() {
     if (paginaAtual < totalPaginas - 1) setPaginaAtual((p) => p + 1);
   };
 
-  useEffect(() => {
-    setPaginaAtual(0);
-  }, [pesquisa, filtroTipo]);
 
   // Menu states
   const [anchorEl, setAnchorEl] = useState(null);

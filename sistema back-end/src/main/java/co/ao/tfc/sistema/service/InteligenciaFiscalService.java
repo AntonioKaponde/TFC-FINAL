@@ -54,7 +54,8 @@ public class InteligenciaFiscalService {
         Map<Integer, BigDecimal> ivaDedAtual = resumoIvaDedutivel(empresa, anoAtual);
 
         List<PrevisaoFiscalResponse.MesFiscalDTO> historico = linhasAtual.stream()
-                .map(row -> toMesFiscal((Integer) row[0], anoAtual, row, ivaDedAtual.getOrDefault((Integer) row[0], BigDecimal.ZERO)))
+                .map(row -> toMesFiscal(((Number) row[0]).intValue(), anoAtual, row,
+                        ivaDedAtual.getOrDefault(((Number) row[0]).intValue(), BigDecimal.ZERO)))
                 .collect(Collectors.toList());
 
         // IVA dedutível mensal do ano anterior (para comparação anual)
@@ -65,12 +66,12 @@ public class InteligenciaFiscalService {
         List<BigDecimal> faturacaoMensal = new ArrayList<>();
         List<Object[]> linhasAnterior = faturaRepository.resumoMensalPorAno(empresa, anoAnterior);
         for (Object[] row : linhasAnterior) {
-            int mes = (Integer) row[0];
+            int mes = ((Number) row[0]).intValue();
             ivaMensal.add((BigDecimal) row[2]);
             faturacaoMensal.add((BigDecimal) row[1]);
         }
         for (Object[] row : linhasAtual) {
-            int mes = (Integer) row[0];
+            int mes = ((Number) row[0]).intValue();
             ivaMensal.add((BigDecimal) row[2]);
             faturacaoMensal.add((BigDecimal) row[1]);
         }
