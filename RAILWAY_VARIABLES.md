@@ -68,18 +68,26 @@ Root Directory: `sistema-front-end`
 
 | # | Variável | Valor | Descrição |
 |---|----------|-------|-----------|
-| 1 | `VITE_API_URL` | `https://<NOME-BACKEND>.up.railway.app` | URL do backend para chamadas API |
+| 1 | `API_URL` | `https://<NOME-BACKEND>.up.railway.app` | URL do backend — usada pelo nginx (proxy `/api/`)
 
 ### Cópia Rápida para Railway Dashboard
 
 Copia e cola isto na secção **Variables** do frontend:
 
 ```
-VITE_API_URL=https://<NOME-BACKEND>.up.railway.app
+API_URL=https://<NOME-BACKEND>.up.railway.app
 ```
 
 > **NOTA**: Substitui `<NOME-BACKEND>` pelo domínio gerado no serviço backend.
 > Substitui `<NOME-FRONTEND>` pelo domínio gerado no serviço frontend.
+>
+> ⚠️ **NÃO uses `VITE_API_URL`**: é embutida em build-time e não é necessária.
+> O nginx faz proxy de todos os pedidos `/api/...` para o backend através de
+> `API_URL` (runtime). Deixa `VITE_API_URL` vazia para os pedidos irem para o
+> mesmo domínio do frontend (evita CORS).
+>
+> ⚠️ **Sem barra final**: `API_URL` deve terminar SEM `/` (ex.:
+> `https://api.exemplo.com`, não `https://api.exemplo.com/`).
 
 ---
 
@@ -112,7 +120,7 @@ app.uploads.dir=/app/uploads
 
 ### Frontend (copiar para Railway → Variables):
 ```env
-VITE_API_URL=https://sistema-api.up.railway.app
+API_URL=https://sistema-api.up.railway.app
 ```
 
 ### PostgreSQL (criar no Railway → Database → PostgreSQL):
@@ -144,12 +152,12 @@ DATABASE_PASSWORD=xxx
 4. Criar Serviço Frontend
    └──→ + New → GitHub Repo → selecionar o MESMO repo
    └──→ Settings → Root Directory → "sistema-front-end"
-   └──→ Variables → colar variáveis do frontend
+   └──→ Variables → colar variáveis do frontend (`API_URL`)
    └──→ Settings → Networking → Generate Domain
 
 5. Actualizar URL do Backend no Frontend
    └──→ Copiar o domínio gerado do backend
-   └──→ Colar em VITE_API_URL do frontend
+   └──→ Colar em API_URL do frontend
 
 6. Actualizar URL do Frontend no Backend
    └──→ Copiar o domínio gerado do frontend
@@ -170,7 +178,8 @@ DATABASE_PASSWORD=xxx
 | `JWT signature invalid` | `JWT_SECRET` diferente entre deploys | Usar SEMPRE o mesmo `JWT_SECRET` |
 | `Connection refused` | PostgreSQL não ligado ao serviço | **Settings → Service Connections → Link Database** |
 | `PSQLException: ... near "MONTH"` | Queries antigas com `FUNCTION('MONTH'...)` (MySQL) | Já corrigido — agora usam `EXTRACT(...)` compatível com PostgreSQL |
-| `Cannot find module VITE_API_URL` | Frontend não tem a variável | Adicionar `VITE_API_URL` no frontend |
+| `Cannot find module VITE_API_URL` | Frontend não tem a variável | (Opção antiga) — agora usa-se `API_URL` no nginx; não é preciso |
+| `405 Not Allowed` ao fazer login/API | nginx sem proxy `/api/` (config antiga) | Redeploy com o novo `nginx.conf` e `API_URL` definida |
 | `Port already in use` | Railway já define PORT | Remover PORT hard-coded, usar `${{PORT}}` |
 
 ---

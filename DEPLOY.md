@@ -101,9 +101,13 @@ Vá em **Variables** do serviço frontend e adicione:
 
 | Variável | Valor |
 |----------|-------|
-| `VITE_API_URL` | `https://<backend-service>.up.railway.app` |
+| `API_URL` | `https://<backend-service>.up.railway.app` |
 
-> **Importante**: Use o URL do **backend** obtido no passo anterior.
+> **Importante**: Use o URL do **backend** obtido no passo anterior, **sem barra final**.
+>
+> O nginx do frontend faz proxy de todos os pedidos `/api/...` para o backend
+> usando esta variável. **Não** uses `VITE_API_URL` — ela é embutida em build-time;
+> com o proxy do nginx os pedidos ficam no mesmo domínio e não há CORS.
 
 ### Configurar Rede do Frontend
 
@@ -117,12 +121,12 @@ Este será o URL público da aplicação!
 
 Railway 2026 suporta **Variable References** — ligue o frontend ao backend automaticamente:
 
-No serviço **frontend**, na variável `VITE_API_URL`, use:
+No serviço **frontend**, na variável `API_URL`, use:
 ```
-${{Backend Service.VITE_API_URL}}
+${{Backend Service.API_URL}}
 ```
 
-Ou simplesmente coloque o URL directo do backend.
+Ou simplesmente coloque o URL directo do backend (ex.: `https://sistema-api.up.railway.app`).
 
 ---
 
@@ -226,7 +230,9 @@ Adicione o seu próprio domínio:
 - Verifique se a PostgreSQL está ligada (ícone verde)
 
 ### Frontend não comunica com Backend
-- Verifique se `VITE_API_URL` aponta para o URL correcto do backend
+- Verifique se `API_URL` aponta para o URL correcto do backend (sem barra final)
+- Verifique se o nginx.conf em produção tem o bloco `location /api/` (redeploy se necessário)
+- Se a página der `405 Not Allowed` no login, o nginx em produção ainda não tem o proxy `/api/` — confirme que o commit com o novo `nginx.conf` foi feito push
 - Verifique se o CORS está configurado (variável `FRONTEND_URL`)
 
 ### Erro de JWT
