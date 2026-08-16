@@ -22,6 +22,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { api } from '../api/client';
+import { validarEmail } from '../utils/validators';
 
 export default function Cadastro() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,7 @@ export default function Cadastro() {
     nif: '',
     telefoneEmpresa: '',
     endereco: '',
-    sector: 'FARMACIA',
+    sector: 'BEBIDAS',
     regimeIva: 'GERAL',
     nomeAdministrador: '',
     email: '',
@@ -52,8 +53,8 @@ export default function Cadastro() {
       setError("O NIF da Empresa deve conter 10 dígitos e começar por 5.");
       return;
     }
-    if (!formData.email.endsWith('@gmail.com')) {
-      setError("O email deve ser um endereço @gmail.com");
+    if (!validarEmail(formData.email)) {
+      setError("Insira um email válido");
       return;
     }
     if (formData.password.length < 8) {
@@ -322,7 +323,7 @@ export default function Cadastro() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="admin@gmail.com"
+                    placeholder="admin@empresa.com"
                     size="small"
                     fullWidth
                   />

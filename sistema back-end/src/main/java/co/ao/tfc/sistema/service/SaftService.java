@@ -90,7 +90,7 @@ public class SaftService {
             writeElement(writer, "TaxEntity", "Global");
             writeElement(writer, "ProductCompanyTaxID", "500000000"); // Exemplo fictício do software
             writeElement(writer, "SoftwareCertificateNumber", "0");
-            writeElement(writer, "ProductID", "Mulemba Software/Gestao");
+            writeElement(writer, "ProductID", "Kamba Gestão Software/Gestao");
             writeElement(writer, "ProductVersion", "1.0.0");
             writer.writeEndElement(); // Header
 

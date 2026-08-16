@@ -152,6 +152,7 @@ export function NavBar() {
               <ListItem sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Paper
                   component="form"
+                  onSubmit={(e) => e.preventDefault()}
                   sx={{
                     display: "flex",
                     alignItems: "center",

@@ -79,6 +79,8 @@ export default function Inventário() {
               </Button>*/}
               {!hideAdd && (
                 <Button
+                  component={Link}
+                  to="/novoArtigo"
                   variant="contained"
                   startIcon={<AddIcon />}
                   sx={{
@@ -93,9 +95,7 @@ export default function Inventário() {
                     boxShadow: 'none'
                   }}
                 >
-                  <Link style={{ textDecoration: "none", color: "inherit", width: "100%", textAlign: "center" }} to="/novoArtigo">
-                    NovoArtigo
-                  </Link>
+                  Novo Artigo
                 </Button>
               )}
             </Box>

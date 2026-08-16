@@ -45,6 +45,8 @@ export default function Fornecedores() {
             >
               {!hideAdd && (
                 <Button
+                  component={Link}
+                  to="/novoFornecedor"
                   variant="contained"
                   startIcon={<AddIcon />}
                   sx={{ 
@@ -59,9 +61,7 @@ export default function Fornecedores() {
                     boxShadow: 'none' 
                   }}
                 >
-                  <Link style={{textDecoration:"none", color: "inherit", width: "100%", textAlign: "center"}} to="/novoFornecedor">
-                    Novo Fornecedor
-                  </Link>
+                  Novo Fornecedor
                 </Button>
               )}
             </Box>

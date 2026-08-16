@@ -24,6 +24,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { Snackbar, Alert } from '@mui/material';
+import { validarEmail } from '../utils/validators';
 export default function CriarUsuarios() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,8 +65,8 @@ export default function CriarUsuarios() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.emailProfissional.endsWith('@gmail.com')) {
-      showMessage('O email deve ser um endereço @gmail.com', 'error');
+    if (!validarEmail(formData.emailProfissional)) {
+      showMessage('Insira um email válido', 'error');
       return;
     }
 
@@ -103,6 +104,8 @@ export default function CriarUsuarios() {
         <Container maxWidth="md" sx={{ flexGrow: 1, minWidth: 0, py: 4, px: { xs: 2, md: 3 }, mt: '70px', boxSizing: 'border-box' }}>
       {/* Botão Voltar */}
       <Button
+        component={Link}
+        to="/gestaoUsuarios"
         startIcon={<ArrowBackIcon />}
         sx={{
           textTransform: 'none',
@@ -112,10 +115,7 @@ export default function CriarUsuarios() {
           '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' }
         }}
       >
-        <Link style={{textDecoration:"none"}} to="/gestaoUsuarios">
-            Voltar para Todos os Usuários
-        </Link>
-        
+        Voltar para Todos os Usuários
       </Button>
 
       {/* Título Principal */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fornecedoresApi } from '../api';
+import { validarEmail } from '../utils/validators';
 import {
   Box,
   TextField,
@@ -49,10 +50,17 @@ const NovoFornecedor = () => {
     }
   };
 
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'nif' && value.length > 10) return;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSalvar = async () => {
     setErro('');
 
-    if (!/^5\d{9}$/.test(form.nif)) {
+    if (!/^5\d{9}$/.test(form.nif)){
       setErro('O NIF do fornecedor deve possuir exactamente 10 caracteres numéricos e começar com o dígito 5.');
       return;
     }
@@ -62,8 +70,8 @@ const NovoFornecedor = () => {
       return;
     }
 
-    if (form.email && !form.email.endsWith('@gmail.com')) {
-      setErro('O email deve ser um endereço @gmail.com');
+    if (form.email && !validarEmail(form.email)) {
+      setErro('Insira um email válido');
       return;
     }
 
@@ -136,8 +144,11 @@ const NovoFornecedor = () => {
                     onChange={(e) => setForm({ ...form, nif: e.target.value })}
                     placeholder="5007382748"
                     size="small"
-                    type="number"
-                    maxLength={10}
+                    type="text"
+                    inputProps={{
+                      maxLength:10,
+                      inputMode: 'numeric'
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>

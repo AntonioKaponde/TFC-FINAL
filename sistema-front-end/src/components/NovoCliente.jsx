@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { clientesApi } from "../api";
+import { validarEmail } from "../utils/validators";
 import {
   Box,
   TextField,
@@ -46,8 +47,8 @@ const NovoCliente = () => {
       return;
     }
 
-    if (!form.email.endsWith("@gmail.com")) {
-      setErro("O email deve ser um endereço @gmail.com");
+    if (!validarEmail(form.email)) {
+      setErro("Insira um email válido");
       return;
     }
 
@@ -204,7 +205,7 @@ const NovoCliente = () => {
                     fullWidth
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="Ex: contacto@gmail.com"
+                    placeholder="Ex: contacto@empresa.com"
                     size="small"
                   />
                 </Grid>

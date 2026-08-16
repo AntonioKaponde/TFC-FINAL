@@ -37,6 +37,7 @@ import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 import { api } from '../api/client';
 import { obterRoles } from '../utils/authStorage';
+import { validarEmail } from '../utils/validators';
 
 export default function GestaoDeUsuarios() {
   const [users, setUsers] = useState([]);
@@ -83,8 +84,8 @@ export default function GestaoDeUsuarios() {
       return;
     }
 
-    if (!newUser.email.endsWith('@gmail.com')) {
-      showNotification('O email deve ser um endereço @gmail.com', 'warning');
+    if (!validarEmail(newUser.email)) {
+      showNotification('Insira um email válido', 'warning');
       return;
     }
 

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { guardarSessao } from '../utils/authStorage';
 import { destinoPadrao } from '../utils/roles';
+import { validarEmail } from '../utils/validators';
 import {
   Grid,
   Box,
@@ -43,8 +44,8 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!email.endsWith('@gmail.com')) {
-      setError("O email deve ser um endereço @gmail.com");
+    if (!validarEmail(email)) {
+      setError("Insira um email válido");
       return;
     }
     if (password.length < 8) {
@@ -225,7 +226,7 @@ export default function Login() {
             variant="outlined"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="nome@gmail.com"
+            placeholder="nome@empresa.com"
             sx={{ mb: 3 }}
             InputProps={{
               endAdornment: (

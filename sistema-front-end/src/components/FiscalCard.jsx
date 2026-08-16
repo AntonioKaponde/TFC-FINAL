@@ -46,7 +46,7 @@ const TaxRow = ({ label, value, totalPercentage, color, tooltip }) => (
     </Box>
     <BorderLinearProgress variant="determinate" value={Math.min(totalPercentage, 100)} barcolor={color} />
     <Typography variant="caption" sx={{ color: '#94a3b8', mt: 0.5, display: 'block' }}>
-      {totalPercentage}% do IVA Liquidado
+      {/*{totalPercentage}% do IVA Liquidado*/}
     </Typography>
   </Box>
 );

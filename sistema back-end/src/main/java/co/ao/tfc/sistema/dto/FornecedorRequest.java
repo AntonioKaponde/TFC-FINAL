@@ -17,7 +17,6 @@ public class FornecedorRequest {
     private String telefone;
     
     @jakarta.validation.constraints.Email(message = "Email inválido")
-    @jakarta.validation.constraints.Pattern(regexp = ".*@gmail\\.com$", message = "O email deve ser um endereço @gmail.com")
     private String email;
 
     private String endereco;

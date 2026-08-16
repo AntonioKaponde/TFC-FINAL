@@ -72,6 +72,8 @@ export default function Clientes() {
               </Button> */}
               {!hideNovoCliente && (
                 <Button
+                  component={Link}
+                  to="/novoCliente"
                   variant="contained"
                   startIcon={<AddIcon />}
                   sx={{
@@ -85,9 +87,7 @@ export default function Clientes() {
                     textTransform: 'none'
                   }}
                 >
-                  <Link style={{textDecoration:"none", color: "inherit", width: "100%", textAlign: "center"}} to="/novoCliente">
-                    Novo Cliente
-                  </Link>
+                  Novo Cliente
                 </Button>
               )}
             </Box>

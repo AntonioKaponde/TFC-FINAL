@@ -29,7 +29,6 @@ public class RegistroEmpresaUsuarioRequest {
     
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "Email inválido")
-    @Pattern(regexp = ".*@gmail\\.com$", message = "O email deve ser um endereço @gmail.com")
     private String email;
     
     @NotBlank(message = "A password é obrigatória")

@@ -144,7 +144,7 @@ export default function Vendas() {
                       value={clienteId}
                       displayEmpty
                       onChange={(e) => setClienteId(e.target.value)}
-                      sx={{ width: "100%", height: "40px" }}
+                      sx={{ width: "20em", height: "40px" }}
                     >
                       <MenuItem value="" disabled>Selecione o cliente</MenuItem>
                       {clientes.map((c) => (
@@ -155,17 +155,17 @@ export default function Vendas() {
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                   <Typography sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }} variant="caption">NIF</Typography>
-                  <TextField size="small" value={cliente?.nif || ""} disabled sx={{ width: "100%" }} />
+                  <TextField size="small" value={cliente?.nif || ""} disabled sx={{ width: "20em"}} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                   <Typography sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }} variant="caption">Telefone</Typography>
-                  <TextField size="small" value={cliente?.telefone || ""} disabled sx={{ width: "100%" }} />
+                  <TextField size="small" value={cliente?.telefone || ""} disabled sx={{ width: "20em" }} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                   <Typography variant="caption" sx={{ margin: "0 10px", fontWeight: 700, color: '#0F172A', mb: 1, display: 'block' }}>
                     Email
                   </Typography>
-                  <TextField size="small" value={cliente?.email || ""} disabled sx={{ width: "100%" }} />
+                  <TextField size="small" value={cliente?.email || ""} disabled sx={{ width: "20em" }} />
                 </Grid>
               </Grid>
             </Card>
