@@ -108,10 +108,32 @@ export default function Vendas() {
   };
 
   if (loading) {
+    // Mantém a NavBar e a SideBar visíveis durante o carregamento — assim a
+    // transição para esta página é suave (SPA) em vez de parecer um reload da
+    // página inteira, como acontecia com um spinner de ecrã inteiro.
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <CircularProgress sx={{ color: '#0B6E4F' }} />
-      </Box>
+      <div>
+        <NavBar />
+        <Box sx={{ display: "flex" }}>
+          <SideBar />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 2, md: 4 },
+              mt: "70px",
+              width: "100%",
+              boxSizing: "border-box",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress sx={{ color: "#0B6E4F" }} />
+          </Box>
+        </Box>
+      </div>
     );
   }
 
