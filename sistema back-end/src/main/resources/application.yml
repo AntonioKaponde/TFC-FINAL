@@ -7,10 +7,12 @@ spring:
       max-request-size: 50MB
 
   datasource:
+    # Credenciais por variáveis de ambiente (evita segredos no repositório).
+    # Os valores por omissão servem apenas para o desenvolvimento local.
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/facturacao
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: rooter
-    password: Root@2024
+    username: ${MYSQL_USER:rooter}
+    password: ${MYSQL_PASSWORD:Root@2024}
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect

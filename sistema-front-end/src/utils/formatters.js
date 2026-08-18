@@ -46,6 +46,7 @@ export function labelEstadoFatura(estado) {
     PAGO: 'Pago',
     PENDENTE: 'Pendente',
     VENCIDO: 'Vencido',
+    CREDITO: 'Crédito',
   };
   return map[estado] ?? estado;
 }

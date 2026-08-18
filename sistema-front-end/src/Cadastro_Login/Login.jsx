@@ -85,6 +85,8 @@ export default function Login() {
         setError('Credenciais inválidas. O email ou a palavra-passe não estão corretos.');
       } else if (status === 404) {
         setError('Utilizador não encontrado. Verifique se introduziu o email correto.');
+      } else if (status === 429) {
+        setError('Muitas tentativas falhadas. Conta bloqueada temporariamente, tente novamente mais tarde.');
       } else if (status === 500) {
         setError('Erro interno do servidor. Por favor, tente novamente mais tarde.');
       } else if (err instanceof TypeError && err.message === 'Failed to fetch') {

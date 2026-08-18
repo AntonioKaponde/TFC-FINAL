@@ -12,6 +12,7 @@ import java.util.*;
 import co.ao.tfc.sistema.repository.PerfilRoleRepository;
 import co.ao.tfc.sistema.repository.UsuarioRepository;
 import co.ao.tfc.sistema.security.JwtTokenProvider;
+import co.ao.tfc.sistema.security.LoginRateLimiter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,17 @@ public class AuthService {
     private final PerfilRoleRepository perfilRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditoriaService auditoriaService;
+    private final LoginRateLimiter loginRateLimiter;
 
     public JwtAuthResponse autenticarUsuario(LoginRequest loginRequest, String ip) {
+        // Proteção contra força bruta (OWASP A07): bloqueia a conta após várias
+        // tentativas falhadas seguidas.
+        if (loginRateLimiter.estaBloqueada(loginRequest.getEmail())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
+                    "Muitas tentativas falhadas de login. Conta bloqueada temporariamente (15 minutos).");
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -48,6 +58,9 @@ public class AuthService {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Login bem-sucedido: repõe o contador de tentativas falhadas.
+            loginRateLimiter.limpar(loginRequest.getEmail());
 
             String jwt = tokenProvider.generateToken(authentication);
 
@@ -64,7 +77,8 @@ public class AuthService {
             return new JwtAuthResponse(jwt, usuario.getNome(), usuario.getEmail(), roles, usuario.isPrimeiroAcesso());
 
         } catch (BadCredentialsException e) {
-            // Regista tentativa falhada
+            // Regista tentativa falhada e alimenta o bloqueio de força bruta
+            loginRateLimiter.registarFalha(loginRequest.getEmail());
             auditoriaService.registrarLoginFalha(loginRequest.getEmail(), ip);
             log.warn("Tentativa de login falhada para {} de IP {}", loginRequest.getEmail(), ip);
             throw e;

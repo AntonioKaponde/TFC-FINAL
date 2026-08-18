@@ -161,8 +161,19 @@ public class FaturaService {
         // Assumindo que isto é chamado por cada tenant via UI ou API:
         co.ao.tfc.sistema.model.Empresa empresa = getCurrentEmpresa();
         faturaRepository.findByEmpresa(empresa).forEach(fatura -> {
+            // Faturas com pagamento a pronto (Fatura-Recibo/Simplificada) estão
+            // SEMPRE PAGAS — não são vendas a crédito e nunca passam a vencidas.
+            if (fatura.isPagoPronto()) {
+                if (fatura.getEstado() != EstadoFatura.PAGO) {
+                    fatura.setEstado(EstadoFatura.PAGO);
+                    faturaRepository.save(fatura);
+                }
+                return;
+            }
+            // Faturas a crédito: vencimento já passou ⇒ fica VENCIDA.
             if (fatura.getEstado() != EstadoFatura.PAGO && fatura.getDataVencimento().isBefore(LocalDate.now())) {
                 fatura.setEstado(EstadoFatura.VENCIDO);
+                faturaRepository.save(fatura);
             }
         });
     }

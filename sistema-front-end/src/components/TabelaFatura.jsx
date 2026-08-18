@@ -44,6 +44,8 @@ function getStatusColor(status) {
       return "warning";
     case "Vencido":
       return "error";
+    case "Crédito":
+      return "secondary";
     default:
       return "default";
   }
@@ -51,6 +53,7 @@ function getStatusColor(status) {
 
 export default function FaturasTable() {
   const [faturas, setFaturas] = useState([]);
+  const [notasCredito, setNotasCredito] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(0);
   const itensPorPagina = 4;
@@ -59,41 +62,54 @@ export default function FaturasTable() {
   const [filtroTipo, setFiltroTipo] = useState("Todos");
 
   // Filtros Locais — useMemo evita recalcular em cada render
-  const faturasFiltradas = useMemo(() => faturas.filter((fatura) => {
-    // text filter
+  const linhasFiltradas = useMemo(() => {
     const search = pesquisa.toLowerCase();
-    const matchPesquisa =
+    const matchPesquisa = (doc) =>
       !search ||
-      (fatura.numero && fatura.numero.toLowerCase().includes(search)) ||
-      (fatura.cliente && fatura.cliente.toLowerCase().includes(search)) ||
-      (fatura.nif && fatura.nif.toLowerCase().includes(search));
+      (doc.numero && doc.numero.toLowerCase().includes(search)) ||
+      (doc.cliente && doc.cliente.toLowerCase().includes(search)) ||
+      (doc.nif && doc.nif.toLowerCase().includes(search));
 
-    // type filter
-    let matchTipo = true;
-    if (filtroTipo === "Faturas(FT)")
-      matchTipo = fatura.numero && fatura.numero.startsWith("FT");
-    if (filtroTipo === "Faturas-Recebido(FR)")
-      matchTipo = fatura.numero && fatura.numero.startsWith("FR");
-    if (filtroTipo === "Proformas(PP)")
-      matchTipo = fatura.numero && fatura.numero.startsWith("PP");
-    if (filtroTipo === "Notas de Crédito(NC)")
-      matchTipo = fatura.numero && fatura.numero.startsWith("NC");
+    // Notas de Crédito são documentos próprios (não faturas com prefixo NC)
+    if (filtroTipo === "Notas de Crédito(NC)") {
+      return notasCredito
+        .map((nc) => ({
+          id: `nc-${nc.id}`,
+          numero: nc.numero,
+          cliente: nc.clienteNome,
+          nif: null,
+          dataEmissao: nc.dataEmissao,
+          dataVencimento: null,
+          total: nc.valor,
+          estado: "CREDITO",
+          isNotaCredito: true,
+          faturaNumero: nc.faturaNumero,
+          motivo: nc.motivo,
+        }))
+        .sort((a, b) => (b.dataEmissao || "").localeCompare(a.dataEmissao || ""))
+        .filter(matchPesquisa);
+    }
 
-    return matchPesquisa && matchTipo;
-  }), [faturas, pesquisa, filtroTipo]);
+    return faturas.filter((fatura) => {
+      if (!matchPesquisa(fatura)) return false;
+      if (filtroTipo === "Faturas(FT)") return fatura.numero?.startsWith("FT");
+      if (filtroTipo === "Faturas-Recebido(FR)") return fatura.numero?.startsWith("FR");
+      return true; // Todos
+    });
+  }, [faturas, notasCredito, pesquisa, filtroTipo]);
 
-  const { startIndex, endIndex, faturasPaginadas, totalPaginas } = useMemo(() => {
-    const totalPaginas = Math.ceil(faturasFiltradas.length / itensPorPagina);
+  const { startIndex, endIndex, linhasPaginadas, totalPaginas } = useMemo(() => {
+    const totalPaginas = Math.ceil(linhasFiltradas.length / itensPorPagina);
     const paginaEfetiva = Math.min(paginaAtual, Math.max(0, totalPaginas - 1));
     const start = paginaEfetiva * itensPorPagina;
     const end = start + itensPorPagina;
     return {
       startIndex: start,
       endIndex: end,
-      faturasPaginadas: faturasFiltradas.slice(start, end),
+      linhasPaginadas: linhasFiltradas.slice(start, end),
       totalPaginas,
     };
-  }, [faturasFiltradas, paginaAtual]);
+  }, [linhasFiltradas, paginaAtual]);
 
   const handleAnterior = () => {
     if (paginaAtual > 0) setPaginaAtual((p) => p - 1);
@@ -111,6 +127,8 @@ export default function FaturasTable() {
   const [openDialog, setOpenDialog] = useState(false);
   const [ncData, setNcData] = useState({ motivo: "", valor: "" });
   const [ncLoading, setNcLoading] = useState(false);
+  const [confirmarPagar, setConfirmarPagar] = useState(false);
+  const [pagarLoading, setPagarLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
   const showMessage = (message, severity = 'info') => {
@@ -118,9 +136,8 @@ export default function FaturasTable() {
   };
 
   const carregar = useCallback(() => {
-    faturasApi
-      .listar()
-      .then((dados) =>
+    Promise.all([faturasApi.listar(), notasCreditoApi.listar()])
+      .then(([dados, notas]) => {
         // Ordena da faturação mais recente para a mais antiga
         setFaturas(
           [...dados].sort(
@@ -128,8 +145,9 @@ export default function FaturasTable() {
               (b.dataEmissao || '').localeCompare(a.dataEmissao || '') ||
               b.id - a.id
           )
-        )
-      )
+        );
+        setNotasCredito(notas || []);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -173,6 +191,27 @@ export default function FaturasTable() {
     }).finally(() => {
       setNcLoading(false);
     });
+  };
+
+  const handleMarcarPaga = () => {
+    if (!faturaSelecionada) return;
+    setPagarLoading(true);
+    faturasApi
+      .marcarComoPaga(faturaSelecionada.id)
+      .then(() => {
+        showMessage(`Fatura ${faturaSelecionada.numero} marcada como Paga!`, "success");
+        setConfirmarPagar(false);
+        setFaturaSelecionada(null);
+        carregar();
+      })
+      .catch((err) => {
+        showMessage(
+          "Erro ao marcar como paga: " + (err.response?.data?.message || err.response?.data || err.message),
+          "error"
+        );
+        setConfirmarPagar(false);
+      })
+      .finally(() => setPagarLoading(false));
   };
 
   return (
@@ -230,7 +269,7 @@ export default function FaturasTable() {
               py: { xs: 1, sm: 2 }
             }}
           >
-            {["Todos", "Faturas(FT)", "Faturas-Recebido(FR)", "Proformas(PP)", "Notas de Crédito(NC)"].map((tipo) => (
+            {["Todos", "Faturas(FT)", "Faturas-Recebido(FR)", "Notas de Crédito(NC)"].map((tipo) => (
               <Button
                 key={tipo}
                 variant="text"
@@ -282,7 +321,7 @@ export default function FaturasTable() {
                 <CircularProgress size={28} sx={{ color: "#0B6E4F" }} />
               </TableCell>
             </TableRow>
-          ) : faturasPaginadas.map((row) => {
+          ) : linhasPaginadas.map((row) => {
               const estado = labelEstadoFatura(row.estado);
               return (
                 <TableRow key={row.id} hover>
@@ -307,7 +346,11 @@ export default function FaturasTable() {
                     <Box>
                       <strong>{row.cliente}</strong>
                       <br />
-                      NIF: {row.nif}
+                      {row.isNotaCredito ? (
+                        <>Fatura: {row.faturaNumero}</>
+                      ) : (
+                        <>NIF: {row.nif}</>
+                      )}
                     </Box>
                   </TableCell>
 
@@ -324,37 +367,41 @@ export default function FaturasTable() {
                   </TableCell>
 
                   <TableCell sx={{ fontSize: "0.85rem", color: "#64748b" }}>
-                    <IconButton size="small">
-                      <VisibilityIcon sx={{ fontSize: 18 }} />
-                    </IconButton>
+                    {!row.isNotaCredito && (
+                      <>
+                        <IconButton size="small">
+                          <VisibilityIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
 
-                    <IconButton
-                      size="small"
-                      onClick={() =>
-                        row.estado === "PAGO" &&
-                        faturasApi.baixarPdf(row.id, row.numero)
-                      }
-                      disabled={row.estado !== "PAGO"}
-                      title={
-                        row.estado === "PAGO"
-                          ? "Baixar PDF da Fatura"
-                          : "Fatura deve estar PAGA para baixar PDF"
-                      }
-                    >
-                      <DownloadIcon
-                        sx={{
-                          fontSize: 18,
-                          color: row.estado === "PAGO" ? "#1976d2" : "#ccc",
-                        }}
-                      />
-                    </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            row.estado === "PAGO" &&
+                            faturasApi.baixarPdf(row.id, row.numero)
+                          }
+                          disabled={row.estado !== "PAGO"}
+                          title={
+                            row.estado === "PAGO"
+                              ? "Baixar PDF da Fatura"
+                              : "Fatura deve estar PAGA para baixar PDF"
+                          }
+                        >
+                          <DownloadIcon
+                            sx={{
+                              fontSize: 18,
+                              color: row.estado === "PAGO" ? "#1976d2" : "#ccc",
+                            }}
+                          />
+                        </IconButton>
 
-                    <IconButton
-                      size="small"
-                      onClick={(e) => handleMenuClick(e, row)}
-                    >
-                      <MoreVertIcon sx={{ fontSize: 18 }} />
-                    </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleMenuClick(e, row)}
+                        >
+                          <MoreVertIcon sx={{ fontSize: 18 }} />
+                        </IconButton>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
               );
@@ -365,9 +412,10 @@ export default function FaturasTable() {
         <TableRow sx={{ display: "flex", justifyContent: "space-between" }}>
           <TableCell>
             <Typography variant="caption" color="textSecondary">
-              A mostrar {faturasFiltradas.length > 0 ? startIndex + 1 : 0} a{" "}
-              {Math.min(endIndex, faturasFiltradas.length)} de{" "}
-              {faturasFiltradas.length} fatura(s)
+              A mostrar {linhasFiltradas.length > 0 ? startIndex + 1 : 0} a{" "}
+              {Math.min(endIndex, linhasFiltradas.length)} de{" "}
+              {linhasFiltradas.length}{" "}
+              {filtroTipo === "Notas de Crédito(NC)" ? "nota(s) de crédito" : "fatura(s)"}
             </Typography>
           </TableCell>
           <TableCell sx={{ display: "flex", gap: 2, height: "60px" }}>
@@ -394,8 +442,37 @@ export default function FaturasTable() {
       </Table>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        {faturaSelecionada?.estado !== "PAGO" && (
+          <MenuItem onClick={() => { handleMenuClose(); setConfirmarPagar(true); }}>
+            Marcar como Paga
+          </MenuItem>
+        )}
         <MenuItem onClick={handleOpenDialog}>Emitir Nota de Crédito</MenuItem>
       </Menu>
+
+      <Dialog open={confirmarPagar} onClose={() => setConfirmarPagar(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Marcar Fatura como Paga</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body2" color="textSecondary">
+            Confirma que deseja marcar a fatura{" "}
+            <strong>{faturaSelecionada?.numero}</strong> como <strong>Paga</strong>
+            (Total: {formatKzSemPrefixo(faturaSelecionada?.total || 0)} Kz)?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmarPagar(false)} color="inherit">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleMarcarPaga}
+            variant="contained"
+            sx={{ bgcolor: "#0B6E4F" }}
+            disabled={pagarLoading}
+          >
+            {pagarLoading ? <CircularProgress size={24} /> : "Marcar como Paga"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth>
         <DialogTitle>Emitir Nota de Crédito</DialogTitle>
