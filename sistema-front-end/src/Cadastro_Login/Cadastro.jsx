@@ -45,6 +45,7 @@ export default function Cadastro() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'nif' && value.length > 10) return;
+    if (name === 'telefoneEmpresa' && value.length > 9) return;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -222,15 +223,15 @@ export default function Cadastro() {
                     Telefone
                   </Typography>
                   <TextField
-                    type="number"
+                    type="tel"
                     name="telefoneEmpresa"
                     value={formData.telefoneEmpresa}
                     onChange={handleChange}
                     placeholder="943093943"
                     size="small"
                     fullWidth
-                    inputProps={{ min: 0 }}
-                    onKeyDown={(e) => { if (e.key === '-') e.preventDefault(); }}
+                    inputProps={{ maxLength: 9 }}
+                    onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace','Delete','Tab','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault(); }}
                   />
                 </FormControl>
               </Box>
